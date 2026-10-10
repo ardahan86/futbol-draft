@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ornek-kl",
+    "name": "Örnek Kaleci",
+    "position": "GK",
+    "rating": 85,
+    "country": "Türkiye",
+    "fee": 80
+  },
+  {
+    "id": "ornek-st",
+    "name": "Örnek Santrfor",
+    "position": "ST",
+    "rating": 90,
+    "country": "Brezilya",
+    "fee": 105
+  }
+]
