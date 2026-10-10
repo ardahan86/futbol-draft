@@ -1,0 +1,894 @@
+[
+  {
+    "id": "p001",
+    "name": "Gianluigi Buffon",
+    "position": "GK",
+    "country": "Italy",
+    "rating": 94,
+    "fee": 125,
+    "captainBonus": 2
+  },
+  {
+    "id": "p002",
+    "name": "Manuel Neuer",
+    "position": "GK",
+    "country": "Germany",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p003",
+    "name": "Iker Casillas",
+    "position": "GK",
+    "country": "Spain",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p004",
+    "name": "Petr Čech",
+    "position": "GK",
+    "country": "Czechia",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p005",
+    "name": "Edwin van der Sar",
+    "position": "GK",
+    "country": "Netherlands",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p006",
+    "name": "Thibaut Courtois",
+    "position": "GK",
+    "country": "Belgium",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p007",
+    "name": "Alisson Becker",
+    "position": "GK",
+    "country": "Brazil",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p008",
+    "name": "Jan Oblak",
+    "position": "GK",
+    "country": "Slovenia",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p009",
+    "name": "Hugo Lloris",
+    "position": "GK",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p010",
+    "name": "David de Gea",
+    "position": "GK",
+    "country": "Spain",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p011",
+    "name": "Cafu",
+    "position": "RB",
+    "country": "Brazil",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p012",
+    "name": "Philipp Lahm",
+    "position": "RB",
+    "country": "Germany",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p013",
+    "name": "Dani Alves",
+    "position": "RB",
+    "country": "Brazil",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p014",
+    "name": "Javier Zanetti",
+    "position": "RB",
+    "country": "Argentina",
+    "rating": 92,
+    "fee": 115,
+    "captainBonus": 4
+  },
+  {
+    "id": "p015",
+    "name": "Maicon",
+    "position": "RB",
+    "country": "Brazil",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p016",
+    "name": "Dani Carvajal",
+    "position": "RB",
+    "country": "Spain",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p017",
+    "name": "Trent Alexander-Arnold",
+    "position": "RB",
+    "country": "England",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p018",
+    "name": "Kyle Walker",
+    "position": "RB",
+    "country": "England",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p019",
+    "name": "João Cancelo",
+    "position": "RB",
+    "country": "Portugal",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p020",
+    "name": "Lilian Thuram",
+    "position": "RB",
+    "country": "France",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p021",
+    "name": "Roberto Carlos",
+    "position": "LB",
+    "country": "Brazil",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p022",
+    "name": "Marcelo",
+    "position": "LB",
+    "country": "Brazil",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p023",
+    "name": "Ashley Cole",
+    "position": "LB",
+    "country": "England",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p024",
+    "name": "Patrice Evra",
+    "position": "LB",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p025",
+    "name": "Jordi Alba",
+    "position": "LB",
+    "country": "Spain",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p026",
+    "name": "David Alaba",
+    "position": "LB",
+    "country": "Austria",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p027",
+    "name": "Andrew Robertson",
+    "position": "LB",
+    "country": "Scotland",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p028",
+    "name": "Theo Hernández",
+    "position": "LB",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p029",
+    "name": "Éric Abidal",
+    "position": "LB",
+    "country": "France",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p030",
+    "name": "Joan Capdevila",
+    "position": "LB",
+    "country": "Spain",
+    "rating": 85,
+    "fee": 80
+  },
+  {
+    "id": "p031",
+    "name": "Paolo Maldini",
+    "position": "CB",
+    "country": "Italy",
+    "rating": 97,
+    "fee": 140,
+    "captainBonus": 4
+  },
+  {
+    "id": "p032",
+    "name": "Alessandro Nesta",
+    "position": "CB",
+    "country": "Italy",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p033",
+    "name": "Fabio Cannavaro",
+    "position": "CB",
+    "country": "Italy",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p034",
+    "name": "Sergio Ramos",
+    "position": "CB",
+    "country": "Spain",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p035",
+    "name": "Carles Puyol",
+    "position": "CB",
+    "country": "Spain",
+    "rating": 92,
+    "fee": 115,
+    "captainBonus": 4
+  },
+  {
+    "id": "p036",
+    "name": "John Terry",
+    "position": "CB",
+    "country": "England",
+    "rating": 91,
+    "fee": 110,
+    "captainBonus": 2
+  },
+  {
+    "id": "p037",
+    "name": "Rio Ferdinand",
+    "position": "CB",
+    "country": "England",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p038",
+    "name": "Nemanja Vidić",
+    "position": "CB",
+    "country": "Serbia",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p039",
+    "name": "Thiago Silva",
+    "position": "CB",
+    "country": "Brazil",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p040",
+    "name": "Virgil van Dijk",
+    "position": "CB",
+    "country": "Netherlands",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p041",
+    "name": "Raphaël Varane",
+    "position": "CB",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p042",
+    "name": "Pepe",
+    "position": "CB",
+    "country": "Portugal",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p043",
+    "name": "Giorgio Chiellini",
+    "position": "CB",
+    "country": "Italy",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p044",
+    "name": "Mats Hummels",
+    "position": "CB",
+    "country": "Germany",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p045",
+    "name": "Diego Godín",
+    "position": "CB",
+    "country": "Uruguay",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p046",
+    "name": "Vincent Kompany",
+    "position": "CB",
+    "country": "Belgium",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p047",
+    "name": "Claude Makélélé",
+    "position": "DM",
+    "country": "France",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p048",
+    "name": "Sergio Busquets",
+    "position": "DM",
+    "country": "Spain",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p049",
+    "name": "Yaya Touré",
+    "position": "DM",
+    "country": "Ivory Coast",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p050",
+    "name": "Patrick Vieira",
+    "position": "DM",
+    "country": "France",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p051",
+    "name": "Andrea Pirlo",
+    "position": "DM",
+    "country": "Italy",
+    "rating": 94,
+    "fee": 125,
+    "captainBonus": 2
+  },
+  {
+    "id": "p052",
+    "name": "Casemiro",
+    "position": "DM",
+    "country": "Brazil",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p053",
+    "name": "Bastian Schweinsteiger",
+    "position": "DM",
+    "country": "Germany",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p054",
+    "name": "Xabi Alonso",
+    "position": "DM",
+    "country": "Spain",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p055",
+    "name": "N'Golo Kanté",
+    "position": "DM",
+    "country": "France",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p056",
+    "name": "Gennaro Gattuso",
+    "position": "DM",
+    "country": "Italy",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p057",
+    "name": "Xavi",
+    "position": "CM",
+    "country": "Spain",
+    "rating": 96,
+    "fee": 135,
+    "captainBonus": 2
+  },
+  {
+    "id": "p058",
+    "name": "Andrés Iniesta",
+    "position": "CM",
+    "country": "Spain",
+    "rating": 96,
+    "fee": 135
+  },
+  {
+    "id": "p059",
+    "name": "Luka Modrić",
+    "position": "CM",
+    "country": "Croatia",
+    "rating": 95,
+    "fee": 130
+  },
+  {
+    "id": "p060",
+    "name": "Steven Gerrard",
+    "position": "CM",
+    "country": "England",
+    "rating": 94,
+    "fee": 125,
+    "captainBonus": 4
+  },
+  {
+    "id": "p061",
+    "name": "Frank Lampard",
+    "position": "CM",
+    "country": "England",
+    "rating": 93,
+    "fee": 120,
+    "captainBonus": 2
+  },
+  {
+    "id": "p062",
+    "name": "Clarence Seedorf",
+    "position": "CM",
+    "country": "Netherlands",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p063",
+    "name": "Pavel Nedvěd",
+    "position": "CM",
+    "country": "Czechia",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p064",
+    "name": "Paul Pogba",
+    "position": "CM",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p065",
+    "name": "Toni Kroos",
+    "position": "CM",
+    "country": "Germany",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p066",
+    "name": "Kevin De Bruyne",
+    "position": "CM",
+    "country": "Belgium",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p067",
+    "name": "Lionel Messi",
+    "position": "CAM",
+    "country": "Argentina",
+    "rating": 99,
+    "fee": 150
+  },
+  {
+    "id": "p068",
+    "name": "Ronaldinho",
+    "position": "CAM",
+    "country": "Brazil",
+    "rating": 96,
+    "fee": 135
+  },
+  {
+    "id": "p069",
+    "name": "Zinedine Zidane",
+    "position": "CAM",
+    "country": "France",
+    "rating": 98,
+    "fee": 145,
+    "captainBonus": 2
+  },
+  {
+    "id": "p070",
+    "name": "Kaká",
+    "position": "CAM",
+    "country": "Brazil",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p071",
+    "name": "Mesut Özil",
+    "position": "CAM",
+    "country": "Germany",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p072",
+    "name": "Francesco Totti",
+    "position": "CAM",
+    "country": "Italy",
+    "rating": 95,
+    "fee": 130,
+    "captainBonus": 4
+  },
+  {
+    "id": "p073",
+    "name": "Eden Hazard",
+    "position": "CAM",
+    "country": "Belgium",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p074",
+    "name": "Juan Román Riquelme",
+    "position": "CAM",
+    "country": "Argentina",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p075",
+    "name": "David Silva",
+    "position": "CAM",
+    "country": "Spain",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p076",
+    "name": "James Rodríguez",
+    "position": "CAM",
+    "country": "Colombia",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p077",
+    "name": "Luís Figo",
+    "position": "RW",
+    "country": "Portugal",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p078",
+    "name": "Arjen Robben",
+    "position": "RW",
+    "country": "Netherlands",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p079",
+    "name": "Franck Ribéry",
+    "position": "RW",
+    "country": "France",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p080",
+    "name": "Mohamed Salah",
+    "position": "RW",
+    "country": "Egypt",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p081",
+    "name": "Ousmane Dembélé",
+    "position": "RW",
+    "country": "France",
+    "rating": 88,
+    "fee": 95
+  },
+  {
+    "id": "p082",
+    "name": "Thomas Müller",
+    "position": "RW",
+    "country": "Germany",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p083",
+    "name": "Ángel Di María",
+    "position": "RW",
+    "country": "Argentina",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p084",
+    "name": "David Beckham",
+    "position": "RW",
+    "country": "England",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p085",
+    "name": "Leroy Sané",
+    "position": "RW",
+    "country": "Germany",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p086",
+    "name": "Riyad Mahrez",
+    "position": "RW",
+    "country": "Algeria",
+    "rating": 89,
+    "fee": 100
+  },
+  {
+    "id": "p087",
+    "name": "Neymar",
+    "position": "LW",
+    "country": "Brazil",
+    "rating": 96,
+    "fee": 135
+  },
+  {
+    "id": "p088",
+    "name": "Gareth Bale",
+    "position": "LW",
+    "country": "Wales",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p089",
+    "name": "Sadio Mané",
+    "position": "LW",
+    "country": "Senegal",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p090",
+    "name": "Alexis Sánchez",
+    "position": "LW",
+    "country": "Chile",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p091",
+    "name": "Heung-min Son",
+    "position": "LW",
+    "country": "South Korea",
+    "rating": 90,
+    "fee": 105
+  },
+  {
+    "id": "p092",
+    "name": "Ryan Giggs",
+    "position": "LW",
+    "country": "Wales",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p093",
+    "name": "Robert Pirès",
+    "position": "LW",
+    "country": "France",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p094",
+    "name": "Vinícius Júnior",
+    "position": "LW",
+    "country": "Brazil",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p095",
+    "name": "Luis Díaz",
+    "position": "LW",
+    "country": "Colombia",
+    "rating": 87,
+    "fee": 90
+  },
+  {
+    "id": "p096",
+    "name": "Alessandro Del Piero",
+    "position": "LW",
+    "country": "Italy",
+    "rating": 94,
+    "fee": 125,
+    "captainBonus": 4
+  },
+  {
+    "id": "p097",
+    "name": "Cristiano Ronaldo",
+    "position": "ST",
+    "country": "Portugal",
+    "rating": 98,
+    "fee": 145
+  },
+  {
+    "id": "p098",
+    "name": "Ronaldo Nazário",
+    "position": "ST",
+    "country": "Brazil",
+    "rating": 98,
+    "fee": 145
+  },
+  {
+    "id": "p099",
+    "name": "Robert Lewandowski",
+    "position": "ST",
+    "country": "Poland",
+    "rating": 95,
+    "fee": 130
+  },
+  {
+    "id": "p100",
+    "name": "Luis Suárez",
+    "position": "ST",
+    "country": "Uruguay",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p101",
+    "name": "Karim Benzema",
+    "position": "ST",
+    "country": "France",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p102",
+    "name": "Zlatan Ibrahimović",
+    "position": "ST",
+    "country": "Sweden",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p103",
+    "name": "Samuel Eto'o",
+    "position": "ST",
+    "country": "Cameroon",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p104",
+    "name": "Didier Drogba",
+    "position": "ST",
+    "country": "Ivory Coast",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p105",
+    "name": "Erling Haaland",
+    "position": "ST",
+    "country": "Norway",
+    "rating": 94,
+    "fee": 125
+  },
+  {
+    "id": "p106",
+    "name": "Kylian Mbappé",
+    "position": "ST",
+    "country": "France",
+    "rating": 96,
+    "fee": 135
+  },
+  {
+    "id": "p107",
+    "name": "Harry Kane",
+    "position": "ST",
+    "country": "England",
+    "rating": 93,
+    "fee": 120
+  },
+  {
+    "id": "p108",
+    "name": "Ruud van Nistelrooy",
+    "position": "ST",
+    "country": "Netherlands",
+    "rating": 92,
+    "fee": 115
+  },
+  {
+    "id": "p109",
+    "name": "Fernando Torres",
+    "position": "ST",
+    "country": "Spain",
+    "rating": 91,
+    "fee": 110
+  },
+  {
+    "id": "p110",
+    "name": "Sergio Agüero",
+    "position": "ST",
+    "country": "Argentina",
+    "rating": 92,
+    "fee": 115
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "name": "Futbol Draft",
+  "playerCount": 110,
+  "positions": {
+    "GK": 10,
+    "RB": 10,
+    "LB": 10,
+    "CB": 16,
+    "DM": 10,
+    "CM": 10,
+    "CAM": 10,
+    "RW": 10,
+    "LW": 10,
+    "ST": 14
+  },
+  "files": [
+    "index.html",
+    "styles.css",
+    "app.js",
+    "players.json",
+    "firestore.rules",
+    "README.md"
+  ]
+}
