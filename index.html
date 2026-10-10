@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futbol Draft | Yönetim Merkezi</title>
+<style>
+:root {
+  --bg: #0b1118;
+  --panel: #141e28;
+  --panel2: #1a2733;
+  --line: #293845;
+  --green: #61d58b;
+  --text: #f0f5f8;
+  --muted: #8fa1af;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px Arial, sans-serif;
+}
+button { font: inherit; cursor: pointer; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 235px;
+  background: #101923;
+  border-right: 1px solid var(--line);
+  padding: 25px 16px;
+  flex-shrink: 0;
+}
+.logo {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 0 10px 28px;
+}
+.logo span { color: var(--green); }
+.logo small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+.menu-title {
+  color: #708391;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  padding: 18px 10px 9px;
+}
+.nav {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 7px;
+  padding: 12px 11px;
+  margin: 3px 0;
+  color: #a9bac6;
+  background: transparent;
+  text-align: left;
+}
+.nav:hover, .nav.active {
+  color: white;
+  background: #20352f;
+}
+.nav.active { border-left: 3px solid var(--green); }
+.sidebar-bottom {
+  margin-top: 40px;
+  padding: 14px 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+main { flex: 1; min-width: 0; }
+.topbar {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--line);
+  background: #101923;
+}
+.crumb { color: var(--muted); }
+.crumb strong { color: white; }
+.profile { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 35px; height: 35px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  background: #29483a; color: var(--green);
+  font-weight: bold;
+}
+.content { padding: 30px; max-width: 1500px; margin: auto; }
+.eyebrow {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+h1 { font-size: 29px; margin: 10px 0; }
+.subtitle { color: var(--muted); margin: 0; line-height: 1.6; }
+.hero {
+  margin-top: 26px;
+  padding: 30px;
+  border: 1px solid #304b41;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 90% 20%, #244938 0, transparent 42%),
+    linear-gradient(110deg, #172b27, #15212b 70%);
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 25px;
+  overflow: hidden;
+}
+.hero h2 { font-size: 25px; margin: 12px 0; }
+.hero p { color: #b4c5c2; line-height: 1.7; max-width: 470px; }
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 17px;
+  color: white;
+  background: #22303c;
+  font-weight: bold;
+}
+.btn.primary {
+  background: var(--green);
+  color: #0b1b12;
+  border-color: var(--green);
+}
+.btn:hover { filter: brightness(1.12); }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.pitch {
+  min-height: 205px;
+  border: 1px solid #6e9e7d70;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    0deg, #246442 0px, #246442 35px,
+    #205a3b 35px, #205a3b 70px
+  );
+}
+.pitch:before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid #ffffff80;
+}
+.pitch:after {
+  content: "";
+  position: absolute;
+  width: 90px; height: 90px;
+  border: 1px solid #ffffff80;
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+.center-line {
+  position: absolute; width: 1px;
+  top: 12px; bottom: 12px; left: 50%;
+  background: #ffffff80;
+}
+.player-dot {
+  position: absolute;
+  z-index: 2;
+  width: 27px; height: 27px;
+  border-radius: 50%;
+  background: #e7f4e9;
+  color: #173e2b;
+  border: 2px solid #b3efc3;
+  display: grid; place-items: center;
+  font-size: 10px; font-weight: bold;
+}
+.section-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin: 30px 0 15px;
+}
+.section-head h2 { font-size: 17px; margin: 0; }
+.muted { color: var(--muted); font-size: 12px; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 14px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 19px;
+}
+.stat-label { color: var(--muted); font-size: 12px; }
+.stat-number { font-size: 26px; font-weight: bold; margin: 12px 0 7px; }
+.stat-foot { color: var(--green); font-size: 11px; }
+.columns {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 15px;
+}
+.row-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--line);
+}
+.row-item:last-child { border-bottom: 0; }
+.icon-box {
+  width: 39px; height: 39px;
+  display: grid; place-items: center;
+  background: var(--panel2); border-radius: 8px;
+  font-size: 18px;
+}
+.row-text { flex: 1; }
+.row-text strong { display: block; margin-bottom: 5px; }
+.status {
+  color: var(--green); background: #244335;
+  border-radius: 20px; padding: 5px 8px; font-size: 10px;
+}
+.footer { color: #718391; font-size: 11px; padding: 25px 0 5px; }
+@media (max-width: 950px) {
+  .sidebar { width: 190px; }
+  .content { padding: 22px; }
+  .hero { grid-template-columns: 1fr; }
+  .pitch { min-height: 180px; }
+  .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 600px) {
+  .layout { display: block; }
+  .sidebar { width: 100%; padding: 15px; border-right: 0; }
+  .logo { padding-bottom: 10px; }
+  .menu-title, .sidebar-bottom { display: none; }
+  .sidebar nav { display: flex; overflow-x: auto; gap: 5px; }
+  .nav { white-space: nowrap; width: auto; }
+  .topbar { padding: 0 17px; height: 58px; }
+  .content { padding: 18px 14px; }
+  h1 { font-size: 24px; }
+  .hero { padding: 20px; }
+  .hero h2 { font-size: 21px; }
+  .stats { gap: 9px; }
+  .card { padding: 13px; }
+  .stat-number { font-size: 22px; }
+  .columns { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">FUTBOL<span>DRAFT</span><small>MANAGEMENT HUB</small></div>
+    <div class="menu-title">ANA MENÜ</div>
+    <nav>
+      <button class="nav active" data-page="dashboard">▦ &nbsp; Yönetim Merkezi</button>
+      <button class="nav" data-page="draft">⚽ &nbsp; Draft Merkezi</button>
+      <button class="nav" data-page="squad">♟ &nbsp; Kadrom</button>
+      <button class="nav" data-page="players">☷ &nbsp; Futbolcu Havuzu</button>
+      <button class="nav" data-page="rankings">▤ &nbsp; Sıralama</button>
+    </nav>
+    <div class="menu-title">HESAP</div>
+    <nav>
+      <button class="nav" data-page="account">⚙ &nbsp; Hesap Ayarları</button>
+    </nav>
+    <div class="sidebar-bottom">
+      FUTBOL DRAFT v1.0<br>
+      Stratejini kur. Takımını yönet.
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumb">Futbol Draft &nbsp; / &nbsp; <strong id="pageTitle">Yönetim Merkezi</strong></div>
+      <div class="profile">
+        <div>
+          <strong>Menajer</strong><br>
+          <span class="muted">Misafir oturumu</span>
+        </div>
+        <div class="avatar">M</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="eyebrow">MENAJERLİK MERKEZİ</div>
+      <h1 id="welcome">Kulübüne hoş geldin.</h1>
+      <p class="subtitle">Planını yap, doğru futbolcuları seç ve draftın zirvesine çık.</p>
+
+      <section class="hero">
+        <div>
+          <div class="eyebrow">YENİ BİR MÜCADELE</div>
+          <h2>Takımını kurmaya hazır mısın?</h2>
+          <p>Rakip menajerlerle yarış. 1.100 M€ bütçeni doğru kullan, 11 kişilik kadronu oluştur ve en güçlü takımı kur.</p>
+          <div class="hero-actions">
+            <button class="btn primary" data-page="draft">Draft Merkezine Git →</button>
+            <button class="btn" data-page="squad">Kadromu Gör</button>
+          </div>
+        </div>
+        <div class="pitch" aria-label="Futbol sahası ön izlemesi">
+          <div class="center-line"></div>
+          <span class="player-dot" style="left:47%;top:9%">GK</span>
+          <span class="player-dot" style="left:22%;top:30%">DF</span>
+          <span class="player-dot" style="left:43%;top:29%">DF</span>
+          <span class="player-dot" style="left:62%;top:29%">DF</span>
+          <span class="player-dot" style="left:79%;top:30%">DF</span>
+          <span class="player-dot" style="left:30%;top:52%">MF</span>
+          <span class="player-dot" style="left:48%;top:54%">MF</span>
+          <span class="player-dot" style="left:67%;top:52%">MF</span>
+          <span class="player-dot" style="left:28%;top:76%">FW</span>
+          <span class="player-dot" style="left:48%;top:79%">FW</span>
+          <span class="player-dot" style="left:68%;top:76%">FW</span>
+        </div>
+      </section>
+
+      <div class="section-head">
+        <h2>Menajer Özeti</h2>
+        <span class="muted">Oyun kuralları</span>
+      </div>
+      <section class="stats">
+        <div class="card">
+          <div class="stat-label">KADRO HEDEFİ</div>
+          <div class="stat-number">0 <span class="muted">/ 11</span></div>
+          <div class="stat-foot">Futbolcu seçimi bekleniyor</div>
+        </div>
+        <div class="card">
+          <div class="stat-label">TOPLAM BÜTÇE</div>
+          <div class="stat-number">1.100 <span class="muted">M€</span></div>
+          <div class="stat-foot">Başlangıç bütçesi</div>
+        </div>
+        <div class="card">
+          <div class="stat-label">TAKIM GÜCÜ</div>
+          <div class="stat-number">—</div>
+          <div class="muted">Kadron oluşturulduğunda</div>
+        </div>
+        <div class="card">
+          <div class="stat-label">DRAFT DURUMU</div>
+          <div class="stat-number" style="font-size:21px">Hazır</div>
+          <div class="muted">Oyun odası bekleniyor</div>
+        </div>
+      </section>
+
+      <div class="section-head">
+        <h2>Hızlı Erişim</h2>
+        <span class="muted">Menajer araçları</span>
+      </div>
+      <section class="columns">
+        <div class="card">
+          <div class="eyebrow">OYUN MERKEZİ</div>
+          <div class="row-item">
+            <div class="icon-box">⚽</div>
+            <div class="row-text">
+              <strong>Draft Merkezi</strong>
+              <span class="muted">Oyuncu seçimi ve oda katılımı</span>
+            </div>
+            <button class="btn" data-page="draft">Aç →</button>
+          </div>
+          <div class="row-item">
+            <div class="icon-box">♟</div>
+            <div class="row-text">
+              <strong>Kadro Yönetimi</strong>
+              <span class="muted">Diziliş ve takım gücü</span>
+            </div>
+            <button class="btn" data-page="squad">Aç →</button>
+          </div>
+          <div class="row-item">
+            <div class="icon-box">☷</div>
+            <div class="row-text">
+              <strong>Futbolcu Havuzu</strong>
+              <span class="muted">Mevki, puan ve bonservis</span>
+            </div>
+            <button class="btn" data-page="players">Aç →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">OYUN KURALLARI</div>
+          <div class="row-item">
+            <div class="icon-box">👥</div>
+            <div class="row-text"><strong>2–6 menajer</strong><span class="muted">Çok oyunculu mücadele</span></div>
+          </div>
+          <div class="row-item">
+            <div class="icon-box">📋</div>
+            <div class="row-text"><strong>11 kişilik kadro</strong><span class="muted">Her mevkiye uygun seçim</span></div>
+          </div>
+          <div class="row-item">
+            <div class="icon-box">💶</div>
+            <div class="row-text"><strong>1.100 M€ bütçe</strong><span class="muted">Bütçeni stratejik kullan</span></div>
+          </div>
+        </div>
+      </section>
+      <div class="footer">FUTBOL DRAFT © 2026 · Bağımsız futbol menajerlik oyunu</div>
+    </div>
+  </main>
+</div>
+
+<script>
+const titles = {
+  dashboard: "Yönetim Merkezi",
+  draft: "Draft Merkezi",
+  squad: "Kadrom",
+  players: "Futbolcu Havuzu",
+  rankings: "Sıralama",
+  account: "Hesap Ayarları"
+};
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    const page = button.dataset.page;
+    document.querySelectorAll(".nav").forEach(item => {
+      item.classList.toggle("active", item.dataset.page === page);
+    });
+    document.getElementById("pageTitle").textContent = titles[page];
+    if (page !== "dashboard") {
+      alert(titles[page] + " bölümü sonraki aşamada kurulacak.");
+    }
+  });
+});
+</script>
+</body>
+</html>
