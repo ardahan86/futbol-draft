@@ -1,417 +1,1197 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futbol Draft | Yönetim Merkezi</title>
-<style>
-:root {
-  --bg: #0b1118;
-  --panel: #141e28;
-  --panel2: #1a2733;
-  --line: #293845;
-  --green: #61d58b;
-  --text: #f0f5f8;
-  --muted: #8fa1af;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 14px Arial, sans-serif;
-}
-button { font: inherit; cursor: pointer; }
-.layout { display: flex; min-height: 100vh; }
-.sidebar {
-  width: 235px;
-  background: #101923;
-  border-right: 1px solid var(--line);
-  padding: 25px 16px;
-  flex-shrink: 0;
-}
-.logo {
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 0 10px 28px;
-}
-.logo span { color: var(--green); }
-.logo small {
-  display: block;
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 3px;
-}
-.menu-title {
-  color: #708391;
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  padding: 18px 10px 9px;
-}
-.nav {
-  display: block;
-  width: 100%;
-  border: 0;
-  border-radius: 7px;
-  padding: 12px 11px;
-  margin: 3px 0;
-  color: #a9bac6;
-  background: transparent;
-  text-align: left;
-}
-.nav:hover, .nav.active {
-  color: white;
-  background: #20352f;
-}
-.nav.active { border-left: 3px solid var(--green); }
-.sidebar-bottom {
-  margin-top: 40px;
-  padding: 14px 10px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.8;
-}
-main { flex: 1; min-width: 0; }
-.topbar {
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  border-bottom: 1px solid var(--line);
-  background: #101923;
-}
-.crumb { color: var(--muted); }
-.crumb strong { color: white; }
-.profile { display: flex; align-items: center; gap: 12px; }
-.avatar {
-  width: 35px; height: 35px;
-  border-radius: 8px;
-  display: grid; place-items: center;
-  background: #29483a; color: var(--green);
-  font-weight: bold;
-}
-.content { padding: 30px; max-width: 1500px; margin: auto; }
-.eyebrow {
-  color: var(--green);
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 2px;
-}
-h1 { font-size: 29px; margin: 10px 0; }
-.subtitle { color: var(--muted); margin: 0; line-height: 1.6; }
-.hero {
-  margin-top: 26px;
-  padding: 30px;
-  border: 1px solid #304b41;
-  border-radius: 12px;
-  background:
-    radial-gradient(ellipse at 90% 20%, #244938 0, transparent 42%),
-    linear-gradient(110deg, #172b27, #15212b 70%);
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 25px;
-  overflow: hidden;
-}
-.hero h2 { font-size: 25px; margin: 12px 0; }
-.hero p { color: #b4c5c2; line-height: 1.7; max-width: 470px; }
-.btn {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 12px 17px;
-  color: white;
-  background: #22303c;
-  font-weight: bold;
-}
-.btn.primary {
-  background: var(--green);
-  color: #0b1b12;
-  border-color: var(--green);
-}
-.btn:hover { filter: brightness(1.12); }
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-.pitch {
-  min-height: 205px;
-  border: 1px solid #6e9e7d70;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-  background: repeating-linear-gradient(
-    0deg, #246442 0px, #246442 35px,
-    #205a3b 35px, #205a3b 70px
-  );
-}
-.pitch:before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  border: 1px solid #ffffff80;
-}
-.pitch:after {
-  content: "";
-  position: absolute;
-  width: 90px; height: 90px;
-  border: 1px solid #ffffff80;
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-}
-.center-line {
-  position: absolute; width: 1px;
-  top: 12px; bottom: 12px; left: 50%;
-  background: #ffffff80;
-}
-.player-dot {
-  position: absolute;
-  z-index: 2;
-  width: 27px; height: 27px;
-  border-radius: 50%;
-  background: #e7f4e9;
-  color: #173e2b;
-  border: 2px solid #b3efc3;
-  display: grid; place-items: center;
-  font-size: 10px; font-weight: bold;
-}
-.section-head {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  margin: 30px 0 15px;
-}
-.section-head h2 { font-size: 17px; margin: 0; }
-.muted { color: var(--muted); font-size: 12px; }
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 14px;
-}
-.card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 19px;
-}
-.stat-label { color: var(--muted); font-size: 12px; }
-.stat-number { font-size: 26px; font-weight: bold; margin: 12px 0 7px; }
-.stat-foot { color: var(--green); font-size: 11px; }
-.columns {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 15px;
-}
-.row-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 0; border-bottom: 1px solid var(--line);
-}
-.row-item:last-child { border-bottom: 0; }
-.icon-box {
-  width: 39px; height: 39px;
-  display: grid; place-items: center;
-  background: var(--panel2); border-radius: 8px;
-  font-size: 18px;
-}
-.row-text { flex: 1; }
-.row-text strong { display: block; margin-bottom: 5px; }
-.status {
-  color: var(--green); background: #244335;
-  border-radius: 20px; padding: 5px 8px; font-size: 10px;
-}
-.footer { color: #718391; font-size: 11px; padding: 25px 0 5px; }
-@media (max-width: 950px) {
-  .sidebar { width: 190px; }
-  .content { padding: 22px; }
-  .hero { grid-template-columns: 1fr; }
-  .pitch { min-height: 180px; }
-  .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
-}
-@media (max-width: 600px) {
-  .layout { display: block; }
-  .sidebar { width: 100%; padding: 15px; border-right: 0; }
-  .logo { padding-bottom: 10px; }
-  .menu-title, .sidebar-bottom { display: none; }
-  .sidebar nav { display: flex; overflow-x: auto; gap: 5px; }
-  .nav { white-space: nowrap; width: auto; }
-  .topbar { padding: 0 17px; height: 58px; }
-  .content { padding: 18px 14px; }
-  h1 { font-size: 24px; }
-  .hero { padding: 20px; }
-  .hero h2 { font-size: 21px; }
-  .stats { gap: 9px; }
-  .card { padding: 13px; }
-  .stat-number { font-size: 22px; }
-  .columns { grid-template-columns: 1fr; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071321">
+  <title>Futbol Draft | Menajer Merkezi</title>
+
+  <style>
+    :root {
+      --bg: #071321;
+      --panel: #101f30;
+      --panel2: #15283b;
+      --line: #263c50;
+      --text: #f1f6fc;
+      --muted: #91a5ba;
+      --green: #29d985;
+      --blue: #42b7ff;
+      --red: #ff6879;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at top right, #163550 0, transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    button, input, select { font: inherit; }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: #1b3045;
+      border-radius: 9px;
+      padding: 10px 14px;
+      transition: .15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      border-color: var(--green);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 235px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 15, 27, .96);
+      border-right: 1px solid var(--line);
+      padding: 24px 15px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 4px 8px 25px;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+
+    .brand-ball {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      border-radius: 12px;
+      background: var(--green);
+      color: #052216;
+      font-size: 22px;
+    }
+
+    .section-label {
+      color: #6f849b;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 14px 10px 8px;
+    }
+
+    .nav-button {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      text-align: left;
+      margin: 4px 0;
+      border-color: transparent;
+      background: transparent;
+      color: #a9bbcd;
+    }
+
+    .nav-button.active {
+      color: #fff;
+      background: linear-gradient(90deg, #174d3b, #102c2b);
+      border-color: #23684d;
+    }
+
+    .nav-icon { width: 22px; text-align: center; }
+
+    .sidebar-note {
+      margin-top: 30px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .sidebar-note strong {
+      display: block;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    main { min-width: 0; }
+
+    .topbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 17px 28px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 21, 35, .7);
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 { margin: 5px 0 0; font-size: 24px; }
+    h2 { margin: 0 0 6px; font-size: 19px; }
+    h3 { margin: 0 0 12px; font-size: 15px; }
+
+    .manager {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      border-radius: 50%;
+      background: #203c53;
+      border: 1px solid #36566d;
+    }
+
+    .content {
+      max-width: 1600px;
+      margin: auto;
+      padding: 25px 28px 50px;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .welcome {
+      padding: 25px;
+      border: 1px solid #28475c;
+      border-radius: 18px;
+      background:
+        radial-gradient(ellipse at 90% 10%, #174c49 0, transparent 40%),
+        linear-gradient(120deg, #13283b, #0c1c2d);
+      margin-bottom: 20px;
+    }
+
+    .welcome p {
+      max-width: 700px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border: 1px solid #286448;
+      background: #103a2b;
+      color: #65efad;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat, .panel {
+      background: linear-gradient(145deg, #122438, #0d1b2b);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .green { color: var(--green); }
+    .blue { color: var(--blue); }
+    .muted { color: var(--muted); }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .8fr);
+      gap: 18px;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .panel-heading p {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 5px 0 0;
+    }
+
+    .mini-pitch {
+      display: grid;
+      place-items: center;
+      min-height: 310px;
+      padding: 16px;
+      background: #071b20;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .mini-pitch img {
+      display: block;
+      width: 100%;
+      max-height: 370px;
+      object-fit: contain;
+      border-radius: 9px;
+    }
+
+    .quick-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .action-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      background: #13273a;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+    }
+
+    .action-card strong { display: block; margin-bottom: 5px; }
+    .action-card small { color: var(--muted); }
+
+    .primary {
+      color: #062116;
+      background: var(--green);
+      border-color: var(--green);
+      font-weight: 900;
+    }
+
+    .danger {
+      color: #ffdce0;
+      border-color: #733541;
+      background: #3a202b;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    input, select {
+      min-width: 0;
+      color: var(--text);
+      background: #081726;
+      border: 1px solid #30465a;
+      border-radius: 9px;
+      padding: 12px;
+      outline: none;
+    }
+
+    input:focus, select:focus { border-color: var(--green); }
+    .form-row input { flex: 1; }
+
+    .message {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .squad-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .pitch-frame {
+      padding: 10px;
+      border: 1px solid #245343;
+      border-radius: 16px;
+      background: #061d20;
+      overflow: hidden;
+    }
+
+    /*
+      Kadrom sahası dikeydir.
+      Görselin içine tıklanabilir mevki yuvaları yerleştirilir.
+    */
+    .pitch {
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      margin: auto;
+      aspect-ratio: 2 / 3;
+      overflow: hidden;
+      border-radius: 9px;
+      background: #08753e;
+      isolation: isolate;
+    }
+
+    .pitch-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      z-index: -2;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .pitch-fallback {
+      position: absolute;
+      inset: 1.5%;
+      border: 2px solid rgba(255,255,255,.8);
+      background: repeating-linear-gradient(
+        0deg,
+        #08773d 0,
+        #08773d 9%,
+        #0a8545 9%,
+        #0a8545 18%
+      );
+      z-index: -3;
+    }
+
+    .fallback-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      border-top: 2px solid rgba(255,255,255,.8);
+    }
+
+    .fallback-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 26%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(255,255,255,.8);
+      border-radius: 50%;
+    }
+
+    .position-slot {
+      position: absolute;
+      width: 21%;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      overflow: visible;
+      z-index: 2;
+    }
+
+    .position-slot:hover:not(:disabled) {
+      transform: translate(-50%, -50%) scale(1.06);
+      border: 0;
+    }
+
+    .slot-ball {
+      width: clamp(32px, 5.8vw, 55px);
+      max-width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #0a1a2a;
+      background: #f5fbff;
+      border: 3px solid #2ce39a;
+      box-shadow: 0 3px 12px #00150e80;
+      font-size: clamp(10px, 1.5vw, 15px);
+      font-weight: 900;
+    }
+
+    .slot-name {
+      max-width: 100%;
+      color: white;
+      background: #061c1bdc;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: clamp(8px, 1.2vw, 11px);
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .position-slot.has-player .slot-ball {
+      background: var(--green);
+      border-color: white;
+    }
+
+    .position-slot.has-player .slot-name {
+      background: #062d20ed;
+    }
+
+    .position-slot.selected .slot-ball {
+      outline: 3px solid #fff;
+      box-shadow: 0 0 0 6px #29d98570;
+    }
+
+    .squad-instructions {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .slot-progress {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .squad-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #23384a;
+      font-size: 13px;
+    }
+
+    .squad-row:last-child { border-bottom: 0; }
+
+    .player-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .draft-card {
+      min-width: 0;
+      background: #13273a;
+      border: 1px solid #2b4054;
+      border-radius: 11px;
+      padding: 12px;
+    }
+
+    .draft-card h4 {
+      margin: 8px 0 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .player-top, .draft-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .position-tag {
+      font-size: 10px;
+      padding: 4px 7px;
+      color: #b5d8ee;
+      background: #213b50;
+      border-radius: 6px;
+    }
+
+    .rating {
+      color: var(--green);
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .country { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+    .draft-card-bottom { font-size: 12px; margin: 12px 0; }
+    .draft-card-bottom b { color: var(--green); }
+
+    .draft-card button { width: 100%; font-size: 12px; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 160px 150px;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .toolbar input, .toolbar select { width: 100%; }
+
+    .hidden { display: none !important; }
+
+    .score-breakdown {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #091a29;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    .score-breakdown b { color: var(--green); }
+
+    .rules-list { color: var(--muted); line-height: 1.9; padding-left: 20px; }
+    .rules-list strong { color: var(--text); }
+
+    .footer {
+      padding: 22px 0 0;
+      color: #61758a;
+      text-align: center;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1000px) {
+      .app { grid-template-columns: 190px minmax(0, 1fr); }
+      .content { padding: 20px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dashboard-grid, .squad-layout { grid-template-columns: 1fr; }
+      .pitch { max-width: 540px; }
+    }
+
+    @media (max-width: 650px) {
+      .app { display: block; }
+      .sidebar {
+        padding: 10px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand { padding: 5px 7px 10px; }
+      .section-label, .sidebar-note { display: none; }
+
+      .nav-menu {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .nav-button {
+        flex: 0 0 auto;
+        width: auto;
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .topbar { padding: 13px 16px; min-height: 65px; }
+      .topbar h1 { font-size: 20px; }
+      .content { padding: 14px 12px 30px; }
+      .welcome { padding: 18px; }
+      .stat, .panel { padding: 13px; }
+      .stat-value { font-size: 22px; }
+      .stats { gap: 9px; }
+      .mini-pitch { min-height: 200px; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar input { grid-column: 1 / -1; }
+      .player-list { grid-template-columns: 1fr 1fr; gap: 7px; }
+      .draft-card { padding: 9px; }
+      .draft-card h4 { font-size: 13px; }
+      .slot-name { font-size: 8px; padding: 3px 4px; }
+      .position-slot { width: 23%; }
+      .slot-ball { width: clamp(30px, 8vw, 43px); }
+      .manager .manager-text { display: none; }
+    }
+
+    @media (max-width: 370px) {
+      .player-list { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
+
 <body>
-<div class="layout">
+<div class="app">
+
   <aside class="sidebar">
-    <div class="logo">FUTBOL<span>DRAFT</span><small>MANAGEMENT HUB</small></div>
-    <div class="menu-title">ANA MENÜ</div>
-    <nav>
-      <button class="nav active" data-page="dashboard">▦ &nbsp; Yönetim Merkezi</button>
-      <button class="nav" data-page="draft">⚽ &nbsp; Draft Merkezi</button>
-      <button class="nav" data-page="squad">♟ &nbsp; Kadrom</button>
-      <button class="nav" data-page="players">☷ &nbsp; Futbolcu Havuzu</button>
-      <button class="nav" data-page="rankings">▤ &nbsp; Sıralama</button>
+    <div class="brand">
+      <div class="brand-ball">⚽</div>
+      <div>FUTBOL<br>DRAFT</div>
+    </div>
+
+    <div class="section-label">MENAJER MERKEZİ</div>
+    <nav class="nav-menu">
+      <button class="nav-button active" data-page="dashboard">
+        <span class="nav-icon">▦</span> Ana Sayfa
+      </button>
+      <button class="nav-button" data-page="squad">
+        <span class="nav-icon">⚽</span> Kadrom
+      </button>
+      <button class="nav-button" data-page="draft">
+        <span class="nav-icon">⇄</span> Draft Merkezi
+      </button>
+      <button class="nav-button" data-page="room">
+        <span class="nav-icon">♧</span> Oyun Odası
+      </button>
+      <button class="nav-button" data-page="rules">
+        <span class="nav-icon">☷</span> Oyun Kuralları
+      </button>
     </nav>
-    <div class="menu-title">HESAP</div>
-    <nav>
-      <button class="nav" data-page="account">⚙ &nbsp; Hesap Ayarları</button>
-    </nav>
-    <div class="sidebar-bottom">
-      FUTBOL DRAFT v1.0<br>
-      Stratejini kur. Takımını yönet.
+
+    <div class="sidebar-note">
+      <strong>MENAJER NOTU</strong>
+      Kadronu oluştur, bütçeni koru ve en güçlü takımı kur.
     </div>
   </aside>
 
   <main>
     <header class="topbar">
-      <div class="crumb">Futbol Draft &nbsp; / &nbsp; <strong id="pageTitle">Yönetim Merkezi</strong></div>
-      <div class="profile">
-        <div>
-          <strong>Menajer</strong><br>
-          <span class="muted">Misafir oturumu</span>
+      <div>
+        <div class="eyebrow">Sezon • Draft organizasyonu</div>
+        <h1 id="pageTitle">Menajer Merkezi</h1>
+      </div>
+      <div class="manager">
+        <div class="avatar">⚽</div>
+        <div class="manager-text">
+          <div>Menajer</div>
+          <div class="muted" style="font-size:11px;font-weight:400">
+            Futbol Draft
+          </div>
         </div>
-        <div class="avatar">M</div>
       </div>
     </header>
 
     <div class="content">
-      <div class="eyebrow">MENAJERLİK MERKEZİ</div>
-      <h1 id="welcome">Kulübüne hoş geldin.</h1>
-      <p class="subtitle">Planını yap, doğru futbolcuları seç ve draftın zirvesine çık.</p>
 
-      <section class="hero">
-        <div>
-          <div class="eyebrow">YENİ BİR MÜCADELE</div>
-          <h2>Takımını kurmaya hazır mısın?</h2>
-          <p>Rakip menajerlerle yarış. 1.100 M€ bütçeni doğru kullan, 11 kişilik kadronu oluştur ve en güçlü takımı kur.</p>
-          <div class="hero-actions">
-            <button class="btn primary" data-page="draft">Draft Merkezine Git →</button>
-            <button class="btn" data-page="squad">Kadromu Gör</button>
+      <!-- ANA SAYFA -->
+      <section class="page active" id="page-dashboard">
+        <div class="welcome">
+          <span class="tag">DRAFT MERKEZİ</span>
+          <h2 style="font-size:27px;margin-top:15px">
+            Takımını kur. Sahaya hükmet.
+          </h2>
+          <p>
+            1.100 M€ bütçeni kullanarak 11 kişilik kadronu oluştur.
+            Doğru mevki dağılımı, özel oyuncu bağlantıları ve bonuslarla
+            rakiplerini geride bırak.
+          </p>
+          <button class="primary" data-go="room">Oyuna Katıl →</button>
+          <button data-go="squad">Kadromu Gör</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">BAŞLANGIÇ BÜTÇESİ</div>
+            <div class="stat-value green">1.100 M€</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">KADRO DURUMU</div>
+            <div class="stat-value" id="homeSquadCount">0 / 11</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">KALAN BÜTÇE</div>
+            <div class="stat-value green" id="homeBudget">1.100 M€</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">TOPLAM GÜÇ</div>
+            <div class="stat-value blue" id="homeScore">0</div>
           </div>
         </div>
-        <div class="pitch" aria-label="Futbol sahası ön izlemesi">
-          <div class="center-line"></div>
-          <span class="player-dot" style="left:47%;top:9%">GK</span>
-          <span class="player-dot" style="left:22%;top:30%">DF</span>
-          <span class="player-dot" style="left:43%;top:29%">DF</span>
-          <span class="player-dot" style="left:62%;top:29%">DF</span>
-          <span class="player-dot" style="left:79%;top:30%">DF</span>
-          <span class="player-dot" style="left:30%;top:52%">MF</span>
-          <span class="player-dot" style="left:48%;top:54%">MF</span>
-          <span class="player-dot" style="left:67%;top:52%">MF</span>
-          <span class="player-dot" style="left:28%;top:76%">FW</span>
-          <span class="player-dot" style="left:48%;top:79%">FW</span>
-          <span class="player-dot" style="left:68%;top:76%">FW</span>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Taktik sahası</h3>
+                <p>Kadronun diziliş ön izlemesi</p>
+              </div>
+              <button data-go="squad">Kadrom →</button>
+            </div>
+            <div class="mini-pitch">
+              <img src="taktik-sahasi.png"
+                   alt="Futbol Draft taktik sahası"
+                   onerror="this.style.display='none';document.getElementById('pitchPreviewFallback').classList.remove('hidden')">
+              <div id="pitchPreviewFallback" class="hidden muted">
+                Taktik sahası görselini görmek için
+                <b>taktik-sahasi.png</b> dosyasını depoya ekle.
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Hızlı erişim</h3>
+                <p>Menajer işlemleri</p>
+              </div>
+            </div>
+            <div class="quick-actions">
+              <div class="action-card">
+                <div><strong>Kadrom</strong><small>11 mevkiyi doldur</small></div>
+                <button data-go="squad">Aç</button>
+              </div>
+              <div class="action-card">
+                <div><strong>Draft Merkezi</strong><small>Futbolcu seçimi</small></div>
+                <button data-go="draft">Aç</button>
+              </div>
+              <div class="action-card">
+                <div><strong>Oyun Odası</strong><small>Odaya katıl</small></div>
+                <button data-go="room">Aç</button>
+              </div>
+              <div class="action-card">
+                <div><strong>Oyun Kuralları</strong><small>Puanlama ve bonuslar</small></div>
+                <button data-go="rules">Oku</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <div class="section-head">
-        <h2>Menajer Özeti</h2>
-        <span class="muted">Oyun kuralları</span>
+      <!-- KADROM -->
+      <section class="page" id="page-squad">
+        <div class="panel-heading">
+          <div>
+            <div class="eyebrow">Takım yönetimi</div>
+            <h2>Kadrom</h2>
+            <p>Mevki yuvasına tıkla, uygun futbolcuları görüntüle.</p>
+          </div>
+          <span class="tag" id="squadStatus">0 / 11 oyuncu</span>
+        </div>
+
+        <div class="squad-layout">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>4-2-3-1 taktik dizilişi</h3>
+                <p>Kaleci altta, hücum hattı üstte</p>
+              </div>
+            </div>
+
+            <div class="pitch-frame">
+              <div class="pitch" id="footballPitch">
+                <div class="pitch-fallback" id="pitchFallback">
+                  <div class="fallback-line"></div>
+                  <div class="fallback-circle"></div>
+                </div>
+
+                <img class="pitch-background"
+                     src="taktik-sahasi.png"
+                     alt=""
+                     onerror="this.style.display='none'">
+
+                <!-- Hücum hattı -->
+                <button class="position-slot" data-position="ST"
+                        style="left:50%;top:14%">
+                  <span class="slot-ball">ST</span>
+                  <span class="slot-name">Santrfor</span>
+                </button>
+
+                <button class="position-slot" data-position="LW"
+                        style="left:19%;top:29%">
+                  <span class="slot-ball">SA</span>
+                  <span class="slot-name">Sol Açık</span>
+                </button>
+
+                <button class="position-slot" data-position="CAM"
+                        style="left:50%;top:29%">
+                  <span class="slot-ball">OOS</span>
+                  <span class="slot-name">Ofansif Orta Saha</span>
+                </button>
+
+                <button class="position-slot" data-position="RW"
+                        style="left:81%;top:29%">
+                  <span class="slot-ball">SA</span>
+                  <span class="slot-name">Sağ Açık</span>
+                </button>
+
+                <!-- Orta saha -->
+                <button class="position-slot" data-position="CM"
+                        style="left:35%;top:49%">
+                  <span class="slot-ball">M</span>
+                  <span class="slot-name">Orta Saha</span>
+                </button>
+
+                <button class="position-slot" data-position="DM"
+                        style="left:65%;top:49%">
+                  <span class="slot-ball">ÖL</span>
+                  <span class="slot-name">Ön Libero</span>
+                </button>
+
+                <!-- Dörtlü defans -->
+                <button class="position-slot" data-position="LB"
+                        style="left:14%;top:70%">
+                  <span class="slot-ball">SLB</span>
+                  <span class="slot-name">Sol Bek</span>
+                </button>
+
+                <button class="position-slot" data-position="CB"
+                        data-centerback="1" style="left:36%;top:71%">
+                  <span class="slot-ball">STP</span>
+                  <span class="slot-name">Stoper</span>
+                </button>
+
+                <button class="position-slot" data-position="CB"
+                        data-centerback="2" style="left:64%;top:71%">
+                  <span class="slot-ball">STP</span>
+                  <span class="slot-name">Stoper</span>
+                </button>
+
+                <button class="position-slot" data-position="RB"
+                        style="left:86%;top:70%">
+                  <span class="slot-ball">SĞB</span>
+                  <span class="slot-name">Sağ Bek</span>
+                </button>
+
+                <!-- Kaleci en altta -->
+                <button class="position-slot" data-position="GK"
+                        style="left:50%;top:87%">
+                  <span class="slot-ball">GK</span>
+                  <span class="slot-name">Kaleci</span>
+                </button>
+              </div>
+            </div>
+
+            <p class="squad-instructions">
+              Boş bir mevkiye tıklayarak futbolcu seçimine geçebilirsin.
+              Seçilen oyuncular bu sahada gösterilir.
+            </p>
+          </div>
+
+          <div>
+            <div class="panel">
+              <h3>Takım özeti</h3>
+              <div class="squad-row">
+                <span>Kadro</span><b id="squadCount">0 / 11</b>
+              </div>
+              <div class="squad-row">
+                <span>Harcanan bütçe</span><b id="budgetSpent">0 M€</b>
+              </div>
+              <div class="squad-row">
+                <span>Kalan bütçe</span><b class="green" id="budgetLeft">1.100 M€</b>
+              </div>
+              <div class="squad-row">
+                <span>Temel güç</span><b id="baseScore">0</b>
+              </div>
+              <div class="squad-row">
+                <span>Özel bağlantı</span><b id="linkScore">0</b>
+              </div>
+              <div class="squad-row">
+                <span>Toplam güç</span><b class="green" id="totalScore">0</b>
+              </div>
+              <div id="scoreBreakdown" class="score-breakdown">
+                Kadron oluşturuldukça puanların burada gösterilir.
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:15px">
+              <h3>Mevki durumu</h3>
+              <div id="squadProgress" class="slot-progress">
+                <div class="squad-row"><span>Kaleci</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Sağ bek</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Stoper</span><b>0 / 2</b></div>
+                <div class="squad-row"><span>Sol bek</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Ön libero</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Orta saha</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Ofansif orta saha</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Sağ açık</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Sol açık</span><b>0 / 1</b></div>
+                <div class="squad-row"><span>Santrfor</span><b>0 / 1</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="slotPicker" style="margin-top:18px">
+          <div class="panel-heading">
+            <div>
+              <h3 id="pickerTitle">Futbolcu seçimi</h3>
+              <p id="pickerDescription">Önce sahada bir mevki seç.</p>
+            </div>
+            <button id="clearSlotSelection">Seçimi temizle</button>
+          </div>
+
+          <div class="toolbar">
+            <input id="draftSearch" type="search"
+                   placeholder="Futbolcu veya ülke ara...">
+            <select id="draftPosition">
+              <option value="">Tüm mevkiler</option>
+            </select>
+            <select id="draftSort">
+              <option value="rating">Güce göre</option>
+              <option value="fee">Bonservise göre</option>
+              <option value="name">İsme göre</option>
+            </select>
+          </div>
+
+          <p class="message" id="pickerMessage">
+            Futbolcu seçimi, aktif bir draft odası ve draft sırası gerektirir.
+          </p>
+          <div id="draftPlayers" class="player-list">
+            <p class="muted">Futbolcu listesi yükleniyor...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DRAFT MERKEZİ -->
+      <section class="page" id="page-draft">
+        <div class="welcome">
+          <span class="tag">DRAFT MERKEZİ</span>
+          <h2>Futbolcu seçimi</h2>
+          <p>
+            Draft başladığında sıra sana geldiğinde uygun bir futbolcu seç.
+            Her futbolcu yalnızca bir takım tarafından alınabilir.
+          </p>
+          <div class="form-row">
+            <button class="primary" data-go="squad">Kadromdan futbolcu seç</button>
+            <button data-go="room">Oda bilgilerine git</button>
+          </div>
+          <div id="turnLabel">Sıra bilgisi bekleniyor.</div>
+          <p id="draftHint" class="message"></p>
+        </div>
+
+        <div class="panel">
+          <h3>Draft durumu</h3>
+          <div class="squad-row">
+            <span>Oda kodu</span><b id="draftRoomCode">Henüz oda yok</b>
+          </div>
+          <div class="squad-row">
+            <span>Kullanılabilir futbolcu</span><b id="availableCount">—</b>
+          </div>
+          <div class="squad-row">
+            <span>Seçilen futbolcu</span><b id="squadCountDraft">0 / 11</b>
+          </div>
+          <p class="message" id="draftStatusMessage">
+            Oyun odasına katıldıktan sonra draft bilgileri burada gösterilir.
+          </p>
+        </div>
+      </section>
+
+      <!-- OYUN ODASI -->
+      <section class="page" id="page-room">
+        <div class="welcome">
+          <span class="tag">ÇOK OYUNCULU OYUN</span>
+          <h2>Oyun Odası</h2>
+          <p>
+            Oda kodunu kullanarak mevcut oyuna katıl.
+            Oyun ilerlemesinin tüm oyuncular için ortak kaydedilmesi
+            Firebase yapılandırmasına bağlıdır.
+          </p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <h3>Mevcut odaya katıl</h3>
+            <label for="roomCodeInput" class="muted">6 haneli oda kodu</label>
+            <div class="form-row">
+              <input id="roomCodeInput" inputmode="numeric"
+                     maxlength="6" placeholder="Örn. 123456">
+              <button id="joinRoomButton" class="primary">Katıl</button>
+            </div>
+            <p class="message" id="roomMessage">
+              Odaya katılma işlemi mevcut Firebase oda kodu ve üyelik
+              fonksiyonlarıyla yürütülür.
+            </p>
+          </div>
+
+          <div class="panel">
+            <h3>Oda bilgileri</h3>
+            <div class="squad-row">
+              <span>Aktif oda</span><b id="lobbyCode">Henüz yok</b>
+            </div>
+            <div class="squad-row">
+              <span>Oyuncu sayısı</span><b id="roomPlayerCount">—</b>
+            </div>
+            <div class="squad-row">
+              <span>Oyun durumu</span><b id="roomStatus">Bekleniyor</b>
+            </div>
+            <button id="startDraft" class="primary hidden"
+                    style="width:100%;margin-top:12px">
+              Draftı Başlat
+            </button>
+            <div class="message" id="roomStatusMessage"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KURALLAR -->
+      <section class="page" id="page-rules">
+        <div class="panel">
+          <div class="eyebrow">Oyun rehberi</div>
+          <h2>Oyun Kuralları</h2>
+          <ul class="rules-list">
+            <li>Bir takım <strong>11 futbolcudan</strong> oluşur.</li>
+            <li>Takım bütçesi <strong>1.100 M€</strong> ile sınırlıdır.</li>
+            <li>Oyun <strong>2–6 oyuncu</strong> ile oynanacak şekilde tasarlanır.</li>
+            <li>Draft sırasında futbolcular sırayla seçilir ve seçilen oyuncu tekrar alınamaz.</li>
+            <li>Mevkiler: Kaleci, sağ bek, iki stoper, sol bek, ön libero,
+                orta saha, ofansif orta saha, sağ açık, sol açık ve santrfor.</li>
+            <li>Aynı ülkeden 3 futbolcu: <strong>+3 puan</strong>.</li>
+            <li>Aynı ülkeden 4 futbolcu: <strong>+4 puan</strong>.</li>
+            <li>Aynı ülkeden 5 veya daha fazla futbolcu: <strong>+5 puan</strong>.</li>
+            <li>Efsane kaptan bonusu: <strong>+4 puan</strong>.</li>
+            <li>Büyük lider bonusu: <strong>+2 puan</strong>.</li>
+            <li>Özel bağlantılı oyuncular birlikteyse ilgili bağlantı bonusu uygulanır.</li>
+            <li>Kazanan, belirlenen bonuslar dâhil en yüksek toplam kadro gücüne
+                sahip takımdır.</li>
+          </ul>
+          <p class="muted">
+            Not: Oyun kurallarının uygulanması için mevcut draft.js ve
+            Firebase işlemlerinin de bu kurallarla uyumlu olması gerekir.
+          </p>
+        </div>
+      </section>
+
+      <div class="footer">
+        FUTBOL DRAFT • Menajerlik senin elinde
       </div>
-      <section class="stats">
-        <div class="card">
-          <div class="stat-label">KADRO HEDEFİ</div>
-          <div class="stat-number">0 <span class="muted">/ 11</span></div>
-          <div class="stat-foot">Futbolcu seçimi bekleniyor</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">TOPLAM BÜTÇE</div>
-          <div class="stat-number">1.100 <span class="muted">M€</span></div>
-          <div class="stat-foot">Başlangıç bütçesi</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">TAKIM GÜCÜ</div>
-          <div class="stat-number">—</div>
-          <div class="muted">Kadron oluşturulduğunda</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">DRAFT DURUMU</div>
-          <div class="stat-number" style="font-size:21px">Hazır</div>
-          <div class="muted">Oyun odası bekleniyor</div>
-        </div>
-      </section>
-
-      <div class="section-head">
-        <h2>Hızlı Erişim</h2>
-        <span class="muted">Menajer araçları</span>
-      </div>
-      <section class="columns">
-        <div class="card">
-          <div class="eyebrow">OYUN MERKEZİ</div>
-          <div class="row-item">
-            <div class="icon-box">⚽</div>
-            <div class="row-text">
-              <strong>Draft Merkezi</strong>
-              <span class="muted">Oyuncu seçimi ve oda katılımı</span>
-            </div>
-            <button class="btn" data-page="draft">Aç →</button>
-          </div>
-          <div class="row-item">
-            <div class="icon-box">♟</div>
-            <div class="row-text">
-              <strong>Kadro Yönetimi</strong>
-              <span class="muted">Diziliş ve takım gücü</span>
-            </div>
-            <button class="btn" data-page="squad">Aç →</button>
-          </div>
-          <div class="row-item">
-            <div class="icon-box">☷</div>
-            <div class="row-text">
-              <strong>Futbolcu Havuzu</strong>
-              <span class="muted">Mevki, puan ve bonservis</span>
-            </div>
-            <button class="btn" data-page="players">Aç →</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="eyebrow">OYUN KURALLARI</div>
-          <div class="row-item">
-            <div class="icon-box">👥</div>
-            <div class="row-text"><strong>2–6 menajer</strong><span class="muted">Çok oyunculu mücadele</span></div>
-          </div>
-          <div class="row-item">
-            <div class="icon-box">📋</div>
-            <div class="row-text"><strong>11 kişilik kadro</strong><span class="muted">Her mevkiye uygun seçim</span></div>
-          </div>
-          <div class="row-item">
-            <div class="icon-box">💶</div>
-            <div class="row-text"><strong>1.100 M€ bütçe</strong><span class="muted">Bütçeni stratejik kullan</span></div>
-          </div>
-        </div>
-      </section>
-      <div class="footer">FUTBOL DRAFT © 2026 · Bağımsız futbol menajerlik oyunu</div>
     </div>
   </main>
 </div>
 
 <script>
-const titles = {
-  dashboard: "Yönetim Merkezi",
-  draft: "Draft Merkezi",
-  squad: "Kadrom",
-  players: "Futbolcu Havuzu",
-  rankings: "Sıralama",
-  account: "Hesap Ayarları"
-};
-document.querySelectorAll("[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-    const page = button.dataset.page;
-    document.querySelectorAll(".nav").forEach(item => {
-      item.classList.toggle("active", item.dataset.page === page);
+  const pageNames = {
+    dashboard: "Menajer Merkezi",
+    squad: "Kadrom",
+    draft: "Draft Merkezi",
+    room: "Oyun Odası",
+    rules: "Oyun Kuralları"
+  };
+
+  function showPage(name) {
+    document.querySelectorAll(".page").forEach(page => {
+      page.classList.toggle("active", page.id === "page-" + name);
     });
-    document.getElementById("pageTitle").textContent = titles[page];
-    if (page !== "dashboard") {
-      alert(titles[page] + " bölümü sonraki aşamada kurulacak.");
-    }
+
+    document.querySelectorAll(".nav-button").forEach(button => {
+      button.classList.toggle("active", button.dataset.page === name);
+    });
+
+    document.getElementById("pageTitle").textContent =
+      pageNames[name] || "Menajer Merkezi";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
   });
-});
+
+  document.querySelectorAll("[data-go]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.go));
+  });
+
+  let selectedPosition = "";
+
+  document.querySelectorAll(".position-slot").forEach(slot => {
+    slot.addEventListener("click", () => {
+      selectedPosition = slot.dataset.position;
+
+      document.querySelectorAll(".position-slot").forEach(other => {
+        other.classList.toggle("selected", other === slot);
+      });
+
+      const labels = {
+        GK: "Kaleci",
+        RB: "Sağ bek",
+        CB: "Stoper",
+        LB: "Sol bek",
+        DM: "Ön libero",
+        CM: "Orta saha",
+        CAM: "Ofansif orta saha",
+        RW: "Sağ açık",
+        LW: "Sol açık",
+        ST: "Santrfor"
+      };
+
+      document.getElementById("pickerTitle").textContent =
+        labels[selectedPosition] + " seçimi";
+
+      document.getElementById("pickerDescription").textContent =
+        "Seçilen mevki: " + labels[selectedPosition];
+
+      document.getElementById("draftPosition").value = selectedPosition;
+
+      showPage("squad");
+      document.getElementById("slotPicker").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      /*
+        Mevcut draft.js futbolcu listesini filtreler.
+        Gerçek seçim için aktif oda ve sıra kontrolü yine gereklidir.
+      */
+      document.getElementById("draftPosition")
+        .dispatchEvent(new Event("change"));
+    });
+  });
+
+  document.getElementById("clearSlotSelection").addEventListener("click", () => {
+    selectedPosition = "";
+    document.querySelectorAll(".position-slot").forEach(slot => {
+      slot.classList.remove("selected");
+    });
+    document.getElementById("draftPosition").value = "";
+    document.getElementById("pickerTitle").textContent = "Futbolcu seçimi";
+    document.getElementById("pickerDescription").textContent =
+      "Önce sahada bir mevki seç.";
+    document.getElementById("draftPosition")
+      .dispatchEvent(new Event("change"));
+  });
+
+  /*
+    Oda kodunu ekranda göstermek için temel arayüz bağlantısı.
+    Bu alan tek başına Firebase'e oyuncu kaydetmez; oda katılım
+    fonksiyonunun mevcut Firebase kodunda bulunması gerekir.
+  */
+  document.getElementById("joinRoomButton").addEventListener("click", () => {
+    const code = document.getElementById("roomCodeInput").value.trim();
+    const message = document.getElementById("roomMessage");
+
+    if (!/^\d{6}$/.test(code)) {
+      message.textContent = "Lütfen 6 haneli oda kodunu gir.";
+      return;
+    }
+
+    document.getElementById("lobbyCode").textContent = code;
+    document.getElementById("draftRoomCode").textContent = code;
+    message.textContent =
+      "Oda kodu girildi. Odaya gerçekten katılmak için Firebase üyelik işlemi çalışmalıdır.";
+  });
 </script>
+
+<!-- Mevcut futbolcu listesi, draft ve Firebase kodu korunmalıdır. -->
+<script type="module" src="./draft.js"></script>
 </body>
 </html>
