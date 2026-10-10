@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -85,13 +84,25 @@ input:focus,select:focus { border-color:var(--green); }
 .message { min-height:22px; color:var(--muted); font-size:13px; line-height:1.5; margin-top:10px; }
 .squad-layout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr); gap:18px; align-items:start; }
 .pitch-frame { padding:10px; border:1px solid #245343; border-radius:16px; background:#061d20; overflow:hidden; }
-.pitch { position:relative; width:100%; max-width:650px; margin:auto; aspect-ratio:2/3; overflow:hidden; border-radius:9px; background:#08753e; isolation:isolate; }
-.pitch-background { position:absolute; inset:0; width:100%; height:100%; object-fit:fill; z-index:-2; pointer-events:none; }
-.pitch-fallback { position:absolute; inset:1.5%; border:2px solid #ffffffcc; background:repeating-linear-gradient(0deg,#08773d 0,#08773d 9%,#0a8545 9%,#0a8545 18%); z-index:-3; }
+
+/* Son taktik PNG görselini saha arka planı olarak kullanır. */
+.pitch {
+  position:relative;
+  width:100%;
+  max-width:650px;
+  margin:auto;
+  aspect-ratio:2/3;
+  overflow:hidden;
+  border-radius:9px;
+  background:#08753e url("taktik-sahasi.png") center / 100% 100% no-repeat;
+  isolation:isolate;
+}
+.pitch-background { display:none; }
+.pitch-fallback { display:none; }
 .fallback-line { position:absolute; top:50%; left:0; width:100%; border-top:2px solid #ffffffcc; }
 .fallback-circle { position:absolute; top:50%; left:50%; width:26%; aspect-ratio:1; transform:translate(-50%,-50%); border:2px solid #ffffffcc; border-radius:50%; }
 
-/* İsimlik boş görünür; futbolcu seçilince adı burada görünür. */
+/* Görseldeki yuvarlakları ikinci kez göstermemek için HTML yuvarlakları gizlenir. */
 .position-slot {
   position:absolute;
   width:21%;
@@ -102,12 +113,15 @@ input:focus,select:focus { border-color:var(--green); }
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
   gap:3px;
+  height:8%;
   overflow:visible;
   z-index:2;
 }
 .position-slot:hover:not(:disabled) { transform:translate(-50%,-50%) scale(1.04); border:0; }
 .slot-ball {
+  visibility:hidden;
   width:clamp(32px,5.8vw,55px);
   max-width:100%;
   aspect-ratio:1;
@@ -135,9 +149,19 @@ input:focus,select:focus { border-color:var(--green); }
   line-height:1.2;
   overflow-wrap:anywhere;
 }
-.position-slot:not(.has-player) .slot-name { color:transparent; }
-.position-slot.has-player .slot-ball { background:var(--green); border-color:white; }
-.position-slot.has-player .slot-name { background:#062d20ed; color:white; }
+.position-slot:not(.has-player) .slot-name { display:none; }
+.position-slot.has-player .slot-name {
+  display:block;
+  position:absolute;
+  top:54%;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  background:#062d20ed;
+  color:white;
+  border:1px solid #29d985;
+  box-shadow:0 2px 8px #0009;
+}
 .position-slot.selected .slot-ball { outline:3px solid white; box-shadow:0 0 0 6px #29d98570; }
 .squad-instructions { margin:12px 0 0; color:var(--muted); font-size:12px; line-height:1.6; }
 .squad-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #23384a; font-size:13px; }
@@ -192,6 +216,7 @@ input:focus,select:focus { border-color:var(--green); }
   .slot-name { font-size:8px; padding:3px 4px; }
   .position-slot { width:23%; }
   .slot-ball { width:clamp(30px,8vw,43px); }
+  .position-slot.has-player .slot-name { font-size:8px; padding:3px 2px; }
   .manager-text { display:none; }
 }
 @media(max-width:370px) {
@@ -274,9 +299,6 @@ input:focus,select:focus { border-color:var(--green); }
             <div class="panel-heading"><div><h3>4-2-3-1 taktik dizilişi</h3><p>Kaleci altta, hücum hattı üstte</p></div></div>
             <div class="pitch-frame">
               <div class="pitch" id="footballPitch">
-                <div class="pitch-fallback"><div class="fallback-line"></div><div class="fallback-circle"></div></div>
-                <img class="pitch-background" src="taktik-sahasi.png" alt="" onerror="this.style.display='none'">
-
                 <button class="position-slot" data-position="ST" style="left:50%;top:14%" aria-label="Santrfor">
                   <span class="slot-ball">ST</span><span class="slot-name"></span>
                 </button>
@@ -312,7 +334,7 @@ input:focus,select:focus { border-color:var(--green); }
                 </button>
               </div>
             </div>
-            <p class="squad-instructions">Boş mevkiyi seç. İsimsiz lacivert isimlikler futbolcu seçildiğinde oyuncu adını gösterir.</p>
+            <p class="squad-instructions">Sahadaki mevkiye tıklayarak futbolcu seç. Seçilen futbolcunun adı ilgili mevki üzerinde görünür.</p>
           </div>
 
           <div>
