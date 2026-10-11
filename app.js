@@ -234,7 +234,26 @@ function teamProfile(team){
   const attackAvg=attackRaw/4;
   const goalkeeper=averageRating(squad,['GK']);
   const midfield=averageRating(squad,['CM','CAM','RW','LW']);
-  return {parts,power:parts.total,possessionPower,defenseRaw,defenseAvg,xgRaw,xgAvg,attackRaw,attackAvg,goalkeeper,midfield};
+  // Aliases used by the match report renderer. Keep all report fields defined.
+  return {
+    parts,
+    power: parts.total,
+    possessionPower,
+    defenseRaw,
+    defenseAvg,
+    xgRaw,
+    xgAvg,
+    attackRaw,
+    attackAvg,
+    attack: attackAvg,
+    defense: defenseAvg,
+    country: parts.country,
+    links: parts.links,
+    captain: parts.captain,
+    base: parts.base,
+    goalkeeper,
+    midfield
+  };
 }
 function simulateScore(home,away){
   const h=teamProfile(home),a=teamProfile(away);
@@ -244,6 +263,7 @@ function simulateScore(home,away){
   return {homeGoals:poissonGoals(homeExpected),awayGoals:poissonGoals(awayExpected),homeXg:Number(homeExpected.toFixed(2)),awayXg:Number(awayExpected.toFixed(2))};
 }
 async function createLeagueFixtures(){
+  if(!isHost()){notify('Fikstürü yalnızca oda sahibi oluşturabilir.',true);return;}
   const valid=validLeagueTeams();
   if(!valid.ok){notify(valid.message,true);return;}
   const ref=db.collection('rooms').doc(roomCode);
@@ -251,6 +271,7 @@ async function createLeagueFixtures(){
     await db.runTransaction(async tx=>{
       const snap=await tx.get(ref);if(!snap.exists)throw new Error('Oda bulunamadı.');
       const data=snap.data();
+      if(data.hostUid!==uid)throw new Error('Fikstürü yalnızca oda sahibi oluşturabilir.');
       if(data.league?.fixtures?.length)return;
       if(data.status!=='finished')throw new Error('Draft tamamlanmadan lig kurulamaz.');
       const teams=(data.memberOrder||[]).map(id=>({id,name:data.members?.[id]?.name||'Menajer',squad:(data.picks||[]).filter(p=>p.uid===id),captainId:data.captains?.[id]||null}));
@@ -345,7 +366,7 @@ function makeMatchReport(home,away,score){
   const goalEvents=events.filter(e=>e.type==='goal');
   const scorers={};goalEvents.forEach(e=>{const key=`${e.teamUid}:${e.playerId||e.playerName}`;scorers[key]??={teamName:e.teamName,playerName:e.playerName,goals:0};scorers[key].goals++;});
   const summary=score.homeGoals===score.awayGoals?`${home.name} ve ${away.name} sahadan ${score.homeGoals}-${score.awayGoals} beraberlikle ayrıldı.`:score.homeGoals>score.awayGoals?`${home.name}, ${away.name} karşısında ${score.homeGoals}-${score.awayGoals} kazanarak 3 puanı aldı.`:`${away.name}, deplasmanda ${home.name} takımını ${score.awayGoals}-${score.homeGoals} yenerek 3 puanı aldı.`;
-  return {events,scorers:Object.values(scorers),stats:{homePossession:homePoss,awayPossession:awayPoss,homeShots,awayShots,homeShotsOnTarget:homeOnTarget,awayShotsOnTarget:awayOnTarget,homeCorners:clamp(Math.round(homeShots*.42+Math.random()*3),0,14),awayCorners:clamp(Math.round(awayShots*.42+Math.random()*3),0,14),homeSaves:Math.max(0,awayOnTarget-score.awayGoals),awaySaves:Math.max(0,homeOnTarget-score.homeGoals),homeXg:hXg,awayXg:aXg,homeYellow:events.filter(e=>e.teamUid===home.id&&e.type==='yellow').length,awayYellow:events.filter(e=>e.teamUid===away.id&&e.type==='yellow').length,homeRed:events.filter(e=>e.teamUid===home.id&&e.type==='red').length,awayRed:events.filter(e=>e.teamUid===away.id&&e.type==='red').length,homePower:hp.power,awayPower:ap.power,homeAttack:Number((hp.attackAvg ?? 50).toFixed(1)),awayAttack:Number((ap.attackAvg ?? 50).toFixed(1)),homeMidfield:Number(hp.midfield.toFixed(1)),awayMidfield:Number(ap.midfield.toFixed(1)),homeDefense:Number((hp.defenseAvg ?? 50).toFixed(1)),awayDefense:Number((ap.defenseAvg ?? 50).toFixed(1)),homeGoalkeeper:Number(hp.goalkeeper.toFixed(1)),awayGoalkeeper:Number(ap.goalkeeper.toFixed(1)),homeBase:h.base,awayBase:a.base,homeCountry:h.country,awayCountry:a.country,homeLinks:h.links,awayLinks:a.links,homeCaptain:h.captain,awayCaptain:a.captain,
+  return {events,scorers:Object.values(scorers),stats:{homePossession:homePoss,awayPossession:awayPoss,homeShots,awayShots,homeShotsOnTarget:homeOnTarget,awayShotsOnTarget:awayOnTarget,homeCorners:clamp(Math.round(homeShots*.42+Math.random()*3),0,14),awayCorners:clamp(Math.round(awayShots*.42+Math.random()*3),0,14),homeSaves:Math.max(0,awayOnTarget-score.awayGoals),awaySaves:Math.max(0,homeOnTarget-score.homeGoals),homeXg:hXg,awayXg:aXg,homeYellow:events.filter(e=>e.teamUid===home.id&&e.type==='yellow').length,awayYellow:events.filter(e=>e.teamUid===away.id&&e.type==='yellow').length,homeRed:events.filter(e=>e.teamUid===home.id&&e.type==='red').length,awayRed:events.filter(e=>e.teamUid===away.id&&e.type==='red').length,homePower:hp.power,awayPower:ap.power,homeAttack:Number(hp.attack.toFixed(1)),awayAttack:Number(ap.attack.toFixed(1)),homeMidfield:Number(hp.midfield.toFixed(1)),awayMidfield:Number(ap.midfield.toFixed(1)),homeDefense:Number(hp.defense.toFixed(1)),awayDefense:Number(ap.defense.toFixed(1)),homeGoalkeeper:Number(hp.goalkeeper.toFixed(1)),awayGoalkeeper:Number(ap.goalkeeper.toFixed(1)),homeBase:h.base,awayBase:a.base,homeCountry:h.country,awayCountry:a.country,homeLinks:h.links,awayLinks:a.links,homeCaptain:h.captain,awayCaptain:a.captain,
   homeAttackTotal:hp.attackRaw,awayAttackTotal:ap.attackRaw,homeXgTotal:hp.xgRaw,awayXgTotal:ap.xgRaw,homeDefenseTotal:hp.defenseRaw,awayDefenseTotal:ap.defenseRaw,
   homeBlockAttempts:awayDefense.blockAttempts,awayBlockAttempts:homeDefense.blockAttempts,homeBlocks:awayDefense.blocks,awayBlocks:homeDefense.blocks,
   homeTackleAttempts:homeDefense.tackleAttempts,awayTackleAttempts:awayDefense.tackleAttempts,homeTackles:homeDefense.tackles,awayTackles:awayDefense.tackles,
