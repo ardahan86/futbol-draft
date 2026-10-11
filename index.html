@@ -6,6 +6,26 @@
   <link rel="stylesheet" href="styles.css">
 
   <style>
+
+    .league-match-card{border:1px solid rgba(148,163,184,.16);border-radius:14px;margin:10px 0;padding:8px 12px;background:rgba(10,20,33,.5)}
+    .league-match-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:6px 0 10px}
+    .league-match-controls .small{padding:8px 12px;font-size:12px}
+    .league-match-details{border-top:1px solid rgba(148,163,184,.16);padding:14px 4px 6px}
+    .match-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+    .match-detail-grid>div,.match-power-grid>div{padding:12px;border-radius:10px;background:rgba(148,163,184,.07)}
+    .match-detail-grid small{display:block;color:#94a3b8;font-size:10px;margin-bottom:6px}
+    .match-detail-grid b{font-size:15px}
+    .match-power-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .match-power-grid>div{display:flex;flex-direction:column;gap:7px}
+    .match-power-grid span{font-size:12px;color:#94a3b8}
+    .match-power-grid strong{font-size:12px;color:#a7f3d0}
+    .match-summary{margin:12px 0;font-weight:700}
+    .match-events h5{margin:8px 0;color:#a7f3d0}
+    .match-event{display:grid;grid-template-columns:45px minmax(0,1fr) minmax(0,1fr);gap:8px;padding:8px;border-bottom:1px solid rgba(148,163,184,.12)}
+    .match-event span{color:#a7f3d0;font-weight:700}
+    .match-event small{color:#94a3b8;text-align:right}
+    @media(max-width:650px){.match-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.match-power-grid{grid-template-columns:1fr}.league-match{gap:5px}.league-team{font-size:12px}}
+
     .league-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
     .league-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
     .league-stat{padding:18px;border:1px solid rgba(148,163,184,.18);border-radius:14px;background:rgba(15,27,43,.7)}
@@ -38,7 +58,6 @@
       <button class="nav" data-view="room">♧ <span>Oyun Odası</span></button>
       <button class="nav" data-view="draft">⇄ <span>Draft Merkezi</span></button>
       <button class="nav" data-view="squad">♙ <span>Kadrom</span></button>
-      <button class="nav" data-view="leaderboard">🏆 <span>Puan Tablosu</span></button>
       <button class="nav" data-view="league">⚽ <span>Lig Merkezi</span></button>
       <button class="nav" data-view="rules">☷ <span>Oyun Kuralları</span></button>
     </nav>
@@ -71,21 +90,18 @@
       <div class="squad-layout"><article class="panel"><div class="panel-head"><div><h3>11 kişilik kadro</h3><p>Mevki dağılımına göre kadron.</p></div><span class="panel-icon">♙</span></div><div id="squadRows" class="squad-rows"><div class="empty-state">Henüz futbolcu seçmedin.</div></div></article><aside class="panel"><div class="panel-head"><div><h3>Puan dökümü</h3><p>Excel kurallarına göre hesaplanır.</p></div></div><div id="scoreBreakdown" class="breakdown"></div><div class="captain-box"><h4>Kaptan seçimi</h4><p>11 kişilik kadron tamamlandığında kaptan bonusu alabilecek oyunculardan birini seç.</p><select id="captainSelect" disabled><option value="">Kaptan seç</option></select><small id="captainInfo">Efsane kaptan +4 • Büyük lider +2</small></div></aside></div>
     </section>
 
-    <section class="view" id="view-leaderboard">
-      <div class="section-intro"><div><div class="kicker">SONUÇLAR • CANLI SIRALAMA</div><h2>Puan Tablosu</h2><p>Canlı puan sıralaması ve aynı odadaki tüm menajerlerin kadroları.</p></div><div class="status-pill"><span class="pulse"></span><span id="leaderboardStatus">Oda bekleniyor</span></div></div>
-      <article class="panel"><div class="panel-head"><div><h3>🏆 Şampiyonluk sıralaması</h3><p>Toplam puan ve belirlenen eşitlik bozma kurallarına göre sıralama.</p></div></div><div id="leaderboardTable"><div class="empty-state">Puan tablosunu görmek için bir odaya katıl. Draft bitince tüm takımlar burada sıralanacak.</div></div><p class="hint" id="leaderboardHint">Draft tamamlanmadan sıralama geçicidir. Nihai sonuç için kadroların tamamlanması ve kaptan seçimlerinin yapılması gerekir.</p></article>
-    </section>
+
 
 
     <section class="view" id="view-league">
       <div class="section-intro"><div><div class="kicker">SEZON • ÇİFT DEVRE</div><h2>Lig Merkezi</h2><p>Draft tamamlandığında tüm menajerler birbirleriyle iç saha ve deplasman maçı oynar.</p></div><div class="status-pill"><span class="pulse"></span><span id="leagueStatus">Lig bekleniyor</span></div></div>
       <article class="panel league-intro-panel">
         <div class="panel-head"><div><h3>🏟️ Şampiyonluk Ligi</h3><p id="leagueDescription">Önce tüm takımların 11 kişilik kadrosunu tamamla.</p></div><span class="panel-icon">🏆</span></div>
-        <div class="league-actions"><button id="createFixtures" class="primary">Fikstürü Oluştur</button><button id="simulateLeague" class="secondary">Tüm Maçları Simüle Et</button></div>
-        <p class="hint">Her galibiyet 3, beraberlik 1 puan kazandırır. Maç sonuçları Firebase'e bir kez kaydedilir ve aynı odadaki herkese gösterilir.</p>
+        <div class="league-actions"><button id="createFixtures" class="primary">Fikstürü Oluştur</button></div>
+        <p class="hint">Her galibiyet 3, beraberlik 1 puan kazandırır. Her maç fikstürden ayrı ayrı simüle edilir. Skor ve maç detayları Firebase'e kaydedilir ve aynı odadaki herkese gösterilir.</p>
       </article>
       <div class="league-summary-grid" id="leagueSummary"></div>
-      <article class="panel"><div class="panel-head"><div><h3>📊 Lig Tablosu</h3><p>Önce puan, ardından averaj ve atılan gol değerlendirilir.</p></div></div><div id="leagueStandings"><div class="empty-state">Henüz lig tablosu oluşturulmadı.</div></div></article>
+      <div id="leagueStandings" class="hidden" aria-hidden="true"></div>
       <article class="panel league-fixtures-panel"><div class="panel-head"><div><h3>📅 Fikstür ve Sonuçlar</h3><p id="fixtureCount">Fikstür oluşturulduğunda maçlar burada görünür.</p></div></div><div id="leagueFixtures"><div class="empty-state">Henüz fikstür yok.</div></div></article>
     </section>
 
