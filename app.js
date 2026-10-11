@@ -22,7 +22,7 @@ function notify(message, error=false) {
   if(noticeTimer) clearTimeout(noticeTimer); noticeTimer=setTimeout(()=>el.classList.add('hidden'),6500);
 }
 function setBusy(value){busy=value; ['createRoom','joinRoom','startDraft'].forEach(id=>{if($(id)) $(id).disabled=value || (id==='startDraft' && !canStart());});}
-function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===name));const titles={home:'Menajer Merkezi',room:'Oyun Odası',draft:'Draft Merkezi',squad:'Kadrom',leaderboard:'Puan Tablosu',rules:'Oyun Kuralları'};$('pageTitle').textContent=titles[name]||'Menajer Merkezi';if(name==='draft'||name==='squad'||name==='leaderboard') renderAll();}
+function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===name));const titles={home:'Menajer Merkezi',room:'Oyun Odası',draft:'Draft Merkezi',squad:'Kadrom',leaderboard:'Puan Tablosu',league:'Lig Merkezi',rules:'Oyun Kuralları'};$('pageTitle').textContent=titles[name]||'Menajer Merkezi';if(name==='draft'||name==='squad'||name==='leaderboard') renderAll();}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
 document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.jump)));
 
@@ -54,7 +54,7 @@ async function init(){
     if(playerPool.length!==140)throw new Error(`Oyuncu listesinde 140 kişi bekleniyordu, ${playerPool.length} bulundu.`);
     const filter=$('positionFilter');Object.entries(POSITIONS).forEach(([key,label])=>{const o=document.createElement('option');o.value=key;o.textContent=label;filter.appendChild(o);});
     $('playerSearch').addEventListener('input',renderPlayers);$('positionFilter').addEventListener('change',renderPlayers);$('sortFilter').addEventListener('change',renderPlayers);
-    $('createRoom').addEventListener('click',createRoom);$('joinRoom').addEventListener('click',joinRoom);$('startDraft').addEventListener('click',startDraft);$('copyCode').addEventListener('click',copyRoomCode);$('leaveRoom').addEventListener('click',leaveRoom);$('captainSelect').addEventListener('change',setCaptain);
+    $('createRoom').addEventListener('click',createRoom);$('joinRoom').addEventListener('click',joinRoom);$('startDraft').addEventListener('click',startDraft);$('copyCode').addEventListener('click',copyRoomCode);$('leaveRoom').addEventListener('click',leaveRoom);$('captainSelect').addEventListener('change',setCaptain);$('createFixtures').addEventListener('click',createLeagueFixtures);$('simulateLeague').addEventListener('click',simulateLeague);
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);const user=auth.currentUser|| (await auth.signInAnonymously()).user;uid=user.uid;
     $('connectionLabel').textContent='Firebase bağlantısı hazır';
     if(roomCode) await attachRoom(roomCode);else renderAll();
@@ -151,5 +151,156 @@ function renderLeaderboard(){
  table.innerHTML=`<div class="leaderboard-table"><div class="leaderboard-row leaderboard-head"><span>Sıra</span><span>Menajer / Kadro</span><span>Güç</span><span>Bonus</span><span>Kalan</span></div>${rows.map((r,i)=>`<div class="leaderboard-row ${complete&&i===0?'leaderboard-winner':''}"><span class="rank">${i===0?'🏆':i+1}</span><span class="leader-name"><b>${esc(r.name)}${r.id===uid?' (Sen)':''}</b><small>${r.squad.length}/11 futbolcu${r.captainId?' · Kaptan seçildi':''}</small></span><b class="leader-score">${fmt(r.parts.total)}</b><span class="leader-bonus">+${fmt(r.parts.total-r.parts.base)}</span><span class="leader-budget">${fmt(BUDGET-r.spend)} M€</span></div>`).join('')}</div><div class="team-rosters-heading"><h3>👥 Tüm Menajerlerin Kadroları</h3><p>Bir takıma dokunarak 11 kişilik kadrosunu, futbolcularını ve puan dökümünü görebilirsin.</p></div><div class="team-rosters">${squadRows}</div>${room.status==='cancelled'?`<div class="winner-banner"><span class="trophy">⛔</span><div><small>OYUN İPTAL EDİLDİ</small><b>Draft durduruldu</b><span>Oda sahibi oyunu iptal etti.</span></div></div>`:''}${complete?`<div class="winner-banner"><span class="trophy">🏆</span><div><small>${captainsDone?'ŞAMPİYON':'GEÇİCİ LİDER'}</small><b>${esc(rows[0]?.name||'—')}</b><span>${fmt(rows[0]?.parts.total||0)} toplam güç puanı</span></div></div>`:''}`;
  hint.textContent=room.status==='cancelled'?'Oda sahibi oyunu iptal etti. Draft durduruldu.':!complete?'Sıralama canlı güncellenir. Şampiyon, tüm kadrolar tamamlandığında belirlenir. Eşitlik sırası: toplam puan → kadro değeri → Efsane Kaptan sayısı → Büyük Lider sayısı → bonuslar hariç temel puan.':!captainsDone?'Tüm kadrolar tamamlandı. Nihai sıralama için kaptan seçimleri de yapılmalı; sonuçlar anlık güncellenir.':'Tüm kadrolar ve kaptan seçimleri tamamlandı. Eşitlik ölçütleri uygulanarak şampiyon belirlendi.';
 }
-function renderAll(){renderRoom();renderPlayers();renderDraftSide();renderSquad();renderLeaderboard();}
+
+function leagueTeams(){
+  if(!room)return [];
+  return (room.memberOrder||[]).map(id=>{
+    const squad=(room.picks||[]).filter(p=>p.uid===id);
+    const captainId=room.captains?.[id]||null;
+    const parts=scoreParts(squad,captainId);
+    return {id,name:room.members?.[id]?.name||'Menajer',squad,captainId,power:parts.total};
+  });
+}
+function validLeagueTeams(){
+  const teams=leagueTeams();
+  if(!room||room.status!=='finished')return {ok:false,message:'Lig için önce draftın tamamlanması gerekiyor.'};
+  if(teams.length<2)return {ok:false,message:'Lig kurmak için en az 2 menajer gerekli.'};
+  const incomplete=teams.filter(t=>t.squad.length!==11);
+  if(incomplete.length)return {ok:false,message:`Şu takımların kadrosu 11 kişi değil: ${incomplete.map(t=>t.name).join(', ')}.`};
+  return {ok:true,teams};
+}
+function buildDoubleRoundRobin(teamIds){
+  const base=[...teamIds];
+  if(base.length%2===1)base.push(null);
+  const n=base.length, rounds=[];
+  let rotating=[...base];
+  for(let r=0;r<n-1;r++){
+    const matches=[];
+    for(let i=0;i<n/2;i++){
+      const a=rotating[i],b=rotating[n-1-i];
+      if(a&&b){
+        const home=(r+i)%2===0?a:b;
+        const away=home===a?b:a;
+        matches.push({homeUid:home,awayUid:away,round:r+1});
+      }
+    }
+    rounds.push(matches);
+    rotating=[rotating[0],rotating[n-1],...rotating.slice(1,n-1)];
+  }
+  const all=[...rounds.flat()];
+  const second=all.map((m,i)=>({homeUid:m.awayUid,awayUid:m.homeUid,round:rounds.length+Math.floor(i/(Math.max(1,teamIds.length/2)))+1}));
+  // Group second leg by original round to retain a readable schedule.
+  const leg2=[];
+  rounds.forEach((matches,idx)=>leg2.push(matches.map(m=>({homeUid:m.awayUid,awayUid:m.homeUid,round:rounds.length+idx+1}))));
+  return [...rounds.flat(),...leg2.flat()].map((m,i)=>({...m,id:`m${i+1}`,played:false}));
+}
+function randomGoals(expected){
+  // A small bounded distribution keeps quick results plausible and avoids extreme scores.
+  const lambda=Math.max(0.25,Math.min(3.2,expected));
+  let sum=0;const threshold=Math.exp(-lambda);let k=0;
+  do{k++;sum+=Math.log(Math.max(0.000001,Math.random()));}while(sum>-lambda&&k<8);
+  // Convert a compact random sample into a goal count; score remains bounded.
+  const r=Math.random();
+  if(r<0.10)return 0;
+  if(r<0.38)return 1;
+  if(r<0.68)return 2;
+  if(r<0.86)return 3;
+  if(r<0.95)return 4;
+  return 5;
+}
+function simulateScore(home,away){
+  const homeAvg=home.power/11, awayAvg=away.power/11;
+  const difference=(homeAvg-awayAvg)/18;
+  const homeExpected=Math.max(0.35,Math.min(3.1,1.35+difference+0.18));
+  const awayExpected=Math.max(0.25,Math.min(2.8,1.20-difference));
+  // Weighted score distribution: team strength changes the odds of each score.
+  const goals=expected=>{
+    const weights=[Math.max(.04,1.15-expected*.52),Math.max(.08,.75+expected*.02),Math.max(.05,.25+expected*.20),Math.max(.02,.09+expected*.08),Math.max(.01,.025+expected*.025),.008];
+    const total=weights.reduce((a,b)=>a+b,0);let roll=Math.random()*total;
+    for(let i=0;i<weights.length;i++){roll-=weights[i];if(roll<=0)return i;}return 5;
+  };
+  return {homeGoals:goals(homeExpected),awayGoals:goals(awayExpected)};
+}
+async function createLeagueFixtures(){
+  const valid=validLeagueTeams();
+  if(!valid.ok){notify(valid.message,true);return;}
+  const ref=db.collection('rooms').doc(roomCode);
+  try{
+    await db.runTransaction(async tx=>{
+      const snap=await tx.get(ref);if(!snap.exists)throw new Error('Oda bulunamadı.');
+      const data=snap.data();
+      if(data.league?.fixtures?.length)return;
+      if(data.status!=='finished')throw new Error('Draft tamamlanmadan lig kurulamaz.');
+      const teams=(data.memberOrder||[]).map(id=>({id,squad:(data.picks||[]).filter(p=>p.uid===id)}));
+      if(teams.length<2||teams.some(t=>t.squad.length!==11))throw new Error('Her menajerin 11 kişilik kadrosu olmalı.');
+      const fixtures=buildDoubleRoundRobin(teams.map(t=>t.id));
+      tx.update(ref,{league:{fixtures,results:{},createdAt:Date.now()},updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    });
+    notify('Çift devreli lig fikstürü oluşturuldu.');
+  }catch(err){notify(firebaseError(err),true);}
+}
+async function simulateLeague(){
+  const valid=validLeagueTeams();
+  if(!valid.ok){notify(valid.message,true);return;}
+  const ref=db.collection('rooms').doc(roomCode);
+  try{
+    await db.runTransaction(async tx=>{
+      const snap=await tx.get(ref);if(!snap.exists)throw new Error('Oda bulunamadı.');
+      const data=snap.data(),league=data.league;
+      if(!league?.fixtures?.length)throw new Error('Önce fikstürü oluştur.');
+      const fixtures=league.fixtures,results={...(league.results||{})};
+      const teams=(data.memberOrder||[]).map(id=>{
+        const squad=(data.picks||[]).filter(p=>p.uid===id);
+        const captainId=data.captains?.[id]||null;
+        return {id,name:data.members?.[id]?.name||'Menajer',squad,power:scoreParts(squad,captainId).total};
+      });
+      const byId=Object.fromEntries(teams.map(t=>[t.id,t]));
+      fixtures.forEach(match=>{
+        if(results[match.id])return;
+        const home=byId[match.homeUid],away=byId[match.awayUid];
+        if(!home||!away)throw new Error('Fikstürde geçersiz takım bulundu.');
+        const score=simulateScore(home,away);
+        results[match.id]={...score,played:true,playedAt:Date.now()};
+      });
+      tx.update(ref,{'league.results':results,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    });
+    notify('Maçlar simüle edildi. Sonuçlar tüm menajerlere kaydedildi.');
+  }catch(err){notify(firebaseError(err),true);}
+}
+function renderLeague(){
+  const status=$('leagueStatus');if(!status)return;
+  const standingsEl=$('leagueStandings'),fixturesEl=$('leagueFixtures');
+  const createBtn=$('createFixtures'),simBtn=$('simulateLeague');
+  if(!room){
+    status.textContent='Lig bekleniyor';$('leagueDescription').textContent='Lig kurmak için önce bir oyun odasına katıl.';
+    $('leagueSummary').innerHTML='';standingsEl.innerHTML='<div class="empty-state">Henüz lig tablosu oluşturulmadı.</div>';
+    fixturesEl.innerHTML='<div class="empty-state">Henüz fikstür yok.</div>';$('fixtureCount').textContent='Fikstür oluşturulduğunda maçlar burada görünür.';
+    createBtn.disabled=true;simBtn.disabled=true;return;
+  }
+  const teams=leagueTeams(),league=room.league||null,fixtures=league?.fixtures||[],results=league?.results||{};
+  const valid=validLeagueTeams(),played=fixtures.filter(m=>results[m.id]).length;
+  status.textContent=!league?'Fikstür bekleniyor':played===fixtures.length&&fixtures.length?'Lig tamamlandı':played?'Maçlar oynanıyor':'Fikstür hazır';
+  $('leagueDescription').textContent=valid.ok?'Kadrolar hazır. Çift devreli ligde her takım diğerleriyle iki kez karşılaşır.':valid.message;
+  createBtn.disabled=!valid.ok||!!fixtures.length;
+  simBtn.disabled=!valid.ok||!fixtures.length||played===fixtures.length;
+  $('leagueSummary').innerHTML=[
+    ['TAKIM SAYISI',teams.length],
+    ['TOPLAM MAÇ',fixtures.length||'—'],
+    ['OYNANAN MAÇ',`${played} / ${fixtures.length||0}`]
+  ].map(([label,value])=>`<div class="league-stat"><small>${label}</small><strong>${value}</strong></div>`).join('');
+  $('fixtureCount').textContent=fixtures.length?`${fixtures.length} maç · ${played} oynandı`:'Fikstür oluşturulduğunda maçlar burada görünür.';
+  if(!fixtures.length){
+    standingsEl.innerHTML='<div class="empty-state">Fikstürü oluşturduktan sonra lig tablosu burada görünecek.</div>';
+    fixturesEl.innerHTML='<div class="empty-state">Fikstür oluşturmak için yukarıdaki düğmeye bas.</div>';return;
+  }
+  const stats=Object.fromEntries(teams.map(t=>[t.id,{...t,played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]));
+  fixtures.forEach(m=>{const r=results[m.id];if(!r)return;const h=stats[m.homeUid],a=stats[m.awayUid];if(!h||!a)return;h.played++;a.played++;h.gf+=r.homeGoals;h.ga+=r.awayGoals;a.gf+=r.awayGoals;a.ga+=r.homeGoals;if(r.homeGoals>r.awayGoals){h.w++;h.pts+=3;a.l++;}else if(r.homeGoals<r.awayGoals){a.w++;a.pts+=3;h.l++;}else{h.d++;a.d++;h.pts++;a.pts++;}});
+  const sorted=Object.values(stats).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||b.power-a.power);
+  standingsEl.innerHTML=`<div class="league-table-wrap"><table class="league-table"><thead><tr><th>#</th><th>Menajer</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody>${sorted.map((t,i)=>`<tr class="${i===0&&played===fixtures.length?'league-top':''}"><td>${i+1}</td><td>${esc(t.name)}${t.id===uid?' (Sen)':''}</td><td>${t.played}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join('')}</tbody></table></div>`;
+  const teamNames=Object.fromEntries(teams.map(t=>[t.id,t.name]));
+  const rounds={};fixtures.forEach(m=>(rounds[m.round]??=[]).push(m));
+  fixturesEl.innerHTML=Object.entries(rounds).sort((a,b)=>Number(a[0])-Number(b[0])).map(([round,matches])=>`<div class="league-fixture-round"><h4>${Math.ceil(Number(round)/Math.max(1,teams.length-1))===1?'1. DEVRE':'2. DEVRE'} · ${round}. HAFTA</h4>${matches.map(m=>{const r=results[m.id];return `<div class="league-match"><span class="league-team">${esc(teamNames[m.homeUid]||'Takım')}</span><span class="league-score ${r?'':'pending'}">${r?`${r.homeGoals} – ${r.awayGoals}`:'VS'}</span><span class="league-team">${esc(teamNames[m.awayUid]||'Takım')}</span><small class="league-match-meta">${r?'Maç tamamlandı':'Henüz oynanmadı'}</small></div>`;}).join('')}</div>`).join('');
+}
+
+function renderAll(){renderRoom();renderPlayers();renderDraftSide();renderSquad();renderLeaderboard();renderLeague();}
 init();
