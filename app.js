@@ -51,7 +51,7 @@ async function init(){
   try{
     const response=await fetch('./players.json',{cache:'no-store'});if(!response.ok)throw new Error('players.json dosyası yüklenemedi.');
     const data=await response.json();playerPool=data.players||[];
-    if(playerPool.length!==130)throw new Error(`Oyuncu listesinde 130 kişi bekleniyordu, ${playerPool.length} bulundu.`);
+    if(playerPool.length!==140)throw new Error(`Oyuncu listesinde 140 kişi bekleniyordu, ${playerPool.length} bulundu.`);
     const filter=$('positionFilter');Object.entries(POSITIONS).forEach(([key,label])=>{const o=document.createElement('option');o.value=key;o.textContent=label;filter.appendChild(o);});
     $('playerSearch').addEventListener('input',renderPlayers);$('positionFilter').addEventListener('change',renderPlayers);$('sortFilter').addEventListener('change',renderPlayers);
     $('createRoom').addEventListener('click',createRoom);$('joinRoom').addEventListener('click',joinRoom);$('startDraft').addEventListener('click',startDraft);$('copyCode').addEventListener('click',copyRoomCode);$('leaveRoom').addEventListener('click',leaveRoom);$('captainSelect').addEventListener('change',setCaptain);
