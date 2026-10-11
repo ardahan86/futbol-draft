@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111d"><title>Futbol Draft | Menajer Merkezi</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-ball">⚽</span><div><b>FUTBOL DRAFT</b><small>MENAJERLİK MERKEZİ</small></div></div>
+    <nav>
+      <button class="nav active" data-view="home">▦ <span>Genel Bakış</span></button>
+      <button class="nav" data-view="room">♧ <span>Oyun Odası</span></button>
+      <button class="nav" data-view="draft">⇄ <span>Draft Merkezi</span></button>
+      <button class="nav" data-view="squad">♙ <span>Kadrom</span></button>
+      <button class="nav" data-view="leaderboard">🏆 <span>Puan Tablosu</span></button>
+      <button class="nav" data-view="rules">☷ <span>Oyun Kuralları</span></button>
+    </nav>
+    <div class="side-foot"><span class="pulse"></span> <span id="connectionLabel">Bağlantı hazırlanıyor</span><small>Ücretsiz web sürümü</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="kicker">SEZON • DRAFT ORGANİZASYONU</div><h1 id="pageTitle">Menajer Merkezi</h1></div><div class="profile"><div class="avatar">⚽</div><div><b id="managerName">Menajer</b><small id="managerStatus">Odaya bağlı değil</small></div></div></header>
+    <div id="notice" class="notice hidden"></div>
+
+    <section class="view active" id="view-home">
+      <div class="hero"><div class="hero-copy"><span class="tag">KENDİ TAKIMINI KUR</span><h2>Takımını kur.<br><em>Sahaya hükmet.</em></h2><p>Excel’deki son oyuncu listesini kullan, bütçeni yönet ve rakiplerinden daha yüksek toplam güce ulaş.</p><div class="hero-actions"><button class="primary" data-jump="room">Oyuna Başla <span>→</span></button><button class="secondary" data-jump="rules">Kuralları Gör</button></div></div><div class="hero-art"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="ball-large">⚽</div><div class="art-label label-one">130 FUTBOLCU</div><div class="art-label label-two">1.100 M€ BÜTÇE</div><div class="art-label label-three">2–6 MENAJER</div></div></div>
+      <div class="stats-grid"><article class="stat"><span>OYUNCU HAVUZU</span><b>130</b><small>Son Excel listesinden</small></article><article class="stat"><span>TAKIM BÜTÇESİ</span><b>1.100 <i>M€</i></b><small>Her oyuncu için</small></article><article class="stat"><span>KADRO HEDEFİ</span><b>11</b><small>Belirlenmiş mevki dağılımı</small></article><article class="stat"><span>OYUNCU SAYISI</span><b id="homePlayerCount">—</b><small>Aktif odadaki menajerler</small></article></div>
+      <div class="two-col"><article class="panel"><div class="panel-head"><div><h3>Draft odası</h3><p>Yeni oda kur veya arkadaşlarının odasına katıl.</p></div><span class="panel-icon">♧</span></div><div class="room-summary"><div><small>ODA KODU</small><strong id="homeRoomCode">Henüz yok</strong></div><div><small>OYUN DURUMU</small><strong id="homeRoomStatus">Bekleniyor</strong></div></div><button class="primary full" data-jump="room">Oda işlemlerine git</button></article><article class="panel"><div class="panel-head"><div><h3>Oyun hedefi</h3><p>En yüksek toplam güç puanına ulaş.</p></div><span class="panel-icon green-icon">↗</span></div><div class="goal-list"><div><span>01</span><div><b>Bütçeyi koru</b><small>11 kişilik kadro 1.100 M€ sınırını aşamaz.</small></div></div><div><span>02</span><div><b>Bağlantıları yakala</b><small>Excel’deki ÖBB değerleri özel bağlantı bonusunu belirler.</small></div></div><div><span>03</span><div><b>Bonusları topla</b><small>Ülke ve kaptan bonuslarını toplam gücüne ekle.</small></div></div></div></article></div>
+    </section>
+
+    <section class="view" id="view-room">
+      <div class="section-intro"><div><div class="kicker">ÇOK OYUNCULU</div><h2>Oyun Odası</h2><p>Bir oda oluştur veya 6 haneli kodla mevcut odaya katıl.</p></div><div class="status-pill"><span class="pulse"></span><span id="roomStatePill">Oda bekleniyor</span></div></div>
+      <div class="two-col room-cols"><article class="panel"><div class="panel-head"><div><h3>Yeni oda oluştur</h3><p>Oda sahibi draftı başlatır.</p></div><span class="panel-icon">＋</span></div><label for="createName">Menajer adın</label><input id="createName" maxlength="24" placeholder="Örn. Aslan Menajer"><button id="createRoom" class="primary full">Oda Oluştur</button><p class="hint">Oda kodunu arkadaşlarınla paylaş. Oda sahibi olarak draftı sen başlatırsın.</p></article>
+      <article class="panel"><div class="panel-head"><div><h3>Odaya katıl</h3><p>Arkadaşının verdiği kodu gir.</p></div><span class="panel-icon">⇥</span></div><label for="joinName">Menajer adın</label><input id="joinName" maxlength="24" placeholder="Örn. Kırmızı Takım"><label for="joinCode">6 haneli oda kodu</label><input id="joinCode" maxlength="6" inputmode="numeric" placeholder="123456"><button id="joinRoom" class="secondary full">Odaya Katıl</button><p class="hint">Oda doluysa veya draft başladıysa yeni oyuncu katılamaz.</p></article></div>
+      <article class="panel room-panel"><div class="panel-head"><div><h3>Oda bilgileri</h3><p>Kodunu kopyala ve oyuncuları kontrol et.</p></div><span class="room-code" id="roomCodeLarge">------</span></div><div class="room-tools"><button id="copyCode" class="secondary" disabled>Kodu Kopyala</button><button id="leaveRoom" class="ghost" disabled>Odadan Ayrıl</button></div><div id="membersList" class="members-list"><div class="empty-state">Henüz bir odaya bağlı değilsin.</div></div><div class="room-bottom"><div id="hostHint" class="hint">Draftı başlatmak için oda oluştur.</div><button id="startDraft" class="primary" disabled>Draftı Başlat →</button></div></article>
+    </section>
+
+    <section class="view" id="view-draft">
+      <div class="section-intro"><div><div class="kicker">CANLI SEÇİM</div><h2>Draft Merkezi</h2><p>Oyuncular sırayla seçilir. Her futbolcu yalnızca bir takımda yer alabilir.</p></div><div class="turn-chip" id="turnChip">Odaya katıl</div></div>
+      <div class="draft-layout"><div class="draft-main"><article class="panel draft-toolbar"><div class="filters"><div class="search-wrap"><span>⌕</span><input id="playerSearch" placeholder="Futbolcu ara..."></div><select id="positionFilter"><option value="">Tüm mevkiler</option></select><select id="sortFilter"><option value="rating">Güce göre</option><option value="fee">Bonservise göre</option><option value="name">İsme göre</option></select></div><div class="pool-meta"><span id="poolCount">130 futbolcu</span><span id="pickMeta">Draft başlamadı</span></div></article><div id="playerGrid" class="player-grid"><div class="empty-state">Oyuncuları görmek için bir odaya katıl.</div></div></div><aside class="panel draft-side"><div class="panel-head"><div><h3>Takımım</h3><p>Canlı bütçe ve güç durumu</p></div><span class="panel-icon">⚽</span></div><div class="budget-box"><small>KALAN BÜTÇE</small><strong id="draftBudget">1.100 <i>M€</i></strong><div class="budget-track"><span id="budgetBar"></span></div><small id="spentLabel">0 M€ harcandı</small></div><div class="squad-progress"><div><span>Kadro</span><b id="draftSquadCount">0 / 11</b></div><div class="progress-track"><span id="squadBar"></span></div></div><div id="positionProgress" class="position-progress"></div><div class="score-box"><small>MEVCUT TOPLAM GÜÇ</small><strong id="draftScore">0</strong><span id="draftScoreDetail">Bonuslar dahil</span></div><button class="secondary full" data-jump="squad">Kadromu İncele →</button></aside></div>
+    </section>
+
+    <section class="view" id="view-squad">
+      <div class="section-intro"><div><div class="kicker">TAKIM YÖNETİMİ</div><h2>Kadrom</h2><p>Seçtiğin futbolcular, bonservisler ve puan dökümü.</p></div><div class="score-total"><small>TOPLAM GÜÇ</small><b id="squadTotalScore">0</b></div></div>
+      <div class="squad-layout"><article class="panel"><div class="panel-head"><div><h3>11 kişilik kadro</h3><p>Mevki dağılımına göre kadron.</p></div><span class="panel-icon">♙</span></div><div id="squadRows" class="squad-rows"><div class="empty-state">Henüz futbolcu seçmedin.</div></div></article><aside class="panel"><div class="panel-head"><div><h3>Puan dökümü</h3><p>Excel kurallarına göre hesaplanır.</p></div></div><div id="scoreBreakdown" class="breakdown"></div><div class="captain-box"><h4>Kaptan seçimi</h4><p>11 kişilik kadron tamamlandığında kaptan bonusu alabilecek oyunculardan birini seç.</p><select id="captainSelect" disabled><option value="">Kaptan seç</option></select><small id="captainInfo">Efsane kaptan +4 • Büyük lider +2</small></div></aside></div>
+    </section>
+
+    <section class="view" id="view-leaderboard">
+      <div class="section-intro"><div><div class="kicker">SONUÇLAR • CANLI SIRALAMA</div><h2>Puan Tablosu</h2><p>Canlı puan sıralaması ve aynı odadaki tüm menajerlerin kadroları.</p></div><div class="status-pill"><span class="pulse"></span><span id="leaderboardStatus">Oda bekleniyor</span></div></div>
+      <article class="panel"><div class="panel-head"><div><h3>🏆 Şampiyonluk sıralaması</h3><p>Toplam puan ve belirlenen eşitlik bozma kurallarına göre sıralama.</p></div></div><div id="leaderboardTable"><div class="empty-state">Puan tablosunu görmek için bir odaya katıl. Draft bitince tüm takımlar burada sıralanacak.</div></div><p class="hint" id="leaderboardHint">Draft tamamlanmadan sıralama geçicidir. Nihai sonuç için kadroların tamamlanması ve kaptan seçimlerinin yapılması gerekir.</p></article>
+    </section>
+
+    <section class="view" id="view-rules">
+      <div class="section-intro"><div><div class="kicker">OYUN REHBERİ</div><h2>Oyun Kuralları</h2><p>Oyuncu değerleri ve bağlantı bonusları son paylaştığın Excel dosyasından alınmıştır.</p></div></div>
+      <div class="rules-grid"><article class="panel rule-card"><span class="rule-number">01</span><h3>Kadro ve bütçe</h3><p>Her menajer en fazla 11 oyuncu seçer. Başlangıç bütçesi 1.100 M€’dur. Bonservisler Excel’deki değerlerdir; sistem bütçeyi ve kalan mevkileri doldurmak için gereken en düşük maliyeti kontrol eder.</p></article><article class="panel rule-card"><span class="rule-number">02</span><h3>Mevki dağılımı</h3><p>1 kaleci, 1 sağ bek, 2 stoper, 1 sol bek, 1 ön libero, 1 orta saha, 1 on numara, 1 sağ açık, 1 sol açık ve 1 santrfor.</p></article><article class="panel rule-card"><span class="rule-number">03</span><h3>Ülke bonusu</h3><p>Aynı ülkeden 3 oyuncu: +3 puan. 4 oyuncu: +4 puan. 5 veya daha fazla oyuncu: +5 puan. Bonus her ülke için ayrı hesaplanır.</p></article><article class="panel rule-card"><span class="rule-number">04</span><h3>Özel bağlantı</h3><p>Excel’de futbolcu için belirtilen Özel Bağlantı takımda bulunuyorsa, ilgili oyuncunun ÖBB değeri puana eklenir. Bağlantı karşılıklı yazılmışsa her oyuncunun kendi ÖBB değeri ayrı değerlendirilir.</p></article><article class="panel rule-card"><span class="rule-number">05</span><h3>Kaptan bonusu</h3><p>Efsane kaptanlar: Javier Zanetti, Paolo Maldini, Carles Puyol, Steven Gerrard, Francesco Totti ve Alessandro Del Piero (+4). Büyük liderler: Gianluigi Buffon, John Terry, Andrea Pirlo, Xavi, Frank Lampard ve Zinedine Zidane (+2). Yalnızca bir kaptan seçilir.</p></article><article class="panel rule-card"><span class="rule-number">06</span><h3>Draft sırası</h3><p>Oda sahibi en az 2 kişi olduğunda draftı başlatır. Seçimler yılan draft düzeninde ilerler: sıra son oyuncuya geldiğinde sonraki tur ters yönde başlar. Aynı futbolcu ikinci kez seçilemez.</p></article></div>
+    </section>
+    <footer>FUTBOL DRAFT <span>•</span> En yüksek toplam güç kazanır.</footer>
+  </main>
+</div>
+<div id="modalRoot"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="app.js"></script>
+</body></html>

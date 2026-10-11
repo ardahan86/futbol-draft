@@ -1,0 +1,1305 @@
+{
+  "source": "Draft Oyuncu Listesi(1).xlsx",
+  "players": [
+    {
+      "name": "Gianluigi Buffon",
+      "country": "İTALYA",
+      "rating": 90,
+      "fee": 105,
+      "position": "GK",
+      "link": "Giorgio Chiellini",
+      "linkBonus": 1,
+      "id": "p001"
+    },
+    {
+      "name": "Paolo Maldini",
+      "country": "İTALYA",
+      "rating": 93,
+      "fee": 120,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p002"
+    },
+    {
+      "name": "Manuel Neuer",
+      "country": "ALMANYA",
+      "rating": 89,
+      "fee": 100,
+      "position": "GK",
+      "link": "Philipp Lahm",
+      "linkBonus": 1,
+      "id": "p003"
+    },
+    {
+      "name": "Alessandro Nesta",
+      "country": "İTALYA",
+      "rating": 90,
+      "fee": 105,
+      "position": "CB",
+      "link": "Paolo Maldini",
+      "linkBonus": 2,
+      "id": "p004"
+    },
+    {
+      "name": "Iker Casillas",
+      "country": "İSPANYA",
+      "rating": 88,
+      "fee": 95,
+      "position": "GK",
+      "link": "Sergio Ramos",
+      "linkBonus": 1,
+      "id": "p005"
+    },
+    {
+      "name": "Fabio Cannavaro",
+      "country": "İTALYA",
+      "rating": 91,
+      "fee": 110,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p006"
+    },
+    {
+      "name": "Petr Čech",
+      "country": "ÇEKYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "GK",
+      "link": "John Terry",
+      "linkBonus": 2,
+      "id": "p007"
+    },
+    {
+      "name": "Sergio Ramos",
+      "country": "İSPANYA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p008"
+    },
+    {
+      "name": "Edwin van der Sar",
+      "country": "HOLLANDA",
+      "rating": 84,
+      "fee": 75,
+      "position": "GK",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p009"
+    },
+    {
+      "name": "Carles Puyol",
+      "country": "İSPANYA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p010"
+    },
+    {
+      "name": "Thibaut Courtois",
+      "country": "BELÇİKA",
+      "rating": 86,
+      "fee": 85,
+      "position": "GK",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p011"
+    },
+    {
+      "name": "John Terry",
+      "country": "İNGİLTERE",
+      "rating": 87,
+      "fee": 90,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p012"
+    },
+    {
+      "name": "Alisson Becker",
+      "country": "BREZİLYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "GK",
+      "link": "Virgil van Dijk",
+      "linkBonus": 1,
+      "id": "p013"
+    },
+    {
+      "name": "Rio Ferdinand",
+      "country": "İNGİLTERE",
+      "rating": 88,
+      "fee": 95,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p014"
+    },
+    {
+      "name": "Hugo Lloris",
+      "country": "FRANSA",
+      "rating": 83,
+      "fee": 70,
+      "position": "GK",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p015"
+    },
+    {
+      "name": "Nemanja Vidić",
+      "country": "SIRBİSTAN",
+      "rating": 86,
+      "fee": 85,
+      "position": "CB",
+      "link": "Rio Ferdinand",
+      "linkBonus": 1,
+      "id": "p016"
+    },
+    {
+      "name": "Emiliano Martínez",
+      "country": "ARJANTİN",
+      "rating": 83,
+      "fee": 70,
+      "position": "GK",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p017"
+    },
+    {
+      "name": "Thiago Silva",
+      "country": "BREZİLYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p018"
+    },
+    {
+      "name": "Gianluigi Donnarumma",
+      "country": "İTALYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "GK",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p019"
+    },
+    {
+      "name": "Virgil van Dijk",
+      "country": "HOLLANDA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p020"
+    },
+    {
+      "name": "Pepe",
+      "country": "PORTEKİZ",
+      "rating": 88,
+      "fee": 95,
+      "position": "CB",
+      "link": "Sergio Ramos",
+      "linkBonus": 1,
+      "id": "p021"
+    },
+    {
+      "name": "Cafu",
+      "country": "BREZİLYA",
+      "rating": 91,
+      "fee": 110,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p022"
+    },
+    {
+      "name": "Giorgio Chiellini",
+      "country": "İTALYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "CB",
+      "link": "Leonardo Bonucci",
+      "linkBonus": 1,
+      "id": "p023"
+    },
+    {
+      "name": "Philipp Lahm",
+      "country": "ALMANYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p024"
+    },
+    {
+      "name": "Mats Hummels",
+      "country": "ALMANYA",
+      "rating": 83,
+      "fee": 70,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p025"
+    },
+    {
+      "name": "Dani Alves",
+      "country": "BREZİLYA",
+      "rating": 88,
+      "fee": 95,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p026"
+    },
+    {
+      "name": "Diego Godín",
+      "country": "URUGUAY",
+      "rating": 84,
+      "fee": 75,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p027"
+    },
+    {
+      "name": "Javier Zanetti",
+      "country": "ARJANTİN",
+      "rating": 87,
+      "fee": 90,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p028"
+    },
+    {
+      "name": "Vincent Kompany",
+      "country": "BELÇİKA",
+      "rating": 85,
+      "fee": 80,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p029"
+    },
+    {
+      "name": "Dani Carvajal",
+      "country": "İSPANYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p030"
+    },
+    {
+      "name": "Gerard Piqué",
+      "country": "İSPANYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "CB",
+      "link": "Carles Puyol",
+      "linkBonus": 2,
+      "id": "p031"
+    },
+    {
+      "name": "Trent Alexander-Arnold",
+      "country": "İNGİLTERE",
+      "rating": 84,
+      "fee": 75,
+      "position": "RB",
+      "link": "Virgil van Dijk",
+      "linkBonus": 1,
+      "id": "p032"
+    },
+    {
+      "name": "Leonardo Bonucci",
+      "country": "İTALYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "CB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p033"
+    },
+    {
+      "name": "Kyle Walker",
+      "country": "İNGİLTERE",
+      "rating": 83,
+      "fee": 70,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p034"
+    },
+    {
+      "name": "Marquinhos",
+      "country": "BREZİLYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "CB",
+      "link": "Thiago Silva",
+      "linkBonus": 1,
+      "id": "p035"
+    },
+    {
+      "name": "João Cancelo",
+      "country": "PORTEKİZ",
+      "rating": 82,
+      "fee": 65,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p036"
+    },
+    {
+      "name": "Lilian Thuram",
+      "country": "FRANSA",
+      "rating": 90,
+      "fee": 105,
+      "position": "RB",
+      "link": "Patrick Vieira",
+      "linkBonus": 1,
+      "id": "p037"
+    },
+    {
+      "name": "Achraf Hakimi",
+      "country": "FAS",
+      "rating": 89,
+      "fee": 100,
+      "position": "RB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p038"
+    },
+    {
+      "name": "Gianluca Zambrotta",
+      "country": "İTALYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "RB",
+      "link": "Alessandro Nesta",
+      "linkBonus": 2,
+      "id": "p039"
+    },
+    {
+      "name": "Roberto Carlos",
+      "country": "BREZİLYA",
+      "rating": 92,
+      "fee": 115,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p040"
+    },
+    {
+      "name": "Xavi",
+      "country": "İSPANYA",
+      "rating": 94,
+      "fee": 125,
+      "position": "CM",
+      "link": "Lionel Messi",
+      "linkBonus": 1,
+      "id": "p041"
+    },
+    {
+      "name": "Marcelo",
+      "country": "BREZİLYA",
+      "rating": 90,
+      "fee": 105,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p042"
+    },
+    {
+      "name": "Andrés Iniesta",
+      "country": "İSPANYA",
+      "rating": 95,
+      "fee": 130,
+      "position": "CM",
+      "link": "Lionel Messi",
+      "linkBonus": 1,
+      "id": "p043"
+    },
+    {
+      "name": "Ashley Cole",
+      "country": "İNGİLTERE",
+      "rating": 84,
+      "fee": 75,
+      "position": "LB",
+      "link": "John Terry",
+      "linkBonus": 1,
+      "id": "p044"
+    },
+    {
+      "name": "Luka Modrić",
+      "country": "HIRVATİSTAN",
+      "rating": 90,
+      "fee": 105,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p045"
+    },
+    {
+      "name": "Patrice Evra",
+      "country": "FRANSA",
+      "rating": 89,
+      "fee": 100,
+      "position": "LB",
+      "link": "Rio Ferdinand",
+      "linkBonus": 2,
+      "id": "p046"
+    },
+    {
+      "name": "Steven Gerrard",
+      "country": "İNGİLTERE",
+      "rating": 88,
+      "fee": 95,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p047"
+    },
+    {
+      "name": "Jordi Alba",
+      "country": "İSPANYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p048"
+    },
+    {
+      "name": "Frank Lampard",
+      "country": "İNGİLTERE",
+      "rating": 88,
+      "fee": 95,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p049"
+    },
+    {
+      "name": "David Alaba",
+      "country": "AVUSTURYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p050"
+    },
+    {
+      "name": "Clarence Seedorf",
+      "country": "HOLLANDA",
+      "rating": 87,
+      "fee": 90,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p051"
+    },
+    {
+      "name": "Andrew Robertson",
+      "country": "İSKOÇYA",
+      "rating": 83,
+      "fee": 70,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p052"
+    },
+    {
+      "name": "Pavel Nedvěd",
+      "country": "ÇEKYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "CM",
+      "link": "Alessandro Del Piero",
+      "linkBonus": 1,
+      "id": "p053"
+    },
+    {
+      "name": "Theo Hernández",
+      "country": "FRANSA",
+      "rating": 84,
+      "fee": 75,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p054"
+    },
+    {
+      "name": "Paul Pogba",
+      "country": "FRANSA",
+      "rating": 84,
+      "fee": 75,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p055"
+    },
+    {
+      "name": "Éric Abidal",
+      "country": "FRANSA",
+      "rating": 86,
+      "fee": 85,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p056"
+    },
+    {
+      "name": "Toni Kroos",
+      "country": "ALMANYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p057"
+    },
+    {
+      "name": "Joan Capdevila",
+      "country": "İSPANYA",
+      "rating": 83,
+      "fee": 70,
+      "position": "LB",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p058"
+    },
+    {
+      "name": "Kevin De Bruyne",
+      "country": "BELÇİKA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p059"
+    },
+    {
+      "name": "Filipe Luís",
+      "country": "BREZİLYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "LB",
+      "link": "Diego Godín",
+      "linkBonus": 1,
+      "id": "p060"
+    },
+    {
+      "name": "Juan Sebastián Verón",
+      "country": "ARJANTİN",
+      "rating": 88,
+      "fee": 95,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p061"
+    },
+    {
+      "name": "Michael Ballack",
+      "country": "ALMANYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p062"
+    },
+    {
+      "name": "Paul Scholes",
+      "country": "İNGİLTERE",
+      "rating": 84,
+      "fee": 75,
+      "position": "CM",
+      "link": "Ryan Giggs",
+      "linkBonus": 1,
+      "id": "p063"
+    },
+    {
+      "name": "Cesc Fàbregas",
+      "country": "İSPANYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "CM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p064"
+    },
+    {
+      "name": "Claude Makélélé",
+      "country": "FRANSA",
+      "rating": 87,
+      "fee": 90,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p065"
+    },
+    {
+      "name": "Neymar",
+      "country": "BREZİLYA",
+      "rating": 90,
+      "fee": 105,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p066"
+    },
+    {
+      "name": "Sergio Busquets",
+      "country": "İSPANYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "DM",
+      "link": "Xavi",
+      "linkBonus": 2,
+      "id": "p067"
+    },
+    {
+      "name": "Gareth Bale",
+      "country": "GALLER",
+      "rating": 88,
+      "fee": 95,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p068"
+    },
+    {
+      "name": "Yaya Touré",
+      "country": "FİLDİŞİ",
+      "rating": 88,
+      "fee": 95,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p069"
+    },
+    {
+      "name": "Sadio Mané",
+      "country": "SENEGAL",
+      "rating": 87,
+      "fee": 90,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p070"
+    },
+    {
+      "name": "Patrick Vieira",
+      "country": "FRANSA",
+      "rating": 90,
+      "fee": 105,
+      "position": "DM",
+      "link": "Zinedine Zidane",
+      "linkBonus": 1,
+      "id": "p071"
+    },
+    {
+      "name": "Heung-min Son",
+      "country": "GÜNEY KORE",
+      "rating": 86,
+      "fee": 85,
+      "position": "LW",
+      "link": "Harry Kane",
+      "linkBonus": 1,
+      "id": "p072"
+    },
+    {
+      "name": "Andrea Pirlo",
+      "country": "İTALYA",
+      "rating": 89,
+      "fee": 100,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p073"
+    },
+    {
+      "name": "Ryan Giggs",
+      "country": "GALLER",
+      "rating": 85,
+      "fee": 80,
+      "position": "LW",
+      "link": "Cristiano Ronaldo",
+      "linkBonus": 1,
+      "id": "p074"
+    },
+    {
+      "name": "Casemiro",
+      "country": "BREZİLYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "DM",
+      "link": "Luka Modrić",
+      "linkBonus": 2,
+      "id": "p075"
+    },
+    {
+      "name": "Robert Pirès",
+      "country": "FRANSA",
+      "rating": 84,
+      "fee": 75,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p076"
+    },
+    {
+      "name": "Bastian Schweinsteiger",
+      "country": "ALMANYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "DM",
+      "link": "Michael Ballack",
+      "linkBonus": 1,
+      "id": "p077"
+    },
+    {
+      "name": "Vinícius Júnior",
+      "country": "BREZİLYA",
+      "rating": 88,
+      "fee": 95,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p078"
+    },
+    {
+      "name": "Xabi Alonso",
+      "country": "İSPANYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p079"
+    },
+    {
+      "name": "Luis Díaz",
+      "country": "KOLOMBİYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p080"
+    },
+    {
+      "name": "N'Golo Kanté",
+      "country": "FRANSA",
+      "rating": 85,
+      "fee": 80,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p081"
+    },
+    {
+      "name": "Raheem Sterling",
+      "country": "İNGİLTERE",
+      "rating": 85,
+      "fee": 80,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p082"
+    },
+    {
+      "name": "Gennaro Gattuso",
+      "country": "İTALYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "DM",
+      "link": "Clarence Seedorf",
+      "linkBonus": 2,
+      "id": "p083"
+    },
+    {
+      "name": "Kingsley Coman",
+      "country": "FRANSA",
+      "rating": 86,
+      "fee": 85,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p084"
+    },
+    {
+      "name": "Esteban Cambiasso",
+      "country": "ARJANTİN",
+      "rating": 85,
+      "fee": 80,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p085"
+    },
+    {
+      "name": "Ivan Perišić",
+      "country": "HIRVATİSTAN",
+      "rating": 84,
+      "fee": 75,
+      "position": "LW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p086"
+    },
+    {
+      "name": "Rodri",
+      "country": "İSPANYA",
+      "rating": 86,
+      "fee": 85,
+      "position": "DM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p087"
+    },
+    {
+      "name": "Lionel Messi",
+      "country": "ARJANTİN",
+      "rating": 99,
+      "fee": 150,
+      "position": "CAM",
+      "link": "Andrés Iniesta",
+      "linkBonus": 1,
+      "id": "p088"
+    },
+    {
+      "name": "Cristiano Ronaldo",
+      "country": "PORTEKİZ",
+      "rating": 98,
+      "fee": 145,
+      "position": "ST",
+      "link": "Ángel Di María",
+      "linkBonus": 2,
+      "id": "p089"
+    },
+    {
+      "name": "Ronaldinho",
+      "country": "BREZİLYA",
+      "rating": 98,
+      "fee": 145,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p090"
+    },
+    {
+      "name": "Ronaldo Nazário",
+      "country": "BREZİLYA",
+      "rating": 98,
+      "fee": 145,
+      "position": "ST",
+      "link": "Zinedine Zidane",
+      "linkBonus": 2,
+      "id": "p091"
+    },
+    {
+      "name": "Zinedine Zidane",
+      "country": "FRANSA",
+      "rating": 98,
+      "fee": 145,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p092"
+    },
+    {
+      "name": "Robert Lewandowski",
+      "country": "POLONYA",
+      "rating": 94,
+      "fee": 125,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p093"
+    },
+    {
+      "name": "Kaká",
+      "country": "BREZİLYA",
+      "rating": 94,
+      "fee": 125,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p094"
+    },
+    {
+      "name": "Luis Suárez",
+      "country": "URUGUAY",
+      "rating": 89,
+      "fee": 100,
+      "position": "ST",
+      "link": "Lionel Messi",
+      "linkBonus": 3,
+      "id": "p095"
+    },
+    {
+      "name": "Mesut Özil",
+      "country": "ALMANYA",
+      "rating": 91,
+      "fee": 110,
+      "position": "CAM",
+      "link": "Cristiano Ronaldo",
+      "linkBonus": 2,
+      "id": "p096"
+    },
+    {
+      "name": "Karim Benzema",
+      "country": "FRANSA",
+      "rating": 90,
+      "fee": 105,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p097"
+    },
+    {
+      "name": "Francesco Totti",
+      "country": "İTALYA",
+      "rating": 90,
+      "fee": 105,
+      "position": "CAM",
+      "link": "Cafu",
+      "linkBonus": 1,
+      "id": "p098"
+    },
+    {
+      "name": "Zlatan Ibrahimović",
+      "country": "İSVEÇ",
+      "rating": 93,
+      "fee": 120,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p099"
+    },
+    {
+      "name": "Eden Hazard",
+      "country": "BELÇİKA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p100"
+    },
+    {
+      "name": "Samuel Eto'o",
+      "country": "KAMERUN",
+      "rating": 93,
+      "fee": 120,
+      "position": "ST",
+      "link": "Ronaldinho",
+      "linkBonus": 2,
+      "id": "p101"
+    },
+    {
+      "name": "Juan Román Riquelme",
+      "country": "ARJANTİN",
+      "rating": 88,
+      "fee": 95,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p102"
+    },
+    {
+      "name": "Didier Drogba",
+      "country": "FİLDİŞİ",
+      "rating": 92,
+      "fee": 115,
+      "position": "ST",
+      "link": "Frank Lampard",
+      "linkBonus": 2,
+      "id": "p103"
+    },
+    {
+      "name": "Alessandro Del Piero",
+      "country": "İTALYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p104"
+    },
+    {
+      "name": "Erling Haaland",
+      "country": "NORVEÇ",
+      "rating": 90,
+      "fee": 105,
+      "position": "ST",
+      "link": "Kevin De Bruyne",
+      "linkBonus": 1,
+      "id": "p105"
+    },
+    {
+      "name": "Rui Costa",
+      "country": "PORTEKİZ",
+      "rating": 86,
+      "fee": 85,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p106"
+    },
+    {
+      "name": "Kylian Mbappé",
+      "country": "FRANSA",
+      "rating": 96,
+      "fee": 135,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p107"
+    },
+    {
+      "name": "Deco",
+      "country": "PORTEKİZ",
+      "rating": 86,
+      "fee": 85,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p108"
+    },
+    {
+      "name": "Harry Kane",
+      "country": "İNGİLTERE",
+      "rating": 95,
+      "fee": 130,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p109"
+    },
+    {
+      "name": "Dennis Bergkamp",
+      "country": "HOLLANDA",
+      "rating": 89,
+      "fee": 100,
+      "position": "CAM",
+      "link": "Thierry Henry",
+      "linkBonus": 1,
+      "id": "p110"
+    },
+    {
+      "name": "Robin van Persie",
+      "country": "HOLLANDA",
+      "rating": 90,
+      "fee": 105,
+      "position": "ST",
+      "link": "Wesley Sneijder",
+      "linkBonus": 2,
+      "id": "p111"
+    },
+    {
+      "name": "Wesley Sneijder",
+      "country": "HOLLANDA",
+      "rating": 90,
+      "fee": 105,
+      "position": "CAM",
+      "link": "Arjen Robben",
+      "linkBonus": 2,
+      "id": "p112"
+    },
+    {
+      "name": "Miroslav Klose",
+      "country": "ALMANYA",
+      "rating": 88,
+      "fee": 95,
+      "position": "ST",
+      "link": "Michael Ballack",
+      "linkBonus": 1,
+      "id": "p113"
+    },
+    {
+      "name": "Rivaldo",
+      "country": "BREZİLYA",
+      "rating": 92,
+      "fee": 115,
+      "position": "CAM",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p114"
+    },
+    {
+      "name": "Ruud van Nistelrooy",
+      "country": "HOLLANDA",
+      "rating": 89,
+      "fee": 100,
+      "position": "ST",
+      "link": "Arjen Robben",
+      "linkBonus": 1,
+      "id": "p115"
+    },
+    {
+      "name": "Fernando Torres",
+      "country": "İSPANYA",
+      "rating": 87,
+      "fee": 90,
+      "position": "ST",
+      "link": "Steven Gerrard",
+      "linkBonus": 2,
+      "id": "p116"
+    },
+    {
+      "name": "Luís Figo",
+      "country": "PORTEKİZ",
+      "rating": 88,
+      "fee": 95,
+      "position": "RW",
+      "link": "Zinedine Zidane",
+      "linkBonus": 1,
+      "id": "p117"
+    },
+    {
+      "name": "Sergio Agüero",
+      "country": "ARJANTİN",
+      "rating": 88,
+      "fee": 95,
+      "position": "ST",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p118"
+    },
+    {
+      "name": "Arjen Robben",
+      "country": "HOLLANDA",
+      "rating": 90,
+      "fee": 105,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p119"
+    },
+    {
+      "name": "Andriy Shevchenko",
+      "country": "UKRAYNA",
+      "rating": 91,
+      "fee": 110,
+      "position": "ST",
+      "link": "Kaká",
+      "linkBonus": 3,
+      "id": "p120"
+    },
+    {
+      "name": "Franck Ribéry",
+      "country": "FRANSA",
+      "rating": 89,
+      "fee": 100,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p121"
+    },
+    {
+      "name": "Thierry Henry",
+      "country": "FRANSA",
+      "rating": 91,
+      "fee": 110,
+      "position": "ST",
+      "link": "Robert Pirès",
+      "linkBonus": 1,
+      "id": "p122"
+    },
+    {
+      "name": "Mohamed Salah",
+      "country": "MISIR",
+      "rating": 93,
+      "fee": 120,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p123"
+    },
+    {
+      "name": "Ousmane Dembélé",
+      "country": "FRANSA",
+      "rating": 90,
+      "fee": 105,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p124"
+    },
+    {
+      "name": "Thomas Müller",
+      "country": "ALMANYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p125"
+    },
+    {
+      "name": "Ángel Di María",
+      "country": "ARJANTİN",
+      "rating": 89,
+      "fee": 100,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p126"
+    },
+    {
+      "name": "David Beckham",
+      "country": "İNGİLTERE",
+      "rating": 88,
+      "fee": 95,
+      "position": "RW",
+      "link": "Paul Scholes",
+      "linkBonus": 1,
+      "id": "p127"
+    },
+    {
+      "name": "Leroy Sané",
+      "country": "ALMANYA",
+      "rating": 85,
+      "fee": 80,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p128"
+    },
+    {
+      "name": "Raphinha",
+      "country": "BREZİLYA",
+      "rating": 88,
+      "fee": 95,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p129"
+    },
+    {
+      "name": "Joaquín",
+      "country": "İSPANYA",
+      "rating": 84,
+      "fee": 75,
+      "position": "RW",
+      "link": null,
+      "linkBonus": 0,
+      "id": "p130"
+    }
+  ]
+}
