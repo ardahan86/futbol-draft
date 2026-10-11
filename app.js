@@ -48,6 +48,8 @@ function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;'
 function playerCopy(p){return {id:p.id,name:p.name,country:p.country,rating:p.rating,fee:p.fee,position:p.position,link:p.link||null,linkBonus:Number(p.linkBonus||0)};}
 
 async function init(){
+  // Eski index.html sürümünden kalmış ayrı Puan Tablosu sekmesini kaldır.
+  document.querySelectorAll('[data-view="leaderboard"], #view-leaderboard').forEach(el=>el.remove());
   try{
     const response=await fetch('./players.json',{cache:'no-store'});if(!response.ok)throw new Error('players.json dosyası yüklenemedi.');
     const data=await response.json();playerPool=data.players||[];
@@ -278,7 +280,12 @@ async function simulateSingleMatch(matchId){
       results[matchId]={...score,...report,played:true,playedAt:Date.now()};
       tx.update(ref,{'league.results':results,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     });
-    notify('Maç simüle edildi. Skor ve maç detayları kaydedildi.');
+    // Snapshot beklenmeden de sonucu ekrana getir; ilgili maçın detayları açılır.
+    const fresh=await ref.get();
+    if(fresh.exists){room=fresh.data();renderAll();}
+    const details=$(`matchDetails-${matchId}`);
+    if(details)details.classList.remove('hidden');
+    notify('Maç simüle edildi. Gol anları ve istatistikler kaydedildi.');
   }catch(err){notify(firebaseError(err),true);}
 }
 
