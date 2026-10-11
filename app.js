@@ -212,21 +212,35 @@ function averageRating(squad,positions){
   if(!players.length)return squad.reduce((sum,p)=>sum+Number(p.rating||0),0)/Math.max(1,squad.length);
   return players.reduce((sum,p)=>sum+Number(p.rating||0),0)/players.length;
 }
+function sumRatings(squad, positions){
+  return (squad||[]).filter(p=>positions.includes(p.position)).reduce((sum,p)=>sum+Number(p.rating||0),0);
+}
+function averageRating(squad,positions){
+  const players=(squad||[]).filter(p=>positions.includes(p.position));
+  if(!players.length)return 50;
+  return players.reduce((sum,p)=>sum+Number(p.rating||0),0)/players.length;
+}
 function teamProfile(team){
   const squad=team.squad||[];
-  const attack=averageRating(squad,['ST','RW','LW','CAM']);
-  const midfield=averageRating(squad,['DM','CM','CAM']);
-  const defense=averageRating(squad,['RB','CB','LB','DM']);
-  const goalkeeper=averageRating(squad,['GK']);
   const parts=scoreParts(squad,team.captainId);
-  // Kimya ve kaptan bonusları maç motoruna da sınırlı ölçüde etki eder.
-  const synergy=(parts.country*0.20)+(parts.links*0.25)+(parts.captain*0.30);
-  return {attack:attack+synergy,midfield:midfield+synergy*0.45,defense:defense+synergy*0.35,goalkeeper,parts,power:parts.total};
+  // Dört temel: toplam güç -> topa sahip olma; savunma -> savunma aksiyonları;
+  // CM/CAM/RW/LW + ülke bonusu -> xG; CAM/RW/LW/ST -> şut isabeti/hücum.
+  const possessionPower=parts.total;
+  const defenseRaw=sumRatings(squad,['GK','RB','LB','CB','DM'])+parts.captain;
+  const defenseAvg=defenseRaw/6;
+  const xgRaw=sumRatings(squad,['CM','CAM','RW','LW'])+parts.country;
+  const xgAvg=xgRaw/4;
+  const attackRaw=sumRatings(squad,['CAM','RW','LW','ST']);
+  const attackAvg=attackRaw/4;
+  const goalkeeper=averageRating(squad,['GK']);
+  const midfield=averageRating(squad,['CM','CAM','RW','LW']);
+  return {parts,power:parts.total,possessionPower,defenseRaw,defenseAvg,xgRaw,xgAvg,attackRaw,attackAvg,goalkeeper,midfield};
 }
 function simulateScore(home,away){
   const h=teamProfile(home),a=teamProfile(away);
-  const homeExpected=clamp(1.42+(h.attack-a.defense)/17+(h.midfield-a.midfield)/32+(h.goalkeeper-a.goalkeeper)/45+0.18,0.25,3.35);
-  const awayExpected=clamp(1.20+(a.attack-h.defense)/17+(a.midfield-h.midfield)/32+(a.goalkeeper-h.goalkeeper)/45,0.20,3.15);
+  // xG, hücum üretim profili ile rakip savunmasının karşılaştırılmasından doğar.
+  const homeExpected=clamp(1.28+(h.xgAvg-a.defenseAvg)*0.035+(h.attackAvg-a.defenseAvg)*0.018+(h.midfield-a.midfield)*0.012+0.16,0.18,3.65);
+  const awayExpected=clamp(1.28+(a.xgAvg-h.defenseAvg)*0.035+(a.attackAvg-h.defenseAvg)*0.018+(a.midfield-h.midfield)*0.012,0.15,3.45);
   return {homeGoals:poissonGoals(homeExpected),awayGoals:poissonGoals(awayExpected),homeXg:Number(homeExpected.toFixed(2)),awayXg:Number(awayExpected.toFixed(2))};
 }
 async function createLeagueFixtures(){
@@ -296,18 +310,47 @@ function makeMatchReport(home,away,score){
   }
   events.sort((a,b)=>a.minute-b.minute);
   const hp=teamProfile(home),ap=teamProfile(away);
-  const homePoss=clamp(Math.round(50+(hp.midfield-ap.midfield)*1.05+(Math.random()*10-5)),32,68);
+  // Temel 1: toplam takım gücü topa sahip olmayı belirgin biçimde etkiler.
+  const possessionDelta=clamp((hp.possessionPower-ap.possessionPower)*0.035,-13,13);
+  const homePoss=clamp(Math.round(50+possessionDelta+(Math.random()*8-4)),30,70);
   const awayPoss=100-homePoss;
   const hXg=score.homeXg??1.2,aXg=score.awayXg??1.1;
-  const homeShots=Math.max(score.homeGoals,Math.round(hXg*2.6+3+Math.random()*5));
-  const awayShots=Math.max(score.awayGoals,Math.round(aXg*2.6+3+Math.random()*5));
-  const homeOnTarget=Math.min(homeShots,Math.max(score.homeGoals,Math.round(hXg*1.35+Math.random()*2.2)));
-  const awayOnTarget=Math.min(awayShots,Math.max(score.awayGoals,Math.round(aXg*1.35+Math.random()*2.2)));
+  // Temel 4: CAM/RW/LW/ST toplamı şut isabetini ve hücum verimini belirler.
+  const homeShots=Math.max(score.homeGoals,Math.round(hXg*2.8+3+Math.random()*4));
+  const awayShots=Math.max(score.awayGoals,Math.round(aXg*2.8+3+Math.random()*4));
+  const homeAccuracy=clamp(0.27+(hp.attackAvg-50)*0.006,0.18,0.66);
+  const awayAccuracy=clamp(0.27+(ap.attackAvg-50)*0.006,0.18,0.66);
+  const homeOnTarget=Math.min(homeShots,Math.max(score.homeGoals,Math.round(homeShots*homeAccuracy+Math.random()*2)));
+  const awayOnTarget=Math.min(awayShots,Math.max(score.awayGoals,Math.round(awayShots*awayAccuracy+Math.random()*2)));
+  // Temel 2: savunma toplamı + kaptan bonusu; her aksiyonun girişim ve başarı sayısı ayrı tutulur.
+  function defenseActions(defendingTeam, attackingShots, attackingOnTarget){
+    const dp=teamProfile(defendingTeam);
+    const strength=clamp((dp.defenseAvg-45)*0.012,-0.35,0.35);
+    const blockAttempts=Math.max(1,Math.round(attackingShots*(0.48+Math.random()*0.20)));
+    const blockSuccess=clamp(0.34+strength,0.12,0.72);
+    const blocks=Math.min(attackingShots,Math.round(blockAttempts*blockSuccess));
+    const tackleAttempts=clamp(Math.round(8+Math.random()*8+(100-dp.possessionPower%100)*0.02),5,20);
+    const tackleRate=clamp(0.48+strength,0.20,0.82);
+    const tackles=Math.round(tackleAttempts*tackleRate);
+    const interceptAttempts=clamp(Math.round(5+Math.random()*7),3,15);
+    const interceptRate=clamp(0.42+strength*0.75,0.18,0.78);
+    const interceptions=Math.round(interceptAttempts*interceptRate);
+    const attackStops=Math.round((tackles+interceptions)*clamp(0.35+strength*0.5,0.18,0.65));
+    const qualityReduced=Math.max(0,Math.round((attackingShots-blocks)*clamp(0.18+strength*0.5,0.05,0.42)));
+    return {blockAttempts,blocks,tackleAttempts,tackles,interceptAttempts,interceptions,attackStops,qualityReduced};
+  }
+  const homeDefense=defenseActions(home,awayShots,awayOnTarget);
+  const awayDefense=defenseActions(away,homeShots,homeOnTarget);
   const h=hp.parts,a=ap.parts;
   const goalEvents=events.filter(e=>e.type==='goal');
   const scorers={};goalEvents.forEach(e=>{const key=`${e.teamUid}:${e.playerId||e.playerName}`;scorers[key]??={teamName:e.teamName,playerName:e.playerName,goals:0};scorers[key].goals++;});
   const summary=score.homeGoals===score.awayGoals?`${home.name} ve ${away.name} sahadan ${score.homeGoals}-${score.awayGoals} beraberlikle ayrıldı.`:score.homeGoals>score.awayGoals?`${home.name}, ${away.name} karşısında ${score.homeGoals}-${score.awayGoals} kazanarak 3 puanı aldı.`:`${away.name}, deplasmanda ${home.name} takımını ${score.awayGoals}-${score.homeGoals} yenerek 3 puanı aldı.`;
-  return {events,scorers:Object.values(scorers),stats:{homePossession:homePoss,awayPossession:awayPoss,homeShots,awayShots,homeShotsOnTarget:homeOnTarget,awayShotsOnTarget:awayOnTarget,homeCorners:clamp(Math.round(homeShots*.42+Math.random()*3),0,14),awayCorners:clamp(Math.round(awayShots*.42+Math.random()*3),0,14),homeSaves:Math.max(0,awayOnTarget-score.awayGoals),awaySaves:Math.max(0,homeOnTarget-score.homeGoals),homeXg:hXg,awayXg:aXg,homeYellow:events.filter(e=>e.teamUid===home.id&&e.type==='yellow').length,awayYellow:events.filter(e=>e.teamUid===away.id&&e.type==='yellow').length,homeRed:events.filter(e=>e.teamUid===home.id&&e.type==='red').length,awayRed:events.filter(e=>e.teamUid===away.id&&e.type==='red').length,homePower:hp.power,awayPower:ap.power,homeAttack:Number(hp.attack.toFixed(1)),awayAttack:Number(ap.attack.toFixed(1)),homeMidfield:Number(hp.midfield.toFixed(1)),awayMidfield:Number(ap.midfield.toFixed(1)),homeDefense:Number(hp.defense.toFixed(1)),awayDefense:Number(ap.defense.toFixed(1)),homeGoalkeeper:Number(hp.goalkeeper.toFixed(1)),awayGoalkeeper:Number(ap.goalkeeper.toFixed(1)),homeBase:h.base,awayBase:a.base,homeCountry:h.country,awayCountry:a.country,homeLinks:h.links,awayLinks:a.links,homeCaptain:h.captain,awayCaptain:a.captain},summary};
+  return {events,scorers:Object.values(scorers),stats:{homePossession:homePoss,awayPossession:awayPoss,homeShots,awayShots,homeShotsOnTarget:homeOnTarget,awayShotsOnTarget:awayOnTarget,homeCorners:clamp(Math.round(homeShots*.42+Math.random()*3),0,14),awayCorners:clamp(Math.round(awayShots*.42+Math.random()*3),0,14),homeSaves:Math.max(0,awayOnTarget-score.awayGoals),awaySaves:Math.max(0,homeOnTarget-score.homeGoals),homeXg:hXg,awayXg:aXg,homeYellow:events.filter(e=>e.teamUid===home.id&&e.type==='yellow').length,awayYellow:events.filter(e=>e.teamUid===away.id&&e.type==='yellow').length,homeRed:events.filter(e=>e.teamUid===home.id&&e.type==='red').length,awayRed:events.filter(e=>e.teamUid===away.id&&e.type==='red').length,homePower:hp.power,awayPower:ap.power,homeAttack:Number(hp.attack.toFixed(1)),awayAttack:Number(ap.attack.toFixed(1)),homeMidfield:Number(hp.midfield.toFixed(1)),awayMidfield:Number(ap.midfield.toFixed(1)),homeDefense:Number(hp.defense.toFixed(1)),awayDefense:Number(ap.defense.toFixed(1)),homeGoalkeeper:Number(hp.goalkeeper.toFixed(1)),awayGoalkeeper:Number(ap.goalkeeper.toFixed(1)),homeBase:h.base,awayBase:a.base,homeCountry:h.country,awayCountry:a.country,homeLinks:h.links,awayLinks:a.links,homeCaptain:h.captain,awayCaptain:a.captain,
+  homeAttackTotal:hp.attackRaw,awayAttackTotal:ap.attackRaw,homeXgTotal:hp.xgRaw,awayXgTotal:ap.xgRaw,homeDefenseTotal:hp.defenseRaw,awayDefenseTotal:ap.defenseRaw,
+  homeBlockAttempts:awayDefense.blockAttempts,awayBlockAttempts:homeDefense.blockAttempts,homeBlocks:awayDefense.blocks,awayBlocks:homeDefense.blocks,
+  homeTackleAttempts:homeDefense.tackleAttempts,awayTackleAttempts:awayDefense.tackleAttempts,homeTackles:homeDefense.tackles,awayTackles:awayDefense.tackles,
+  homeInterceptAttempts:homeDefense.interceptAttempts,awayInterceptAttempts:awayDefense.interceptAttempts,homeInterceptions:homeDefense.interceptions,awayInterceptions:awayDefense.interceptions,
+  homeAttackStops:awayDefense.attackStops,awayAttackStops:homeDefense.attackStops,homeQualityReduced:awayDefense.qualityReduced,awayQualityReduced:homeDefense.qualityReduced},summary};
 }
 async function simulateSingleMatch(matchId){
   if(!room||room.status!=='finished'){notify('Önce draft tamamlanmalı.',true);return;}
@@ -368,7 +411,7 @@ function renderLeague(){
   standingsEl.innerHTML=`<div class="league-table-wrap"><table class="league-table"><thead><tr><th>#</th><th>Menajer</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody>${sorted.map((t,i)=>`<tr class="${i===0&&played===fixtures.length?'league-top':''}"><td>${i+1}</td><td>${esc(t.name)}${t.id===uid?' (Sen)':''}</td><td>${t.played}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join('')}</tbody></table></div>`;
   const teamNames=Object.fromEntries(teams.map(t=>[t.id,t.name]));
   const rounds={};fixtures.forEach(m=>(rounds[m.round]??=[]).push(m));
-  fixturesEl.innerHTML=Object.entries(rounds).sort((a,b)=>Number(a[0])-Number(b[0])).map(([round,matches])=>`<div class="league-fixture-round"><h4>${Math.ceil(Number(round)/Math.max(1,teams.length-1))===1?'1. DEVRE':'2. DEVRE'} · ${round}. HAFTA</h4>${matches.map(m=>{const r=results[m.id],homeName=teamNames[m.homeUid]||'Takım',awayName=teamNames[m.awayUid]||'Takım';const report=r?.stats?`<div class="match-detail-grid"><div><small>TOPA SAHİP OLMA</small><b>${r.stats.homePossession}% – ${r.stats.awayPossession}%</b></div><div><small>ŞUT</small><b>${r.stats.homeShots} – ${r.stats.awayShots}</b></div><div><small>İSABETLİ ŞUT</small><b>${r.stats.homeShotsOnTarget} – ${r.stats.awayShotsOnTarget}</b></div><div><small>KORNER</small><b>${r.stats.homeCorners} – ${r.stats.awayCorners}</b></div><div><small>BEKLENEN GOL (xG)</small><b>${Number(r.stats.homeXg||0).toFixed(2)} – ${Number(r.stats.awayXg||0).toFixed(2)}</b></div><div><small>KALECİ KURTARIŞI</small><b>${r.stats.homeSaves??'—'} – ${r.stats.awaySaves??'—'}</b></div><div><small>SARI / KIRMIZI KART</small><b>${r.stats.homeYellow??0}/${r.stats.homeRed??0} – ${r.stats.awayYellow??0}/${r.stats.awayRed??0}</b></div></div><div class="match-power-grid"><div><b>${esc(homeName)}</b><span>Temel ${r.stats.homeBase} · Ülke +${r.stats.homeCountry} · Bağ +${r.stats.homeLinks} · Kaptan +${r.stats.homeCaptain}</span><strong>Toplam güç ${r.stats.homePower}</strong></div><div><b>${esc(awayName)}</b><span>Temel ${r.stats.awayBase} · Ülke +${r.stats.awayCountry} · Bağ +${r.stats.awayLinks} · Kaptan +${r.stats.awayCaptain}</span><strong>Toplam güç ${r.stats.awayPower}</strong></div></div><p class="match-summary">${esc(r.summary||'Maç tamamlandı.')}</p><div class="match-events"><h5>📋 Maç olayları</h5>${r.events?.length?r.events.map(e=>`<div class="match-event"><span>${e.minute}’</span><b>${e.type==='goal'?'⚽':e.type==='yellow'?'🟨':'🟥'} ${esc(e.playerName)}${e.type==='goal'&&e.assistName?` <small>(Asist: ${esc(e.assistName)})</small>`:''}</b><small>${esc(e.teamName)}${e.type==='goal'?' · Gol':e.type==='yellow'?' · Sarı kart':' · Kırmızı kart'}</small></div>`).join(''):'<p>Kayda değer olay olmadı.</p>'}</div><div class="match-scorers"><h5>🥅 Gol katkıları</h5>${r.scorers?.length?r.scorers.map(g=>`<div class="match-event"><span>${g.goals} gol</span><b>${esc(g.playerName)}</b><small>${esc(g.teamName)}</small></div>`).join(''):'<p>Bu maçta gol olmadı.</p>'}</div>`:`<p class="hint">${r?'Bu maç eski sürümde simüle edilmiş; ayrıntılı istatistik kaydı bulunmuyor.':'Maç oynandığında skor, gol anları, takım güçleri ve maç istatistikleri burada gösterilecek.'}</p>`;return `<article class="league-match-card"><div class="league-match"><span class="league-team">${esc(homeName)}</span><span class="league-score ${r?'':'pending'}">${r?`${r.homeGoals} – ${r.awayGoals}`:'VS'}</span><span class="league-team">${esc(awayName)}</span><small class="league-match-meta">${r?'Maç tamamlandı':'Henüz oynanmadı'}</small></div><div class="league-match-controls">${!r?`<button class="primary small" data-sim-match="${esc(m.id)}">⚽ Maçı Simüle Et</button>`:''}<button class="secondary small" data-match-details="${esc(m.id)}">${r?'Maç Detaylarını Göster':'Maç Bilgisi'}</button></div><div class="league-match-details ${r?'':'hidden'}" id="matchDetails-${esc(m.id)}">${report}</div></article>`;}).join('')}</div>`).join('');
+  fixturesEl.innerHTML=Object.entries(rounds).sort((a,b)=>Number(a[0])-Number(b[0])).map(([round,matches])=>`<div class="league-fixture-round"><h4>${Math.ceil(Number(round)/Math.max(1,teams.length-1))===1?'1. DEVRE':'2. DEVRE'} · ${round}. HAFTA</h4>${matches.map(m=>{const r=results[m.id],homeName=teamNames[m.homeUid]||'Takım',awayName=teamNames[m.awayUid]||'Takım';const report=r?.stats?`<div class="match-detail-grid"><div><small>TOPA SAHİP OLMA</small><b>${r.stats.homePossession}% – ${r.stats.awayPossession}%</b></div><div><small>ŞUT</small><b>${r.stats.homeShots} – ${r.stats.awayShots}</b></div><div><small>İSABETLİ ŞUT</small><b>${r.stats.homeShotsOnTarget} – ${r.stats.awayShotsOnTarget}</b></div><div><small>KORNER</small><b>${r.stats.homeCorners} – ${r.stats.awayCorners}</b></div><div><small>BEKLENEN GOL (xG)</small><b>${Number(r.stats.homeXg||0).toFixed(2)} – ${Number(r.stats.awayXg||0).toFixed(2)}</b></div><div><small>KALECİ KURTARIŞI</small><b>${r.stats.homeSaves??'—'} – ${r.stats.awaySaves??'—'}</b></div><div><small>ŞUT ENGELLEME</small><b>${r.stats.homeBlocks??'—'} – ${r.stats.awayBlocks??'—'}</b></div><div><small>TOP KAPMA</small><b>${r.stats.homeTackles??'—'} / ${r.stats.homeTackleAttempts??'—'} – ${r.stats.awayTackles??'—'} / ${r.stats.awayTackleAttempts??'—'}</b></div><div><small>PAS ARASI</small><b>${r.stats.homeInterceptions??'—'} / ${r.stats.homeInterceptAttempts??'—'} – ${r.stats.awayInterceptions??'—'} / ${r.stats.awayInterceptAttempts??'—'}</b></div><div><small>RAKİP HÜCUMUNU KESME</small><b>${r.stats.homeAttackStops??'—'} – ${r.stats.awayAttackStops??'—'}</b></div><div><small>ŞUT KALİTESİNİ DÜŞÜRME</small><b>${r.stats.homeQualityReduced??'—'} – ${r.stats.awayQualityReduced??'—'}</b></div><div><small>SARI / KIRMIZI KART</small><b>${r.stats.homeYellow??0}/${r.stats.homeRed??0} – ${r.stats.awayYellow??0}/${r.stats.awayRed??0}</b></div></div><div class="match-power-grid"><div><b>${esc(homeName)}</b><span>Temel ${r.stats.homeBase} · Ülke +${r.stats.homeCountry} · Bağ +${r.stats.homeLinks} · Kaptan +${r.stats.homeCaptain}</span><strong>Toplam güç ${r.stats.homePower}</strong><span>Savunma ${r.stats.homeDefenseTotal??'—'} · Orta saha/xG ${r.stats.homeXgTotal??'—'} · Hücum ${r.stats.homeAttackTotal??'—'}</span></div><div><b>${esc(awayName)}</b><span>Temel ${r.stats.awayBase} · Ülke +${r.stats.awayCountry} · Bağ +${r.stats.awayLinks} · Kaptan +${r.stats.awayCaptain}</span><strong>Toplam güç ${r.stats.awayPower}</strong><span>Savunma ${r.stats.awayDefenseTotal??'—'} · Orta saha/xG ${r.stats.awayXgTotal??'—'} · Hücum ${r.stats.awayAttackTotal??'—'}</span></div></div><p class="match-summary">${esc(r.summary||'Maç tamamlandı.')}</p><div class="match-events"><h5>📋 Maç olayları</h5>${r.events?.length?r.events.map(e=>`<div class="match-event"><span>${e.minute}’</span><b>${e.type==='goal'?'⚽':e.type==='yellow'?'🟨':'🟥'} ${esc(e.playerName)}${e.type==='goal'&&e.assistName?` <small>(Asist: ${esc(e.assistName)})</small>`:''}</b><small>${esc(e.teamName)}${e.type==='goal'?' · Gol':e.type==='yellow'?' · Sarı kart':' · Kırmızı kart'}</small></div>`).join(''):'<p>Kayda değer olay olmadı.</p>'}</div><div class="match-scorers"><h5>🥅 Gol katkıları</h5>${r.scorers?.length?r.scorers.map(g=>`<div class="match-event"><span>${g.goals} gol</span><b>${esc(g.playerName)}</b><small>${esc(g.teamName)}</small></div>`).join(''):'<p>Bu maçta gol olmadı.</p>'}</div>`:`<p class="hint">${r?'Bu maç eski sürümde simüle edilmiş; ayrıntılı istatistik kaydı bulunmuyor.':'Maç oynandığında skor, gol anları, takım güçleri ve maç istatistikleri burada gösterilecek.'}</p>`;return `<article class="league-match-card"><div class="league-match"><span class="league-team">${esc(homeName)}</span><span class="league-score ${r?'':'pending'}">${r?`${r.homeGoals} – ${r.awayGoals}`:'VS'}</span><span class="league-team">${esc(awayName)}</span><small class="league-match-meta">${r?'Maç tamamlandı':'Henüz oynanmadı'}</small></div><div class="league-match-controls">${!r?`<button class="primary small" data-sim-match="${esc(m.id)}">⚽ Maçı Simüle Et</button>`:''}<button class="secondary small" data-match-details="${esc(m.id)}">${r?'Maç Detaylarını Göster':'Maç Bilgisi'}</button></div><div class="league-match-details ${r?'':'hidden'}" id="matchDetails-${esc(m.id)}">${report}</div></article>`;}).join('')}</div>`).join('');
   fixturesEl.querySelectorAll('[data-sim-match]').forEach(btn=>btn.addEventListener('click',()=>simulateSingleMatch(btn.dataset.simMatch)));
   fixturesEl.querySelectorAll('[data-match-details]').forEach(btn=>btn.addEventListener('click',()=>{const panel=$(`matchDetails-${btn.dataset.matchDetails}`);if(panel){panel.classList.toggle('hidden');btn.textContent=panel.classList.contains('hidden')?(results[btn.dataset.matchDetails]?'Maç Detaylarını Göster':'Maç Bilgisi'):'Detayları Gizle';}}));
 }
