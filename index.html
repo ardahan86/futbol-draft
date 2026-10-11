@@ -88,6 +88,7 @@
     <section class="view" id="view-squad">
       <div class="section-intro"><div><div class="kicker">TAKIM YÖNETİMİ</div><h2>Kadrom</h2><p>Seçtiğin futbolcular, bonservisler ve puan dökümü.</p></div><div class="score-total"><small>TOPLAM GÜÇ</small><b id="squadTotalScore">0</b></div></div>
       <div class="squad-layout"><article class="panel"><div class="panel-head"><div><h3>11 kişilik kadro</h3><p>Mevki dağılımına göre kadron.</p></div><span class="panel-icon">♙</span></div><div id="squadRows" class="squad-rows"><div class="empty-state">Henüz futbolcu seçmedin.</div></div></article><aside class="panel"><div class="panel-head"><div><h3>Puan dökümü</h3><p>Excel kurallarına göre hesaplanır.</p></div></div><div id="scoreBreakdown" class="breakdown"></div><div class="captain-box"><h4>Kaptan seçimi</h4><p>11 kişilik kadron tamamlandığında kaptan bonusu alabilecek oyunculardan birini seç.</p><select id="captainSelect" disabled><option value="">Kaptan seç</option></select><small id="captainInfo">Efsane kaptan +4 • Büyük lider +2</small></div></aside></div>
+      <article class="panel opponent-squads-panel"><div class="panel-head"><div><h3>Rakip Kadroları</h3><p>Odadaki diğer menajerlerin seçtiği futbolcuları ve takım güçlerini incele.</p></div><span class="panel-icon">👥</span></div><div id="opponentSquads" class="team-rosters"><div class="empty-state">Rakip kadroları yükleniyor…</div></div></article>
     </section>
 
 
@@ -101,6 +102,7 @@
         <p class="hint">Her galibiyet 3, beraberlik 1 puan kazandırır. Her maç fikstürden ayrı ayrı simüle edilir. Skor ve maç detayları Firebase'e kaydedilir ve aynı odadaki herkese gösterilir.</p>
       </article>
       <div class="league-summary-grid" id="leagueSummary"></div>
+      <article class="panel league-standings-panel"><div class="panel-head"><div><h3>🏆 Lig Puan Tablosu</h3><p>Her maçı tek tek oynattıkça sıralama güncellenir.</p></div></div><div id="leagueStandings"><div class="empty-state">Fikstür maçları oynandıkça puan tablosu burada güncellenir.</div></div></article>
       <article class="panel league-fixtures-panel"><div class="panel-head"><div><h3>📅 Fikstür ve Sonuçlar</h3><p id="fixtureCount">Fikstür oluşturulduğunda maçlar burada görünür.</p></div></div><div id="leagueFixtures"><div class="empty-state">Henüz fikstür yok.</div></div></article>
     </section>
 
@@ -115,5 +117,5 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="app.js?v=20261011-match-detail-2"></script>
+<script src="app.js?v=20261011-complete-1"></script>
 </body></html>
