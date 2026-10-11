@@ -32,3 +32,9 @@ Bu paket, kullanıcının en son paylaştığı `Draft Oyuncu Listesi(1).xlsx` d
 
 ## Güvenlik notu
 Bu statik istemci sürümünde bütçe ve draft doğrulamaları uygulama tarafında da yapılır; ancak Firestore kuralları oda üyeliği ve temel oda sahipliği sınırlarını koruyan başlangıç kurallarıdır, her hamlenin oyun kurallarına uygunluğunu sunucu tarafında tam doğrulamaz. Rekabetçi/halka açık kullanım için draft hamlelerini doğrulayan güvenilir sunucu (Cloud Functions veya benzeri) gerekir. Ayrıca bu projede daha önce kullanılan Firebase web yapılandırması korunmuştur; bu ayar bir sunucu gizli anahtarı değildir. Firebase güvenliğini kurallar ve yetkiler belirler.
+
+
+## Son eklemeler
+- Draft başlatılırken odadaki oyuncular arasında rastgele kura çekilir; kura sırası oda ekranında gösterilir ve draft bu sırayla ilerler.
+- Oda sahibi, draft sürerken de dâhil olmak üzere, “Odayı Kapat” düğmesiyle odayı silebilir. Diğer oyuncular draft başlamadan önce “Odadan Ayrıl” seçeneğini kullanabilir.
+- Oda sahibi odayı kapattığında diğer katılımcıların ekranları gerçek zamanlı olarak güncellenir ve oda bağlantıları temizlenir.
