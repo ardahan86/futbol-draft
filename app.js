@@ -663,14 +663,16 @@ async function resendVerification(){
 async function joinRoomByCode(e){
  e.preventDefault();
  const code=$('roomCodeInput').value.trim();
- if(!/^\\d{6}$/.test(code)){msg('6 haneli geçerli oda kodu gir.',true);return}
+ if(!/^\d{6}$/.test(code)){msg('6 haneli geçerli oda kodu gir.',true);return}
  const btn=$('joinRoomForm').querySelector('button[type="submit"]');
  if(btn){btn.disabled=true;btn.textContent='Odaya bağlanılıyor…'}
  try{
+  if(!user?.uid)throw new Error('Önce giriş yapmalısın.');
+  await user.getIdToken(true);
   const result=await getDocs(query(collection(db,'rooms'),where('code','==',code)));
-  if(result.empty)throw new Error('Bu kodla eşleşen oda bulunamadı.');
+  if(result.empty)throw new Error('Bu kodla eşleşen oda bulunamadı. Oda kodunu kontrol et.');
   await enterRoom(result.docs[0].id);
- }catch(err){msg(err.message||'Odaya katılınamadı.',true)}
+ }catch(err){console.error('Odaya katılma hatası:',err);msg(err.message||'Odaya katılınamadı.',true)}
  finally{if(btn){btn.disabled=false;btn.textContent='Odaya katıl'}}
 }
 
