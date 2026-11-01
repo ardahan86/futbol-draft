@@ -564,7 +564,7 @@ async function initDashboard(u){
  $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
  $('userBadge').textContent=profile.nickname||profile.name||u.email;
  $('logoutBtn').classList.remove('hidden');$('helloName').textContent=profile.nickname||profile.name||'Menajer';
- $('newRoomBtn').classList.remove('hidden');
+ $('adminBox').classList.add('hidden');$('newRoomBtn').classList.remove('hidden');
  renderRooms();
 }
 async function registerAccount(e){
@@ -656,7 +656,16 @@ function bindUI(){
  };
  $('createRoomForm').onsubmit=createRoom;
  $('joinRoomForm').onsubmit=joinRoomByCode;
- $('newRoomBtn').onclick=()=>{const box=$('adminBox');box.classList.remove('hidden');box.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('roomName').focus(),250)};
+ $('newRoomBtn').onclick=()=>{
+  const box=$('adminBox');
+  const opening=box.classList.contains('hidden');
+  box.classList.toggle('hidden',!opening);
+  $('newRoomBtn').textContent=opening?'− Formu kapat':'+ Oda oluştur';
+  if(opening){
+    box.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>$('roomName').focus(),300);
+  }
+};
  $('startDraftBtn').onclick=startDraft;$('spinBtn').onclick=spin;$('pickBtn').onclick=pickPlayer;
  $('leaveRoomBtn').onclick=leaveRoom;
  $('copyCodeBtn').onclick=async()=>{try{await navigator.clipboard.writeText(room.code||roomId);msg('Oda kodu kopyalandı.')}catch{msg('Oda kodu: '+(room.code||roomId))}};
