@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Futbol Draft | E-posta Doğrulama</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#0b1220;color:#f8fafc;font-family:Arial,sans-serif}.card{width:min(100%,480px);padding:32px;border:1px solid #334155;border-radius:18px;background:#111c2e;text-align:center;box-shadow:0 18px 55px #0005}h1{margin:0 0 12px;font-size:26px}p{color:#cbd5e1;line-height:1.6}.status{margin:24px 0;padding:14px;border-radius:10px;background:#1e293b}a{display:inline-block;margin-top:12px;padding:12px 20px;border-radius:9px;background:#c62828;color:white;text-decoration:none;font-weight:bold}.small{font-size:13px;color:#94a3b8}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Futbol Draft</h1>
+    <p>E-posta adresi doğrulama</p>
+    <div class="status" id="status" role="status" aria-live="polite">Doğrulama bağlantısı kontrol ediliyor…</div>
+    <p class="small">Bu sayfayı kapatabilir veya aşağıdaki bağlantıyla Futbol Draft'a dönebilirsin.</p>
+    <a href="/">Futbol Draft'a Git</a>
+  </main>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+    import { getAuth, applyActionCode } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
+    import { firebaseConfig } from './firebase-config.js';
+
+    const statusEl = document.getElementById('status');
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode');
+    const oobCode = params.get('oobCode');
+
+    try {
+      if (mode !== 'verifyEmail' || !oobCode) {
+        throw new Error('Bu bağlantı geçerli bir e-posta doğrulama bağlantısı değil.');
+      }
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      await applyActionCode(auth, oobCode);
+      statusEl.textContent = 'E-posta adresin başarıyla doğrulandı. Artık Futbol Draft hesabına giriş yapabilirsin.';
+      statusEl.style.background = '#14532d';
+    } catch (error) {
+      console.error('E-posta doğrulama hatası:', error);
+      const code = error?.code || '';
+      if (code === 'auth/expired-action-code') statusEl.textContent = 'Bu doğrulama bağlantısının süresi dolmuş. Siteden yeni doğrulama e-postası iste.';
+      else if (code === 'auth/invalid-action-code') statusEl.textContent = 'Bu doğrulama bağlantısı geçersiz veya daha önce kullanılmış. Giriş yapmayı dene ya da yeni bağlantı iste.';
+      else statusEl.textContent = error.message || 'Doğrulama sırasında bir hata oluştu. Daha sonra tekrar dene.';
+    }
+  </script>
+</body>
+</html>

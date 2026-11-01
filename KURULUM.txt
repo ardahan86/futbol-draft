@@ -1,0 +1,37 @@
+ÇARK FUTBOL — İSTATİSTİK VE EKRAN BULANIKLIĞI DÜZELTMESİ
+
+Dosyalar:
+- index.html
+- app.js
+- styles.css
+- players.json
+- firebase-config.js
+
+Düzeltmeler:
+1. Yeni maçlarda topa sahip olma yüzdesi takım gücü, pas becerisi, taktik ve maç değişkenliğine göre hesaplanır; iki tarafın toplamı %100 olur.
+2. Pas isabeti takımın pas becerisi, topa sahip olma, taktik ve maç değişkenliğine göre hesaplanır.
+3. İstatistiği hiç bulunmayan eski maçlarda sahte %50 / %75 varsayılanı gösterilmez; değer '—' olarak görünür. Eski maçın gerçek istatistiği kayıtlı değilse sonradan gerçeğe dönüştürülemez.
+4. Arka plan bulanıklığı kaldırıldı. Maç raporu kapatıldığında aynı rapor otomatik olarak tekrar açılmaz; başka bir maçın detayına basınca açılır.
+
+Kurulum:
+ZIP içindeki dosyaları GitHub deposunun kök dizinine yükleyip aynı isimli dosyaların üzerine yazın. firebase-config.js mevcut proje ayarlarıyla korunmuştur. Ardından tarayıcıda Ctrl+Shift+R ile yenileyin.
+
+Kontrol: app.js için node --check başarılı. Gerçek Firebase ortamında uçtan uca test yapılmadı.
+
+
+KULLANICI HESABI SİSTEMİ (E-POSTA + SABİT NICKNAME)
+1. Firebase Console > Authentication > Sign-in method bölümünü aç.
+2. Email/Password sağlayıcısını etkinleştir.
+3. Firebase Console > Firestore Database > Rules bölümüne gir.
+4. Bu ZIP içindeki firestore.rules dosyasının tamamını yayımla.
+5. Firebase Authentication > Settings > Authorized domains bölümünde GitHub Pages alan adının (ör. kullanici.github.io) kayıtlı olduğunu kontrol et.
+6. Siteyi GitHub Pages'e yükle. Kullanıcılar e-posta/şifre ile kayıt olabilir.
+7. Kayıtta nickname 3-16 karakter, İngilizce harf/rakam/alt çizgi olmalıdır. Nickname benzersizdir ve güvenlik kurallarıyla değiştirilemez.
+8. E-posta doğrulama bağlantısı kayıt sırasında gönderilir. Şifre sıfırlama bağlantısı giriş ekranından istenebilir.
+
+ÖNEMLİ:
+- firebase-config.js mevcut projeye ait istemci yapılandırmasını içerir; değiştirmeyin.
+- Firebase Auth'ta e-posta/şifre sağlayıcısı etkinleştirilmeden kayıt/giriş çalışmaz.
+- firestore.rules yayımlanmadan nickname benzersizliği güvenli biçimde korunamaz.
+- Önceki anonim misafir oturumları kalıcı kullanıcı hesaplarına otomatik dönüştürülmez. Yeni hesap oluşturulmalıdır.
+- Admin yetkisi mevcut ADMIN_UID üzerinden korunur. Admin, mevcut e-posta/şifre hesabıyla giriş yapar.

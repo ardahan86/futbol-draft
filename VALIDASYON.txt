@@ -1,0 +1,18 @@
+ÇARK FUTBOL - GOL KURALLARI, TAKTİK, PAS ODAĞI VE PRES GÜNCELLEMESİ
+
+Kontroller:
+- app.js JavaScript sözdizimi: BAŞARILI (node --check)
+- players.json futbolcu havuzu: 300 futbolcu
+- Gol motoru: 6 bağımsız kural
+- Taktik seçenekleri: Defansif, Dengeli, Hücumcu
+- Pas odağı seçenekleri: Savunmadan Uzun Top, Kısa Pas, Kanat Oyunu
+- Pres türleri: Önde Pres, Orta Blok Pres, Geride Pres
+- Bonus ve cezalar yalnızca 3., 4. ve 5. kuralların karşılaştırma değerlerinde uygulanır.
+- Gerçek futbolcu puanları ve genel Overall toplamı bonuslardan etkilenmez.
+- Gerçek Firebase ortamında uçtan uca test yapılmadı.
+
+Kurulum:
+1. ZIP içindeki dosyaları projenin mevcut dosyalarıyla değiştirerek yayımlayın.
+2. Firebase yapılandırmasını ve Firestore kurallarını mevcut projenizle aynı bırakın; bu güncelleme bunları değiştirmez.
+3. GitHub Pages veya kullandığınız barındırma ortamında siteyi yenileyin.
+4. Önce test odasında taktik, pas odağı ve pres türü seçimlerinin kaydedildiğini ve maç raporlarında doğru gol kurallarının kullanıldığını doğrulayın.

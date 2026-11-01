@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function verifiedUser() { return signedIn() && request.auth.token.email_verified == true; }
+    function isAdmin() { return verifiedUser() && request.auth.uid == "BahpBQ1anNRV0TPwv3Z5lHPycGm2"; }
+    function isRoomMember(roomData) { return verifiedUser() && request.auth.uid in roomData.memberOrder; }
+    function roomExists(roomId) { return exists(/databases/$(database)/documents/rooms/$(roomId)); }
+    function roomFinished(roomId) { return roomExists(roomId) && get(/databases/$(database)/documents/rooms/$(roomId)).data.status == 'finished'; }
+
+    // Nickname claim is created atomically with the user document and can never be reassigned.
+    match /usernames/{nicknameKey} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.nicknameLower == nicknameKey
+        && nicknameKey.matches('^[a-z0-9_]{3,16}$')
+        && request.resource.data.nickname is string;
+      allow update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == userId
+        && request.resource.data.nicknameLower is string
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.nicknameLower)).data.uid == userId;
+      // Nickname and account identity are immutable from the client.
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /rooms/{roomId} {
+      allow read: if verifiedUser();
+      // Only the configured administrator may create a room.
+      allow create: if isAdmin()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.status == 'waiting'
+        && request.resource.data.memberOrder is list
+        && request.resource.data.memberOrder.size() == 1;
+      // Admin controls status changes/closure. Members may only change game-state fields
+      // while keeping room status and owner unchanged.
+      allow update: if isAdmin() || (
+        // A visitor may join only a waiting room, without changing any other fields.
+        verifiedUser()
+        && resource.data.status == 'waiting'
+        && resource.data.memberOrder.size() < resource.data.capacity
+        && request.resource.data.memberOrder.hasAll(resource.data.memberOrder)
+        && !(request.auth.uid in resource.data.memberOrder)
+        && request.auth.uid in request.resource.data.memberOrder
+        && request.resource.data.memberOrder.size() == resource.data.memberOrder.size() + 1
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberOrder','members','updatedAt'])
+      ) || (
+        isRoomMember(resource.data)
+        && (request.resource.data.status == resource.data.status
+          || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
+          || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
+            && request.auth.uid == resource.data.ownerUid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','lastPickAnnouncement','turnStartedAt','updatedAt'])))
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','protectionRights','swapRights',
+          'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','updatedAt',
+          // Post-draft protection and swap workflow fields used by the app.
+          'protectionDone','postDraftPhase','swapConfirmed','swapRequests','swapResolved','swapResults',
+          'tacticsConfirmed'
+        ])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Protection selections are made after all rosters are complete.
+    // A player can only write their own protection record.
+    match /roomSecrets/{secretId} {
+      allow read: if isAdmin() || (verifiedUser() && secretId.matches('.*_' + request.auth.uid))
+        || (verifiedUser() && resource.data.uid == request.auth.uid)
+        || (verifiedUser() && roomFinished(resource.data.roomId)
+          && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
+      allow create, update: if verifiedUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.roomId is string
+        && roomExists(request.resource.data.roomId)
+        && request.auth.uid in get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.memberOrder
+        && get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.status == 'finished'
+        && request.resource.data.protectedIds is list
+        && request.resource.data.protectedIds.size() <= 3;
+      allow delete: if isAdmin() || (verifiedUser() && resource.data.uid == request.auth.uid);
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -1,0 +1,11 @@
+FUTBOL DRAFT - MODERN TASARIM SÜRÜMÜ
+
+Bu sürümde:
+- Futbol Draft marka adı ve modern futbol oyunu görünümü uygulandı.
+- Giriş/kayıt alanlarının mevcut HTML ID'leri korundu.
+- app.js, players.json, Firebase ayarları, Firestore kuralları ve Functions dosyaları değiştirilmedi.
+- Kulüp görselleri ve oyun motoru korunmuştur.
+
+ÖNEMLİ:
+Bu paket mevcut Firebase projesine otomatik deploy edilmez. Yayına almadan önce yerel olarak test edin.
+Mevcut Firebase/Cloudflare kaynaklarını silmeyin. Yeni altyapı kararı ayrıca uygulanmalıdır.

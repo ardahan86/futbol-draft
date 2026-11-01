@@ -1,0 +1,20 @@
+ÇARK FUTBOL — MAÇ MOTORU VE İSTATİSTİK İYİLEŞTİRMESİ
+
+Bu paket yalnızca app.js dosyasını günceller.
+
+Kurulum:
+1. ZIP içindeki app.js dosyasını GitHub deposunun kök dizinine yükleyin.
+2. Mevcut app.js dosyasını değiştirin ve Commit changes yapın.
+3. Siteyi açıp Ctrl+F5 ile yenileyin.
+
+Bu güncelleme:
+- Mevcut pozisyon ağırlıklı hücum/defans/teknik güç hesaplamasını ve taktikleri korur.
+- Şut, isabetli şut, gol, xG, kurtarış, korner, direk, faul, kart, pas isabeti ve diğer maç istatistiklerini korur.
+- Canlı istatistik paneli ve 1,4 saniyelik canlı anlatım akışını korur.
+- Gol, kaleyi bulmayan şut ve direkten dönen pozisyonlarda anlatımın rastgele bir futbolcu yerine olayda seçilen futbolcuyu kullanmasını sağlar.
+
+ÖNEMLİ:
+- firebase-config.js dosyasını değiştirmeyin.
+- players.json dosyasını değiştirmeyin; 300 futbolcu listesi aynen kalmalıdır.
+- index.html ve styles.css dosyalarına bu yama için değişiklik gerekmez.
+- JavaScript sözdizimi kontrol edildi; canlı Firebase ortamında uçtan uca test yapılmadı.
