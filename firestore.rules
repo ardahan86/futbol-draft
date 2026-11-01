@@ -70,7 +70,7 @@ service cloud.firestore {
         && request.resource.data.ownerUid == resource.data.ownerUid
         // League creation/results are controlled by the room owner, not ordinary members.
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['league'])
-          || request.auth.uid == resource.data.ownerUid)
+          || request.auth.uid == resource.data.ownerUid || isAdmin())
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','protectionRights','swapRights',
           'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','updatedAt',
