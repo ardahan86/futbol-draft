@@ -703,10 +703,27 @@ function bindUI(){
   }catch(err){msg('Admin girişi başarısız: '+authErrorMessage(err),true)}
   finally{if(submit){submit.disabled=false;submit.textContent='Admin olarak giriş yap'}}
  };
- $('logoutBtn').onclick=async()=>{
-  writeStored(RESUME_ROOM_KEY,null);profile=null;user=null;
-  if(roomsUnsub){roomsUnsub();roomsUnsub=null}
-  closeRoomUI();await signOut(auth);
+ $('logoutBtn').onclick=async(e)=>{
+  e?.preventDefault?.();
+  const button=$('logoutBtn');
+  if(button?.dataset.loggingOut==='1')return;
+  if(button){button.dataset.loggingOut='1';button.disabled=true;button.textContent='Çıkış yapılıyor…'}
+  try{
+   await authPersistenceReady;
+   // Firebase oturumunu önce kapat; UI temizliği auth state değişimini takip eder.
+   await signOut(auth);
+   writeStored(RESUME_ROOM_KEY,null);
+   profile=null;user=null;
+   if(roomsUnsub){roomsUnsub();roomsUnsub=null}
+   closeRoomUI();
+   $('authView').classList.remove('hidden');$('appView').classList.add('hidden');
+   if(button)button.classList.add('hidden');
+  }catch(err){
+   console.error('Çıkış işlemi başarısız:',err);
+   msg('Çıkış yapılamadı: '+(err?.message||'Firebase oturumu kapatılamadı.'),true);
+  }finally{
+   if(button){button.disabled=false;button.textContent='Çıkış Yap';delete button.dataset.loggingOut}
+  }
  };
  $('createRoomForm').onsubmit=createRoom;
  $('joinRoomForm').onsubmit=joinRoomByCode;
