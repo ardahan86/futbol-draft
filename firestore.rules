@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
     function verifiedUser() { return signedIn() && request.auth.token.email_verified == true; }
-    function isAdmin() { return verifiedUser() && request.auth.uid == "BahpBQ1anNRV0TPwv3Z5lHPycGm2"; }
+    function isAdmin() { return signedIn() && request.auth.uid == "BahpBQ1anNRV0TPwv3Z5lHPycGm2"; }
     function isRoomMember(roomData) { return verifiedUser() && request.auth.uid in roomData.memberOrder; }
     function roomExists(roomId) { return exists(/databases/$(database)/documents/rooms/$(roomId)); }
     function roomFinished(roomId) { return roomExists(roomId) && get(/databases/$(database)/documents/rooms/$(roomId)).data.status == 'finished'; }
