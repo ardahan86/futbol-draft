@@ -75,6 +75,7 @@ const RESUME_ROOM_KEY='carkFutbolResumeRoomId';
 function readStored(key){try{return localStorage.getItem(key)||null}catch{return null}}
 function writeStored(key,value){try{if(value)localStorage.setItem(key,String(value));else localStorage.removeItem(key)}catch{}}
 let authFlowInProgress=false;
+let actionLockTimer=null,wheelAudioContext=null,wheelAudioOscillator=null,wheelAudioGain=null;
 let user=null,profile=null,players=[],rooms=[],roomsUnsub=null,roomUnsub=null,room=null,roomId=null,roomRef=null,toastTimer=null,selectedCountry=null,pendingSpinCountry=null,lastWheelCountry=null,lastWheelSpinAt=0,lastPickAnnouncementId=null,lastSpinAnnouncementId=null,pendingSpinAnnouncementId=null,pickAnnouncementTimer=null,spinCooldownTimer=null,spinCooldownUntil=0,turnTimeoutTimer=null,scheduledTurnKey=null,roomSnapshotInitialized=false,resumeInProgress=false;
 const isAdmin=()=>!!user&&user.uid===ADMIN_UID;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -101,7 +102,7 @@ function crestFallback(result){const initials=({'Galatasaray':'GS','Arsenal':'AR
 function presentAnnouncement(html,duration){const box=$('pickAnnouncement');if(!box)return;box.innerHTML=html;box.style.animationDuration=`${duration/1000}s`;box.classList.remove('hidden','pick-announcement-show');void box.offsetWidth;box.classList.add('pick-announcement-show');clearTimeout(pickAnnouncementTimer);pickAnnouncementTimer=setTimeout(()=>{box.classList.remove('pick-announcement-show');box.classList.add('hidden')},duration)}
 function showSpinAnnouncement(announcement){if(!announcement?.id||announcement.id===lastSpinAnnouncementId)return;lastSpinAnnouncementId=announcement.id;const result=String(announcement.result||'');const special=SPECIAL_SPIN_RESULTS[result];const crestSrc=special?.src||CLUB_CRESTS[result];let middle='';if(crestSrc){middle=`<img class="${special?'spin-special-crest':'spin-club-crest'}" src="${crestSrc}" alt="${esc(special?.label||result)} logosu" onerror="this.outerHTML=window.__spinCrestFallback('${result.replace(/'/g, '&#39;')}')">`}else{middle=`<div class="spin-special-icon">🎡</div>`}presentAnnouncement(`<div class="pick-announcement-main"><div class="pick-announcement-user">${esc(announcement.managerName||'Menajer')}</div><div class="pick-announcement-crest">${middle}</div><div class="pick-announcement-result">${esc(special?.label||result)}</div></div>`,3000)}
 function queueSpinAnnouncement(announcement){if(!announcement?.id||announcement.id===lastSpinAnnouncementId||announcement.id===pendingSpinAnnouncementId)return;pendingSpinAnnouncementId=announcement.id;const elapsed=Math.max(0,Date.now()-Number(announcement.at||Date.now()));const delay=Math.max(0,3300-elapsed);setTimeout(()=>{if(pendingSpinAnnouncementId!==announcement.id)return;pendingSpinAnnouncementId=null;if(room?.lastSpinAnnouncement?.id===announcement.id)showSpinAnnouncement(announcement)},delay)}
-function showPickAnnouncement(announcement){if(!announcement?.id||announcement.id===lastPickAnnouncementId)return;lastPickAnnouncementId=announcement.id;presentAnnouncement(`<div class="pick-announcement-main pick-player-announcement"><div class="pick-announcement-user">${esc(announcement.managerName||'Menajer')}</div><div class="pick-announcement-club">${esc(announcement.club||'Kulüp')}</div><div class="pick-announcement-player">${esc(announcement.playerName||'Futbolcu')}</div></div>`,5000)}
+function showPickAnnouncement(announcement){if(!announcement?.id||announcement.id===lastPickAnnouncementId)return;lastPickAnnouncementId=announcement.id;presentAnnouncement(`<div class="pick-announcement-main pick-player-announcement"><div class="pick-announcement-user">${esc(announcement.managerName||'Menajer')}</div><div class="pick-announcement-club">${esc(announcement.club||'Kulüp')}</div><div class="pick-announcement-player">${esc(announcement.playerName||'Futbolcu')}</div></div>`,3000)}
 window.__spinCrestFallback=(result)=>crestFallback(result);
 function authMsg(text,error=false){$('authMsg').textContent=text;$('authMsg').style.color=error?'#ffaaa3':'#8bd7a8'}
 const normalizeNickname=value=>String(value||'').trim().toLowerCase();
@@ -114,7 +115,8 @@ function rightsFor(kind,uid=user?.uid){return Number(room?.[kind]?.[uid]||0)}
 function pickedIds(){return new Set((room?.picks||[]).map(p=>p.id))}
 function myPicks(){return (room?.picks||[]).filter(p=>p.uid===user?.uid)}
 function orderedTurns(){return room?.memberOrder||[]}
-function isMyTurn(){if(room?.status!=='drafting'||!room.memberOrder?.length||room.memberOrder[room.turnIndex%room.memberOrder.length]!==user?.uid||room.pendingPick)return false;if(Date.now()<spinCooldownUntil)return false;const picks=room.picks||[];return starterCount(picks,user.uid)<11}
+function isActionLocked(data=room){return Number(data?.actionLock?.until||0)>Date.now()}
+function isMyTurn(){if(room?.status!=='drafting'||!room.memberOrder?.length||room.memberOrder[room.turnIndex%room.memberOrder.length]!==user?.uid||room.pendingPick||isActionLocked())return false;if(Date.now()<spinCooldownUntil)return false;const picks=room.picks||[];return starterCount(picks,user.uid)<11}
 function currentTurnUid(){return room?.memberOrder?.[room.turnIndex%Math.max(1,room.memberOrder?.length||1)]}
 function rosterFor(uid){return (room?.picks||[]).filter(p=>p.uid===uid)}
 function formationSlots(){return ['GK','RB','CB','CB','LB','CM','CM','CAM','RW','LW','ST']}
@@ -238,9 +240,32 @@ function buildFixtures(teamIds){let a=[...teamIds];if(a.length%2)a.push(null);le
 function standings(){const teams=(room?.memberOrder||[]).map(id=>({id,name:userName(id),squad:rosterFor(id),formation:'4-2-3-1',tactic:room?.tactics?.[id]?.tactic||'balanced',played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}));for(const m of room?.league?.fixtures||[]){const r=room?.league?.results?.[m.id];if(!r)continue;const h=teams.find(t=>t.id===m.homeUid),a=teams.find(t=>t.id===m.awayUid);if(!h||!a)continue;h.played++;a.played++;h.gf+=r.homeGoals;h.ga+=r.awayGoals;a.gf+=r.awayGoals;a.ga+=r.homeGoals;if(r.homeGoals>r.awayGoals){h.w++;h.pts+=3;a.l++}else if(r.homeGoals<r.awayGoals){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}return teams.sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
 function drawWheel(){const c=$('wheelCanvas');if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=196,n=WHEEL_SLICES.length;ctx.clearRect(0,0,c.width,c.height);for(let i=0;i<n;i++){const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=getWheelSliceColor(WHEEL_SLICES[i]);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(start+a/2);ctx.textAlign='right';ctx.fillStyle=getWheelTextColor(WHEEL_SLICES[i]);ctx.font=`bold ${WHEEL_SLICES[i].length>10?9:11}px system-ui`;ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(WHEEL_SLICES[i],r-10,4);ctx.restore()}ctx.save();const rim=ctx.createRadialGradient(cx,cy,r+1,cx,cy,r+9);rim.addColorStop(0,'#6f4d18');rim.addColorStop(.28,'#f8e5a6');rim.addColorStop(.55,'#b88b3d');rim.addColorStop(.82,'#fff0bd');rim.addColorStop(1,'#674511');ctx.beginPath();ctx.arc(cx,cy,r+4,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r+9,0,Math.PI*2);ctx.strokeStyle='rgba(255,226,157,.55)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();ctx.beginPath();ctx.arc(cx,cy,43,0,Math.PI*2);ctx.fillStyle='#101827';ctx.fill();ctx.strokeStyle='#d8b56a';ctx.lineWidth=3;ctx.stroke()}
 function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const angle=-(center+Math.PI/2);c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
-function renderRooms(){const list=$('roomList');if(!rooms.length){list.innerHTML='<div class="empty-state">Şu anda açık oda yok.</div>';return}list.innerHTML=rooms.map(r=>`<div class="room-card"><div><b>${esc(r.name||'Çark Futbol Odası')}</b><small>${(r.memberOrder||[]).length}/${r.capacity||4} oyuncu · ${r.status==='waiting'?'Oyuncular bekleniyor':r.status==='drafting'?'Draft devam ediyor':r.status==='finished'?'Lig aşaması':'Oda kapalı'}</small></div><button class="btn ${r.memberOrder?.includes(user.uid)?'secondary':'primary'}" data-enter="${r.id}">${r.memberOrder?.includes(user.uid)?'Odayı aç':'Katıl'}</button></div>`).join('');list.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>enterRoom(b.dataset.enter))}
-function renderRoom(){if(!room)return;scheduleTurnTimeout();$('roomView').classList.remove('hidden');$('spinResult').classList.toggle('hidden',room.status==='finished');if(room.lastSpin?.at&&room.lastSpin.at!==lastWheelSpinAt){drawWheelSpin(room.lastSpin.slice);lastWheelSpinAt=room.lastSpin.at;spinCooldownUntil=Date.now()+3400;const spinAt=room.lastSpin.at;clearTimeout(spinCooldownTimer);spinCooldownTimer=setTimeout(()=>{if(room?.lastSpin?.at===spinAt){spinCooldownUntil=0;renderRoom()}},3450)}$('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;const closeBtn=$('closeRoomBtn');if(closeBtn){closeBtn.classList.toggle('hidden',!isAdmin());closeBtn.onclick=closeRoom;} $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;$('startDraftBtn').classList.toggle('hidden',!(isAdmin()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);$('startDraftBtn').textContent='Draftı başlat';$('turnHeading').textContent=room.status==='drafting'?`${userName(currentTurnUid())} seçiyor · ${stageMessage(room.picks||[],room.memberOrder||[])}`:'Draft başlamadı';$('turnPill').textContent=room.status==='drafting'?(isMyTurn()?'Sıra sende · 30 sn':`Sıra: ${userName(currentTurnUid())}`):room.status==='finished'?'Draft tamamlandı':'Başlamayı bekliyor';$('spinBtn').disabled=!isMyTurn();$('spinBtn').textContent='🎡 Çarkı çevir';$('pickPanel').classList.add('hidden');if(room.pendingPick&&room.pendingPick.uid===user.uid&&room.pendingPick.club){selectedCountry=room.pendingPick.club;renderPlayerOptions(selectedCountry)}else if(room.pendingPick){$('spinResult').textContent=`${userName(room.pendingPick.uid)} çark sonucunu uyguluyor: ${room.pendingPick.slice}.`}else if(room.status==='drafting'&&isMyTurn())$('spinResult').textContent=`Sıra sende! ${stageMessage(room.picks||[],room.memberOrder||[])}. Çarkı çevir.`;else if(room.status==='drafting'&&starterCount(room.picks||[],user.uid)>=11)$('spinResult').textContent='İlk 11’in tamamlandı. Diğer oyuncuların da ilk 11’lerini tamamlamasını bekle.';else if(room.status==='waiting')$('spinResult').textContent='Oda sahibi draftı başlattığında çark aktif olacak.';else $('spinResult').textContent='';
-const phase=room.postDraftPhase||'protection';const protectionDone=room.protectionDone||{};const swapConfirmed=room.swapConfirmed||{};const myProtectionDone=!!protectionDone[user.uid];const mySwapConfirmed=!!swapConfirmed[user.uid];$('specialActions').innerHTML=`<div class="special-rights"><div class="rights-card protection-card"><span class="rights-icon" aria-hidden="true">♜</span><span class="rights-label">KORUMA</span><strong>${rightsFor('protectionRights')}<small>/3</small></strong></div><div class="rights-card swap-card"><span class="rights-icon" aria-hidden="true">⇄</span><span class="rights-label">TAKAS</span><strong>${rightsFor('swapRights')}<small>/3</small></strong></div><p class="rights-note"><span class="rights-info">i</span>${phase==='protection'?(myProtectionDone?'Koruma seçimin onaylandı. Diğer oyuncular bekleniyor.':'Koruma ve takas pencereleri açılacak.') :phase==='swaps'?(mySwapConfirmed?'Takasların onaylandı. Diğer oyuncular bekleniyor.':'Takas penceresi açılacak.'):'Koruma ve takas aşamaları tamamlandı.'}</p></div>`;$('turnOrder').innerHTML=(room.memberOrder||[]).map((id,i)=>`<div class="turn-item ${id===currentTurnUid()&&room.status==='drafting'?'current':''}"><span class="turn-num">${i+1}</span><span><b>${esc(userName(id))}</b><small>${starterCount(room.picks||[],id)}/11 ilk 11</small></span><span class="turn-mark">${id===user.uid?'SEN':id===currentTurnUid()&&room.status==='drafting'?'SIRA':''}</span></div>`).join('');$('draftTeams').innerHTML=(room.memberOrder||[]).map(id=>{const sq=rosterFor(id);return `<div class="team-mini"><div><b>${esc(userName(id))}</b><small>${starterCount(room.picks||[],id)}/11 ilk 11</small></div><div class="progress"><i style="width:${starterCount(room.picks||[],id)/11*100}%"></i></div></div>`}).join('');renderSquad();renderLeague();renderPersistentSwapReport();syncPostDraftModal();}
+function renderRooms(){const list=$('roomList');if(list)list.innerHTML='<div class="empty-state">Bir odaya katılmak için oda kodunu yukarıdaki alana gir. Oda kodu olmadan katılım yapılamaz.</div>'}
+function renderRoom(){
+ if(!room)return;
+ scheduleTurnTimeout();$('roomView').classList.remove('hidden');$('spinResult').classList.toggle('hidden',room.status==='finished');
+ if(room.lastSpin?.at&&room.lastSpin.at!==lastWheelSpinAt){drawWheelSpin(room.lastSpin.slice);lastWheelSpinAt=room.lastSpin.at;spinCooldownUntil=Date.now()+3400;const spinAt=room.lastSpin.at;clearTimeout(spinCooldownTimer);spinCooldownTimer=setTimeout(()=>{if(room?.lastSpin?.at===spinAt){spinCooldownUntil=0;renderRoom()}},3450)}
+ const locked=isActionLocked();clearTimeout(actionLockTimer);actionLockTimer=null;
+ if(locked){actionLockTimer=setTimeout(()=>{if(room){renderRoom()}},Math.max(30,Number(room.actionLock.until)-Date.now()+40))}
+ $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;
+ const closeBtn=$('closeRoomBtn');if(closeBtn){closeBtn.classList.toggle('hidden',!isAdmin());closeBtn.onclick=closeRoom;}
+ $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:locked?'Hamle penceresi açık · Bekleniyor':'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;
+ $('startDraftBtn').classList.toggle('hidden',!(isAdmin()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
+ $('startDraftBtn').textContent='Draftı başlat';$('turnHeading').textContent=room.status==='drafting'?`${userName(currentTurnUid())} seçiyor · ${stageMessage(room.picks||[],room.memberOrder||[])}`:'Draft başlamadı';
+ $('turnPill').textContent=room.status==='drafting'?(locked?'Sonuç penceresi açık':isMyTurn()?'Sıra sende · 30 sn':`Sıra: ${userName(currentTurnUid())}`):room.status==='finished'?'Draft tamamlandı':'Başlamayı bekliyor';
+ $('spinBtn').disabled=!isMyTurn();$('spinBtn').textContent='🎡 Çarkı çevir';$('pickPanel').classList.add('hidden');
+ if(room.pendingPick&&room.pendingPick.uid===user.uid&&room.pendingPick.club){selectedCountry=room.pendingPick.club;if(!locked)renderPlayerOptions(selectedCountry);else $('spinResult').textContent='Çark sonucu penceresi kapanınca futbolcunu seçebilirsin.'}
+ else if(room.pendingPick){$('spinResult').textContent=`${userName(room.pendingPick.uid)} çark sonucunu uyguluyor: ${room.pendingPick.slice}.`}
+ else if(locked){$('spinResult').textContent='Sonuç penceresi kapanana kadar yeni hamle yapılamaz.'}
+ else if(room.status==='drafting'&&isMyTurn())$('spinResult').textContent=`Sıra sende! ${stageMessage(room.picks||[],room.memberOrder||[])}. Çarkı çevir.`;
+ else if(room.status==='drafting'&&starterCount(room.picks||[],user.uid)>=11)$('spinResult').textContent='İlk 11’in tamamlandı. Diğer oyuncuların da ilk 11’lerini tamamlamasını bekle.';
+ else if(room.status==='waiting')$('spinResult').textContent='Oda sahibi draftı başlattığında çark aktif olacak.';else $('spinResult').textContent='';
+ const phase=room.postDraftPhase||'protection',protectionDone=room.protectionDone||{},swapConfirmed=room.swapConfirmed||{},myProtectionDone=!!protectionDone[user.uid],mySwapConfirmed=!!swapConfirmed[user.uid];
+ $('specialActions').innerHTML=`<div class="special-rights"><div class="rights-card protection-card"><span class="rights-icon" aria-hidden="true">♜</span><span class="rights-label">KORUMA</span><strong>${rightsFor('protectionRights')}<small>/3</small></strong></div><div class="rights-card swap-card"><span class="rights-icon" aria-hidden="true">⇄</span><span class="rights-label">TAKAS</span><strong>${rightsFor('swapRights')}<small>/3</small></strong></div><p class="rights-note"><span class="rights-info">i</span>${phase==='protection'?(myProtectionDone?'Koruma seçimin onaylandı. Diğer oyuncular bekleniyor.':'Koruma ve takas pencereleri açılacak.') :phase==='swaps'?(mySwapConfirmed?'Takasların onaylandı. Diğer oyuncular bekleniyor.':'Takas penceresi açılacak.'):'Koruma ve takas aşamaları tamamlandı.'}</p></div>`;
+ $('turnOrder').innerHTML=(room.memberOrder||[]).map((id,i)=>`<div class="turn-item ${id===currentTurnUid()&&room.status==='drafting'?'current':''}"><span class="turn-num">${i+1}</span><span><b>${esc(userName(id))}</b><small>${starterCount(room.picks||[],id)}/11 ilk 11</small></span><span class="turn-mark">${id===user.uid?'SEN':id===currentTurnUid()&&room.status==='drafting'?'SIRA':''}</span></div>`).join('');
+ $('draftTeams').innerHTML=(room.memberOrder||[]).map(id=>{const sq=rosterFor(id);return `<div class="team-mini"><div><b>${esc(userName(id))}</b><small>${starterCount(room.picks||[],id)}/11 ilk 11</small></div><div class="progress"><i style="width:${starterCount(room.picks||[],id)/11*100}%"></i></div></div>`}).join('');
+ renderSquad();renderLeague();renderPersistentSwapReport();syncPostDraftModal();
+}
 function renderPlayerOptions(country){const panel=$('pickPanel');if(panel)panel.classList.remove('hidden');const avail=validPickCandidates(country,room?.picks||[],user?.uid,room?.memberOrder||[]).map(normalizePlayer);$('playerSelect').innerHTML=avail.map(p=>`<option value="${p.id}">${esc(p.name)} · ${esc(p.position)}</option>`).join('');$('pickBtn').disabled=!avail.length;$('pickBtn').textContent='Oyuncuyu seç';$('pickBtn').classList.remove('hidden');$('playerPreview').innerHTML=avail.length?playerCard(avail[0]):'<p>Bu takımda boş mevkiye uygun futbolcu yok. Bu el PAS sayılacak.</p>';if(!avail.length){setTimeout(()=>advanceEmptyCountry(country),350)}$('playerSelect').onchange=()=>{$('playerPreview').innerHTML=playerCard(players.find(p=>p.id===$('playerSelect').value))}}
 function playerCard(p){p=normalizePlayer(p||{});return `<div class="player-card"><div class="player-top"><div><b>${esc(p.name)}</b><small>${esc(p.club||p.country)} · ${esc(p.position)}</small></div></div></div>`}
 async function advanceEmptyCountry(club){if(!room||!room.pendingPick||room.pendingPick.club!==club||room.pendingPick.uid!==currentTurnUid())return;try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef);if(!s.exists())return;const d=s.data();if(!d.pendingPick||d.pendingPick.club!==club)return;const candidates=validPickCandidates(club,d.picks||[],d.pendingPick.uid,d.memberOrder||[]);if(candidates.length)return;const next=nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex);tx.update(roomRef,{pendingPick:null,turnIndex:next,turnStartedAt:Date.now(),lastSpin:{...(d.lastSpin||{}),slice:club,at:Date.now()},updatedAt:serverTimestamp()})});}catch(e){console.error(e)}}
@@ -257,7 +282,19 @@ function scheduleTurnTimeout(){
   runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data();if(d.status==='drafting'&&d.turnIndex===room.turnIndex&&d.memberOrder?.[d.turnIndex%d.memberOrder.length]===uid&&!d.turnStartedAt)tx.update(roomRef,{turnStartedAt:started,updatedAt:serverTimestamp()})}).catch(e=>console.warn('Tur başlangıcı kaydedilemedi:',e));
  }
 }
-async function spin(){if(!user?.uid){msg('Önce giriş yapmalısın.',true);return;}return spinFor(user.uid,false)}
+function startWheelSound(){
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;
+  stopWheelSound();wheelAudioContext=new AudioCtx();if(wheelAudioContext.state==='suspended')wheelAudioContext.resume();
+  wheelAudioOscillator=wheelAudioContext.createOscillator();wheelAudioGain=wheelAudioContext.createGain();
+  wheelAudioOscillator.type='sawtooth';wheelAudioOscillator.frequency.setValueAtTime(420,wheelAudioContext.currentTime);wheelAudioOscillator.frequency.exponentialRampToValueAtTime(95,wheelAudioContext.currentTime+3.15);
+  wheelAudioGain.gain.setValueAtTime(0.0001,wheelAudioContext.currentTime);wheelAudioGain.gain.exponentialRampToValueAtTime(0.055,wheelAudioContext.currentTime+0.08);wheelAudioGain.gain.exponentialRampToValueAtTime(0.0001,wheelAudioContext.currentTime+3.2);
+  wheelAudioOscillator.connect(wheelAudioGain);wheelAudioGain.connect(wheelAudioContext.destination);wheelAudioOscillator.start();wheelAudioOscillator.stop(wheelAudioContext.currentTime+3.22);
+  wheelAudioOscillator.onended=()=>stopWheelSound();
+ }catch(e){console.warn('Çark sesi başlatılamadı:',e)}
+}
+function stopWheelSound(){try{if(wheelAudioOscillator){wheelAudioOscillator.onended=null;wheelAudioOscillator.stop()} }catch{}try{if(wheelAudioContext)wheelAudioContext.close()}catch{}wheelAudioOscillator=null;wheelAudioGain=null;wheelAudioContext=null;}
+async function spin(){if(!user?.uid){msg('Önce giriş yapmalısın.',true);return;}if(!isMyTurn()){msg('Şu anda çarkı çeviremezsin.',true);return;}startWheelSound();await spinFor(user.uid,false)}
 async function spinFor(requestedUid,automatic=false){
  if(automatic)return; // Çark yalnızca oyuncu tarafından çevrilir.
  if(!room||!roomRef)return;
@@ -269,13 +306,14 @@ async function spinFor(requestedUid,automatic=false){
    if(uid!==requestedUid)throw new Error('Sıra değişti; güncel sırayı bekle.');
    if(uid!==user?.uid)throw new Error('Şu anda sıra sende değil.');
    if(d.pendingPick)throw new Error('Önce seçimini tamamla.');
+   if(isActionLocked(d))throw new Error('Sonuç penceresi kapanana kadar beklemelisin.');
    if(starterCount(d.picks||[],uid)>=11)throw new Error('Bu oyuncunun ilk 11’i tamamlandı.');
    if(d.lastSpin?.at&&Date.now()-Number(d.lastSpin.at)<3400)throw new Error('Çarkın durmasını bekle.');
    const slice=WHEEL_SLICES[Math.floor(Math.random()*WHEEL_SLICES.length)],at=Date.now();
    const managerName=d.members?.[uid]?.name||'Menajer';
    const spinAnnouncement={id:`spin_${at}_${uid}`,uid,managerName,result:slice,at,automatic:false};
    const picks=[...(d.picks||[])];
-   const updates={lastSpin:{uid,slice,at,automatic:false},lastSpinAnnouncement:spinAnnouncement,turnStartedAt:at,updatedAt:serverTimestamp()};
+   const updates={lastSpin:{uid,slice,at,automatic:false},lastSpinAnnouncement:spinAnnouncement,actionLock:{id:spinAnnouncement.id,kind:'spin',startedAt:at,until:at+6300},turnStartedAt:at,updatedAt:serverTimestamp()};
    if(CLUBS.includes(slice)){
     const candidates=validPickCandidates(slice,picks,uid,d.memberOrder||[]);
     if(candidates.length){
@@ -302,6 +340,7 @@ async function pickPlayer(){
  if(!room||!roomRef||!user)return;
  const club=room.pendingPick?.club;
  if(!club||room.pendingPick.uid!==user.uid||currentTurnUid()!==user.uid){msg('Önce kendi sıranda çarkı çevir.');return;}
+ if(isActionLocked()){msg('Çark sonucu penceresi kapanana kadar beklemelisin.');return;}
  const playerId=$('playerSelect')?.value;
  if(!playerId){msg('Lütfen bir futbolcu seç.',true);return;}
  try{
@@ -309,6 +348,7 @@ async function pickPlayer(){
    const snap=await tx.get(roomRef);if(!snap.exists())throw new Error('Oda bulunamadı.');
    const d=snap.data(),pending=d.pendingPick;
    if(d.status!=='drafting'||!pending||pending.uid!==user.uid||pending.club!==club)throw new Error('Seçim sırası değişti; tekrar kontrol et.');
+   if(isActionLocked(d))throw new Error('Çark sonucu penceresi kapanana kadar beklemelisin.');
    if(d.memberOrder?.[d.turnIndex%d.memberOrder.length]!==user.uid)throw new Error('Şu anda sıra sende değil.');
    const candidates=validPickCandidates(club,d.picks||[],user.uid,d.memberOrder||[]);
    const raw=candidates.find(p=>String(p.id)===String(playerId));
@@ -321,7 +361,8 @@ async function pickPlayer(){
    const player={...normalizePlayer(raw),uid:user.uid,starter:true,starterIndex,selectedAt:at,autoSelected:false};
    picks.push(player);
    const done=(d.memberOrder||[]).every(id=>starterCount(picks,id)>=11);
-   const updates={picks,pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],picks,d.turnIndex),turnStartedAt:at,lastPickAnnouncement:{id:`${at}_${user.uid}_${player.id}`,uid:user.uid,managerName,club:player.club,playerName:player.name,position:player.position,at,automatic:false},updatedAt:serverTimestamp()};
+   const pickAnnouncement={id:`${at}_${user.uid}_${player.id}`,uid:user.uid,managerName,club:player.club,playerName:player.name,position:player.position,at,automatic:false};
+   const updates={picks,pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],picks,d.turnIndex),turnStartedAt:at,lastPickAnnouncement:pickAnnouncement,actionLock:{id:pickAnnouncement.id,kind:'pick',startedAt:at,until:at+3000},updatedAt:serverTimestamp()};
    if(done){updates.status='finished';updates.postDraftPhase='protection';updates.protectionDone={};updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
    tx.update(roomRef,updates);
   });
@@ -501,8 +542,9 @@ async function enterRoom(id,quiet=false){try{const ref=doc(db,'rooms',id);await 
 function closeRoomUI(){if(roomUnsub){roomUnsub();roomUnsub=null}room=null;roomId=null;roomRef=null;$('roomView').classList.add('hidden')}
 async function closeRoom(){if(!isAdmin()||!roomRef){msg('Odayı yalnızca admin kapatabilir.',true);return}if(!confirm('Bu oda kapatılsın mı?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg('Oda admin tarafından kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
 async function leaveRoom(){closeRoomUI();msg('Oda görünümünden çıktın. Oda üyeliğin korunur.');}
-async function createRoom(e){e.preventDefault();if(!isAdmin()){msg('Oda oluşturma yalnızca admin tarafından yapılabilir.',true);return}try{const name=$('roomName').value.trim(),capacity=Number($('roomCapacity').value),id=Array.from(crypto.getRandomValues(new Uint8Array(6))).map(n=>String(n%10)).join('');const ref=doc(collection(db,'rooms'));const data={name,code:id,capacity,ownerUid:user.uid,memberOrder:[user.uid],members:{[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},status:'waiting',turnIndex:0,picks:[],pendingPick:null,protectionRights:{},swapRights:{[user.uid]:0},protectionRightsEarned:{},swapRightsEarned:{[user.uid]:0},postDraftPhase:'protection',protectionDone:{},swapRequests:[],swapConfirmed:{},swapResolved:false,tactics:{},league:{fixtures:[],results:{}},createdAt:Date.now(),updatedAt:serverTimestamp()};await setDoc(ref,data);$('createRoomForm').reset();await enterRoom(ref.id);msg('Oda oluşturuldu.')}catch(e){msg(e.message||'Oda oluşturulamadı.',true)}}
-async function saveLeagueName(){try{await updateDoc(roomRef,{'league.name':$('leagueName').value.trim()||'Çark Futbol Ligi',updatedAt:serverTimestamp()});msg('Lig adı kaydedildi.')}catch(e){msg(e.message,true)}}
+async function createRoom(e){e.preventDefault();if(!user?.uid||!user.emailVerified){msg('Oda oluşturmak için doğrulanmış e-posta ile giriş yapmalısın.',true);return}try{const name=$('roomName').value.trim(),capacity=Number($('roomCapacity').value);if(!name)throw new Error('Oda adı gir.');let id='',exists=true;while(exists){id=Array.from(crypto.getRandomValues(new Uint8Array(6))).map(n=>String(n%10)).join('');const check=await getDocs(query(collection(db,'rooms'),where('code','==',id)));exists=!check.empty;}const ref=doc(collection(db,'rooms'));const data={name,code:id,capacity,ownerUid:user.uid,memberOrder:[user.uid],members:{[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},status:'waiting',turnIndex:0,picks:[],pendingPick:null,actionLock:null,protectionRights:{},swapRights:{[user.uid]:0},protectionRightsEarned:{},swapRightsEarned:{[user.uid]:0},postDraftPhase:'protection',protectionDone:{},swapRequests:[],swapConfirmed:{},swapResolved:false,tactics:{},league:{name,fixtures:[],results:{}},createdAt:Date.now(),updatedAt:serverTimestamp()};await setDoc(ref,data);$('createRoomForm').reset();await enterRoom(ref.id);msg(`Oda oluşturuldu. Katılma kodu: ${id}`)}catch(e){msg(e.message||'Oda oluşturulamadı.',true)}}
+async function joinRoomByCode(e){e.preventDefault();const code=$('roomCodeInput').value.trim();if(!/^\d{6}$/.test(code)){msg('6 haneli geçerli oda kodunu gir.',true);return}try{const matches=await getDocs(query(collection(db,'rooms'),where('code','==',code)));if(matches.empty)throw new Error('Bu kodla eşleşen oda bulunamadı.');const found=matches.docs[0];await enterRoom(found.id);$('joinRoomForm').reset()}catch(e){msg(e.message||'Odaya katılınamadı.',true)}}
+async function saveLeagueName(){try{const name=$('leagueName').value.trim()||room?.name||'Çark Futbol Ligi';await updateDoc(roomRef,{'league.name':name,updatedAt:serverTimestamp()});msg('Lig adı kaydedildi.')}catch(e){msg(e.message,true)}}
 async function initDashboard(u){
  await authPersistenceReady;
  await reload(u);
@@ -522,9 +564,8 @@ async function initDashboard(u){
  $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
  $('userBadge').textContent=profile.nickname||profile.name||u.email;
  $('logoutBtn').classList.remove('hidden');$('helloName').textContent=profile.nickname||profile.name||'Menajer';
- $('adminBox').classList.toggle('hidden',!isAdmin());$('newRoomBtn').classList.toggle('hidden',!isAdmin());
- if(roomsUnsub)roomsUnsub();
- roomsUnsub=onSnapshot(query(collection(db,'rooms'),where('status','in',['waiting','drafting','finished'])),snap=>{rooms=snap.docs.map(d=>({id:d.id,...d.data()}));renderRooms()},e=>{console.error(e);msg('Odalar okunamadı: '+e.message,true)});
+ $('adminBox').classList.remove('hidden');$('newRoomBtn').classList.remove('hidden');
+ renderRooms();
 }
 async function registerAccount(e){
  e.preventDefault();
@@ -614,7 +655,8 @@ function bindUI(){
   closeRoomUI();await signOut(auth);
  };
  $('createRoomForm').onsubmit=createRoom;
- $('newRoomBtn').onclick=()=>$('roomName').focus();
+ $('joinRoomForm').onsubmit=joinRoomByCode;
+ $('newRoomBtn').onclick=()=>{$('roomName').focus();$('adminBox').scrollIntoView({behavior:'smooth',block:'center'})};
  $('startDraftBtn').onclick=startDraft;$('spinBtn').onclick=spin;$('pickBtn').onclick=pickPlayer;
  $('leaveRoomBtn').onclick=leaveRoom;
  $('copyCodeBtn').onclick=async()=>{try{await navigator.clipboard.writeText(room.code||roomId);msg('Oda kodu kopyalandı.')}catch{msg('Oda kodu: '+(room.code||roomId))}};

@@ -34,8 +34,8 @@ service cloud.firestore {
 
     match /rooms/{roomId} {
       allow read: if verifiedUser();
-      // Only the configured administrator may create a room.
-      allow create: if isAdmin()
+      // Any email-verified account may create a room and becomes its owner.
+      allow create: if verifiedUser()
         && request.resource.data.ownerUid == request.auth.uid
         && request.resource.data.status == 'waiting'
         && request.resource.data.memberOrder is list
@@ -56,13 +56,13 @@ service cloud.firestore {
         isRoomMember(resource.data)
         && (request.resource.data.status == resource.data.status
           || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
           || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
             && request.auth.uid == resource.data.ownerUid
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','lastPickAnnouncement','turnStartedAt','updatedAt'])))
         && request.resource.data.ownerUid == resource.data.ownerUid
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','protectionRights','swapRights',
+          'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','protectionRights','swapRights',
           'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','updatedAt',
           // Post-draft protection and swap workflow fields used by the app.
           'protectionDone','postDraftPhase','swapConfirmed','swapRequests','swapResolved','swapResults',
