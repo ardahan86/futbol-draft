@@ -576,6 +576,31 @@ async function createRoom(e){
   if(btn){btn.disabled=false;btn.textContent='Oda Oluştur'}
  }
 }
+async function initDashboard(u){
+ await authPersistenceReady;
+ await reload(u);
+ if(!u.emailVerified){
+  user=null;profile=null;
+  $('authView').classList.remove('hidden');$('appView').classList.add('hidden');
+  throw new Error('E-posta adresin doğrulanmamış. Gelen kutundaki bağlantıyı onayladıktan sonra tekrar giriş yap.');
+ }
+ user=u;
+ let p=null;
+ if(u.uid!==ADMIN_UID){
+  const snap=await getDoc(doc(db,'users',u.uid));
+  if(!snap.exists())throw new Error('Hesap kaydın bulunamadı. Lütfen destek al.');
+  p=snap.data();
+ }
+ profile=u.uid===ADMIN_UID?{name:'Arda',nickname:'Arda'}:p;
+ $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+ $('userBadge').textContent=profile.nickname||profile.name||u.email;
+ $('logoutBtn').classList.remove('hidden');$('helloName').textContent=profile.nickname||profile.name||'Menajer';
+ // Oda oluşturma tüm doğrulanmış kullanıcılar için açık.
+ $('adminBox').classList.remove('hidden');$('newRoomBtn').classList.remove('hidden');
+ if(roomsUnsub)roomsUnsub();
+ roomsUnsub=onSnapshot(query(collection(db,'rooms'),where('status','in',['waiting','drafting','finished'])),snap=>{rooms=snap.docs.map(d=>({id:d.id,...d.data()}));renderRooms()},e=>{console.error(e);msg('Odalar okunamadı: '+e.message,true)});
+}
+
 async function loginAccount(e){
  e.preventDefault();const identifier=$('accountLoginEmail').value.trim(),password=$('accountLoginPassword').value;
  const submit=$('loginForm').querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Giriş yapılıyor…';authFlowInProgress=true;
