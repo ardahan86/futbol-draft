@@ -398,7 +398,11 @@ async function protectPlayer(){
  if(!room||room.status!=='finished'||(room.postDraftPhase||'protection')!=='protection'||room.protectionDone?.[user.uid])return;
  try{
   const mine=myPicks().slice().sort((a,b)=>Number(a.starterIndex)-Number(b.starterIndex));
-  const secretRef=doc(db,'roomSecrets',`${roomId}_${user.uid}`),snap=await getDoc(secretRef);
+  const requestedRoomId=roomId,requestedUid=user.uid;
+  const secretRef=doc(db,'roomSecrets',`${requestedRoomId}_${requestedUid}`),snap=await getDoc(secretRef);
+  // Firestore yanıtı beklenirken kullanıcı başka sekmeye geçmiş olabilir.
+  // Eski async istek, modalı sonradan yeniden ekranın üzerine koymamalı.
+  if(!room||roomId!==requestedRoomId||user?.uid!==requestedUid||room.status!=='finished'||(room.postDraftPhase||'protection')!=='protection'||room.protectionDone?.[requestedUid]||document.querySelector('.nav-tab.active')?.dataset.pane!=='draftPane')return;
   const prior=[...new Set(snap.exists()?snap.data().protectedIds||[]:[])].filter(id=>mine.some(p=>p.id===id));
   const available=Math.max(0,Math.min(3,rightsFor('protectionRights'))-prior.length);
   const modal=makePostDraftModal('protection','Korunacak futbolcularını seç',`Koruma hakkın: ${rightsFor('protectionRights')}. En fazla ${available} yeni futbolcu seçebilirsin.`);
@@ -739,10 +743,15 @@ function bindUI(){
  $('leaveRoomBtn').onclick=leaveRoom;
  $('copyCodeBtn').onclick=async()=>{try{await navigator.clipboard.writeText(room.code||roomId);msg('Oda kodu kopyalandı.')}catch{msg('Oda kodu: '+(room.code||roomId))}};
  $('createFixturesBtn').onclick=createFixtures;$('saveLeagueNameBtn').onclick=saveLeagueName;
- document.querySelectorAll('.nav-tab').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.nav-tab').forEach(b=>b.onclick=(event)=>{
+  event?.preventDefault?.();
+  const target=document.getElementById(b.dataset.pane);
+  if(!target)return;
+  // Sekme değişirken modalı önce kaldır; ardından görünür paneli seç.
+  if(b.dataset.pane!=='draftPane')closePostDraftModal();
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x===b));
-  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.pane));
-  syncPostDraftModal();
+  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x!==target));
+  if(b.dataset.pane==='draftPane')syncPostDraftModal();
  });
 }
 let resumeAttemptAt=0;
