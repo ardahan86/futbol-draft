@@ -247,7 +247,7 @@ function renderRoom(){
  if(room.lastSpin?.at&&room.lastSpin.at!==lastWheelSpinAt){drawWheelSpin(room.lastSpin.slice);lastWheelSpinAt=room.lastSpin.at;spinCooldownUntil=Date.now()+3400;const spinAt=room.lastSpin.at;clearTimeout(spinCooldownTimer);spinCooldownTimer=setTimeout(()=>{if(room?.lastSpin?.at===spinAt){spinCooldownUntil=0;renderRoom()}},3450)}
  const locked=isActionLocked();clearTimeout(actionLockTimer);actionLockTimer=null;
  if(locked){actionLockTimer=setTimeout(()=>{if(room){renderRoom()}},Math.max(30,Number(room.actionLock.until)-Date.now()+40))}
- $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;
+ $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;const memberCount=$('roomMemberCount');if(memberCount){const count=(room.memberOrder||[]).length,capacity=Number(room.capacity||count);memberCount.textContent=`${count}/${capacity} oyuncu odada`;}
  const closeBtn=$('closeRoomBtn');if(closeBtn){const canCloseOwn=room.ownerUid===user?.uid;const canAdminClose=isAdmin()&&room.status==='finished';closeBtn.classList.toggle('hidden',!(canCloseOwn||canAdminClose));closeBtn.textContent=canCloseOwn?'Odamı kapat':'Bitmiş odayı kapat';closeBtn.onclick=closeRoom;}
  $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:locked?'Hamle penceresi açık · Bekleniyor':'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;
  $('startDraftBtn').classList.toggle('hidden',!(isAdmin()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
@@ -380,6 +380,13 @@ function makePostDraftModal(stage,title,subtitle){
 }
 function syncPostDraftModal(){
  if(!room||room.status!=='finished'||!user)return;
+ // Zorunlu işlem pencereleri yalnızca Draft sekmesinde gösterilir.
+ // Diğer sekmeler erişilebilir kalır; fikstür kilidi postDraftPhase ile korunur.
+ const activePane=document.querySelector('.nav-tab.active')?.dataset.pane||'draftPane';
+ if(activePane!=='draftPane'){
+  if($('postDraftModal'))closePostDraftModal();
+  return;
+ }
  const phase=room.postDraftPhase||'protection';
  if(phase==='tactics'&&!room.tacticsConfirmed?.[user.uid]){if(!$('postDraftModal')||$('postDraftModal').dataset.stage!=='tactics')chooseTactics();}
  else if(phase==='protection'&&!room.protectionDone?.[user.uid]){if(!$('postDraftModal')||$('postDraftModal').dataset.stage!=='protection')protectPlayer();}
@@ -734,7 +741,8 @@ function bindUI(){
  $('createFixturesBtn').onclick=createFixtures;$('saveLeagueNameBtn').onclick=saveLeagueName;
  document.querySelectorAll('.nav-tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x===b));
-  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.pane))
+  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.pane));
+  syncPostDraftModal();
  });
 }
 let resumeAttemptAt=0;
