@@ -542,85 +542,39 @@ async function enterRoom(id,quiet=false){try{const ref=doc(db,'rooms',id);await 
 function closeRoomUI(){if(roomUnsub){roomUnsub();roomUnsub=null}room=null;roomId=null;roomRef=null;$('roomView').classList.add('hidden')}
 async function closeRoom(){if(!isAdmin()||!roomRef){msg('Odayı yalnızca admin kapatabilir.',true);return}if(!confirm('Bu oda kapatılsın mı?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg('Oda admin tarafından kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
 async function leaveRoom(){closeRoomUI();msg('Oda görünümünden çıktın. Oda üyeliğin korunur.');}
-async function createRoom(e){e.preventDefault();if(!user?.uid||!user.emailVerified){msg('Oda oluşturmak için doğrulanmış e-posta ile giriş yapmalısın.',true);return}try{const name=$('roomName').value.trim(),capacity=Number($('roomCapacity').value);if(!name)throw new Error('Oda adı gir.');let id='',exists=true;while(exists){id=Array.from(crypto.getRandomValues(new Uint8Array(6))).map(n=>String(n%10)).join('');const check=await getDocs(query(collection(db,'rooms'),where('code','==',id)));exists=!check.empty;}const ref=doc(collection(db,'rooms'));const data={name,code:id,capacity,ownerUid:user.uid,memberOrder:[user.uid],members:{[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},status:'waiting',turnIndex:0,picks:[],pendingPick:null,actionLock:null,protectionRights:{},swapRights:{[user.uid]:0},protectionRightsEarned:{},swapRightsEarned:{[user.uid]:0},postDraftPhase:'protection',protectionDone:{},swapRequests:[],swapConfirmed:{},swapResolved:false,tactics:{},league:{name,fixtures:[],results:{}},createdAt:Date.now(),updatedAt:serverTimestamp()};await setDoc(ref,data);$('createRoomForm').reset();await enterRoom(ref.id);msg(`Oda oluşturuldu. Katılma kodu: ${id}`)}catch(e){msg(e.message||'Oda oluşturulamadı.',true)}}
-async function joinRoomByCode(e){e.preventDefault();const code=$('roomCodeInput').value.trim();if(!/^\d{6}$/.test(code)){msg('6 haneli geçerli oda kodunu gir.',true);return}try{const matches=await getDocs(query(collection(db,'rooms'),where('code','==',code)));if(matches.empty)throw new Error('Bu kodla eşleşen oda bulunamadı.');const found=matches.docs[0];await enterRoom(found.id);$('joinRoomForm').reset()}catch(e){msg(e.message||'Odaya katılınamadı.',true)}}
-async function saveLeagueName(){try{const name=$('leagueName').value.trim()||room?.name||'Çark Futbol Ligi';await updateDoc(roomRef,{'league.name':name,updatedAt:serverTimestamp()});msg('Lig adı kaydedildi.')}catch(e){msg(e.message,true)}}
-async function initDashboard(u){
- await authPersistenceReady;
- await reload(u);
- if(!u.emailVerified){
-  user=null;profile=null;
-  $('authView').classList.remove('hidden');$('appView').classList.add('hidden');
-  throw new Error('E-posta adresin doğrulanmamış. Gelen kutundaki bağlantıyı onayladıktan sonra tekrar giriş yap.');
- }
- user=u;
- let p=null;
- if(u.uid!==ADMIN_UID){
-  const snap=await getDoc(doc(db,'users',u.uid));
-  if(!snap.exists())throw new Error('Hesap kaydın bulunamadı. Lütfen destek al.');
-  p=snap.data();
- }
- profile=u.uid===ADMIN_UID?{name:'Arda',nickname:'Arda'}:p;
- $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
- $('userBadge').textContent=profile.nickname||profile.name||u.email;
- $('logoutBtn').classList.remove('hidden');$('helloName').textContent=profile.nickname||profile.name||'Menajer';
- $('adminBox').classList.add('hidden');$('newRoomBtn').classList.remove('hidden');
- renderRooms();
-}
-async function registerAccount(e){
+async function createRoom(e){
  e.preventDefault();
- const nickname=$('registerNickname').value.trim(),nicknameLower=normalizeNickname(nickname),email=$('registerEmail').value.trim().toLowerCase(),password=$('registerPassword').value;
- if(!/^[A-Za-z0-9_]{3,16}$/.test(nickname)){authMsg('Kullanıcı adı 3–16 karakter olmalı; İngilizce harf, rakam ve alt çizgi kullanılabilir.',true);return}
- if(nicknameLower==='arda'){authMsg('Bu kullanıcı adı sistem tarafından ayrılmış.',true);return}
- if(password.length<6){authMsg('Şifre en az 6 karakter olmalı.',true);return}
- const submit=$('registerForm').querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Hesap oluşturuluyor…';authFlowInProgress=true;
- let credential=null,profileCreated=false;
+ if(!user?.uid||!user.emailVerified){msg('Oda oluşturmak için doğrulanmış e-posta ile giriş yapmalısın.',true);return}
+ const btn=$('createRoomForm').querySelector('button[type="submit"],button:not([type])');
+ let stage='oturum doğrulaması';
+ if(btn){btn.disabled=true;btn.textContent='Oda oluşturuluyor…'}
  try{
-  await authPersistenceReady;
-  credential=await createUserWithEmailAndPassword(auth,email,password);
-  const uid=credential.user.uid,usernameRef=doc(db,'usernames',nicknameLower),userRef=doc(db,'users',uid);
-  await runTransaction(db,async tx=>{
-   const existing=await tx.get(usernameRef);if(existing.exists())throw new Error('USERNAME_TAKEN');
-   tx.set(usernameRef,{uid,nickname,nicknameLower,createdAt:serverTimestamp()});
-   tx.set(userRef,{uid,email,nickname,name:nickname,nicknameLower,createdAt:serverTimestamp(),accountType:'player'});
-  });
-  profileCreated=true;
-  await sendEmailVerification(credential.user,{url:EMAIL_ACTION_URL,handleCodeInApp:false});
-  await signOut(auth);
-  $('registerForm').reset();showAuthMode('login');
-  authMsg('Hesabın oluşturuldu. '+email+' adresine doğrulama bağlantısı gönderdik. E-postanı doğruladıktan sonra giriş yapabilirsin.');
- }catch(err){
-  console.error('Kayıt hatası:',err);authMsg(err.message==='USERNAME_TAKEN'?'Bu kullanıcı adı alınmış. Başka bir ad seç.':authErrorMessage(err),true);
-  if(credential?.user&&auth.currentUser?.uid===credential.user.uid){if(!profileCreated){try{await deleteUser(credential.user)}catch{await signOut(auth)}}else{try{await signOut(auth)}catch{}}}
- }finally{authFlowInProgress=false;submit.disabled=false;submit.textContent='HESAP OLUŞTUR'}
-}
-async function loginAccount(e){
- e.preventDefault();const identifier=$('accountLoginEmail').value.trim(),password=$('accountLoginPassword').value;
- const submit=$('loginForm').querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Giriş yapılıyor…';authFlowInProgress=true;
- try{
-  await authPersistenceReady;
-  const response=await fetch(`${AUTH_WORKER_URL}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier,password})});
-  const result=await response.json().catch(()=>({}));
-  if(!response.ok){const error=new Error(result.error||'AUTH_SERVICE_UNAVAILABLE');if(result.error==='EMAIL_NOT_VERIFIED')error.code='auth/email-not-verified';else if(result.error==='INVALID_CREDENTIALS')error.code='auth/invalid-credential';throw error}
-  if(!result.customToken)throw new Error('AUTH_SERVICE_UNAVAILABLE');
-  const {signInWithCustomToken}=await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js');
-  const credential=await signInWithCustomToken(auth,result.customToken);
-  await initDashboard(credential.user);authMsg('Giriş başarılı. Hoş geldin '+(profile.nickname||profile.name||'Menajer')+'.');
- }catch(err){console.error('Giriş hatası:',err);authMsg(authErrorMessage(err),true);if(auth.currentUser){try{await signOut(auth)}catch{}}}
- finally{authFlowInProgress=false;submit.disabled=false;submit.textContent='GİRİŞ YAP'}
-}
-async function resetPassword(){
- const value=$('accountLoginEmail').value.trim();
- if(!value||!value.includes('@')){authMsg('Şifre sıfırlama için kullanıcı adı değil, kayıtlı e-posta adresini gir.',true);$('accountLoginEmail').focus();return}
- try{await sendPasswordResetEmail(auth,value);authMsg('Şifre sıfırlama bağlantısı e-posta adresine gönderildi.')}catch(err){authMsg(authErrorMessage(err),true)}
-}
-async function resendVerification(){
- const email=$('resendVerifyEmail').value.trim().toLowerCase(),password=$('resendVerifyPassword').value;
- if(!email||!email.includes('@')||!password){authMsg('Doğrulama bağlantısını yeniden göndermek için e-posta ve şifreni gir.',true);return}
- const button=$('resendVerificationBtn');button.disabled=true;
- try{const cred=await signInWithEmailAndPassword(auth,email,password);await reload(cred.user);if(cred.user.emailVerified){authMsg('E-posta adresin zaten doğrulanmış. Giriş yapabilirsin.')}else{await sendEmailVerification(cred.user,{url:EMAIL_ACTION_URL,handleCodeInApp:false});authMsg('Yeni doğrulama bağlantısı gönderildi. Gelen kutunu ve spam klasörünü kontrol et.')}await signOut(auth)}
- catch(err){authMsg(authErrorMessage(err),true);if(auth.currentUser){try{await signOut(auth)}catch{}}}
- finally{button.disabled=false}
+  // Refresh the Firebase ID token so Firestore receives the current email_verified claim.
+  await user.getIdToken(true);
+  const name=$('roomName').value.trim(),capacity=Number($('roomCapacity').value);
+  if(!name)throw new Error('Oda adı gir.');
+  if(!Number.isInteger(capacity)||capacity<2||capacity>6)throw new Error('Oyuncu sayısı 2 ile 6 arasında olmalı.');
+  let id='',exists=true;
+  stage='oda kodu kontrolü';
+  while(exists){
+   id=Array.from(crypto.getRandomValues(new Uint8Array(6))).map(n=>String(n%10)).join('');
+   const check=await getDocs(query(collection(db,'rooms'),where('code','==',id)));
+   exists=!check.empty;
+  }
+  stage='oda kaydı';
+  const ref=doc(collection(db,'rooms'));
+  const data={name,code:id,capacity,ownerUid:user.uid,memberOrder:[user.uid],members:{[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},status:'waiting',turnIndex:0,picks:[],pendingPick:null,actionLock:null,protectionRights:{},swapRights:{[user.uid]:0},protectionRightsEarned:{},swapRightsEarned:{[user.uid]:0},postDraftPhase:'protection',protectionDone:{},swapRequests:[],swapConfirmed:{},swapResolved:false,tactics:{},league:{name,fixtures:[],results:{}},createdAt:Date.now(),updatedAt:serverTimestamp()};
+  await setDoc(ref,data);
+  stage='odaya giriş';
+  $('createRoomForm').reset();
+  await enterRoom(ref.id);
+  msg(`Oda oluşturuldu. Katılma kodu: ${id}`);
+ }catch(e){
+  console.error('Oda oluşturma aşaması:',stage,e);
+  msg(`${stage} aşamasında hata: ${e.message||'Bilinmeyen hata'}`,true);
+ }finally{
+  if(btn){btn.disabled=false;btn.textContent='Oda Oluştur'}
+ }
 }
 function showAuthMode(mode){
  const isRegister=mode==='register';
@@ -656,16 +610,7 @@ function bindUI(){
  };
  $('createRoomForm').onsubmit=createRoom;
  $('joinRoomForm').onsubmit=joinRoomByCode;
- $('newRoomBtn').onclick=()=>{
-  const box=$('adminBox');
-  const opening=box.classList.contains('hidden');
-  box.classList.toggle('hidden',!opening);
-  $('newRoomBtn').textContent=opening?'− Formu kapat':'+ Oda oluştur';
-  if(opening){
-    box.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(()=>$('roomName').focus(),300);
-  }
-};
+ $('newRoomBtn').onclick=()=>{$('roomName').focus();$('adminBox').scrollIntoView({behavior:'smooth',block:'center'})};
  $('startDraftBtn').onclick=startDraft;$('spinBtn').onclick=spin;$('pickBtn').onclick=pickPlayer;
  $('leaveRoomBtn').onclick=leaveRoom;
  $('copyCodeBtn').onclick=async()=>{try{await navigator.clipboard.writeText(room.code||roomId);msg('Oda kodu kopyalandı.')}catch{msg('Oda kodu: '+(room.code||roomId))}};
