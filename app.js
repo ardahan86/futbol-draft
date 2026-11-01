@@ -76,7 +76,7 @@ function readStored(key){try{return localStorage.getItem(key)||null}catch{return
 function writeStored(key,value){try{if(value)localStorage.setItem(key,String(value));else localStorage.removeItem(key)}catch{}}
 let authFlowInProgress=false;
 let actionLockTimer=null;
-let user=null,profile=null,players=[],rooms=[],roomsUnsub=null,roomUnsub=null,room=null,roomId=null,roomRef=null,toastTimer=null,selectedCountry=null,pendingSpinCountry=null,lastWheelCountry=null,lastWheelSpinAt=0,lastPickAnnouncementId=null,lastSpinAnnouncementId=null,pendingSpinAnnouncementId=null,pickAnnouncementTimer=null,spinCooldownTimer=null,spinCooldownUntil=0,scheduledTurnKey=null,roomSnapshotInitialized=false,resumeInProgress=false;
+let user=null,profile=null,players=[],rooms=[],roomsUnsub=null,roomUnsub=null,room=null,roomId=null,roomRef=null,toastTimer=null,selectedCountry=null,pendingSpinCountry=null,lastWheelCountry=null,lastWheelSpinAt=0,lastPickAnnouncementId=null,lastSpinAnnouncementId=null,pendingSpinAnnouncementId=null,pickAnnouncementTimer=null,spinCooldownTimer=null,spinCooldownUntil=0,scheduledTurnKey=null,roomSnapshotInitialized=false,resumeInProgress=false,roomInspectionMode=false;
 const isAdmin=()=>!!user&&user.uid===ADMIN_UID;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function msg(text,error=false){const t=$('toast');if(!t)return;clearTimeout(toastTimer);if(!error){t.className='toast';return}t.textContent=text;t.className='toast show error';toastTimer=setTimeout(()=>t.className='toast',4500)}
@@ -110,13 +110,13 @@ function authErrorMessage(err){const code=err?.code||'';const message=err?.messa
 function userName(uid){return uid===ADMIN_UID?'Arda':(room?.members?.[uid]?.name||'Menajer')}
 function countryPlayers(club){return players.filter(p=>p.club===club)}
 function normalizePlayer(p){return {...p,country:p.club,rating:Number(p.overall||0),technique:Math.round((Number(p.attack||0)+Number(p.defense||0))/2)}}
-function canAdminRoomAction(){return isAdmin()}
+function canAdminRoomAction(){return isAdmin()&&!roomInspectionMode}
 function rightsFor(kind,uid=user?.uid){return Number(room?.[kind]?.[uid]||0)}
 function pickedIds(){return new Set((room?.picks||[]).map(p=>p.id))}
 function myPicks(){return (room?.picks||[]).filter(p=>p.uid===user?.uid)}
 function orderedTurns(){return room?.memberOrder||[]}
 function isActionLocked(data=room){return Number(data?.actionLock?.until||0)>Date.now()}
-function isMyTurn(){if(room?.status!=='drafting'||!room.memberOrder?.length||room.memberOrder[room.turnIndex%room.memberOrder.length]!==user?.uid||room.pendingPick||isActionLocked())return false;if(Date.now()<spinCooldownUntil)return false;const picks=room.picks||[];return starterCount(picks,user.uid)<11}
+function isMyTurn(){if(roomInspectionMode)return false;if(room?.status!=='drafting'||!room.memberOrder?.length||room.memberOrder[room.turnIndex%room.memberOrder.length]!==user?.uid||room.pendingPick||isActionLocked())return false;if(Date.now()<spinCooldownUntil)return false;const picks=room.picks||[];return starterCount(picks,user.uid)<11}
 function currentTurnUid(){return room?.memberOrder?.[room.turnIndex%Math.max(1,room.memberOrder?.length||1)]}
 function rosterFor(uid){return (room?.picks||[]).filter(p=>p.uid===uid)}
 function formationSlots(){return ['GK','RB','CB','CB','LB','CM','CM','CAM','RW','LW','ST']}
@@ -240,21 +240,30 @@ function buildFixtures(teamIds){let a=[...teamIds];if(a.length%2)a.push(null);le
 function standings(){const teams=(room?.memberOrder||[]).map(id=>({id,name:userName(id),squad:rosterFor(id),formation:'4-2-3-1',tactic:room?.tactics?.[id]?.tactic||'balanced',played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}));for(const m of room?.league?.fixtures||[]){const r=room?.league?.results?.[m.id];if(!r)continue;const h=teams.find(t=>t.id===m.homeUid),a=teams.find(t=>t.id===m.awayUid);if(!h||!a)continue;h.played++;a.played++;h.gf+=r.homeGoals;h.ga+=r.awayGoals;a.gf+=r.awayGoals;a.ga+=r.homeGoals;if(r.homeGoals>r.awayGoals){h.w++;h.pts+=3;a.l++}else if(r.homeGoals<r.awayGoals){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}return teams.sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
 function drawWheel(){const c=$('wheelCanvas');if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=196,n=WHEEL_SLICES.length;ctx.clearRect(0,0,c.width,c.height);for(let i=0;i<n;i++){const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=getWheelSliceColor(WHEEL_SLICES[i]);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(start+a/2);ctx.textAlign='right';ctx.fillStyle=getWheelTextColor(WHEEL_SLICES[i]);ctx.font=`bold ${WHEEL_SLICES[i].length>10?9:11}px system-ui`;ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(WHEEL_SLICES[i],r-10,4);ctx.restore()}ctx.save();const rim=ctx.createRadialGradient(cx,cy,r+1,cx,cy,r+9);rim.addColorStop(0,'#6f4d18');rim.addColorStop(.28,'#f8e5a6');rim.addColorStop(.55,'#b88b3d');rim.addColorStop(.82,'#fff0bd');rim.addColorStop(1,'#674511');ctx.beginPath();ctx.arc(cx,cy,r+4,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r+9,0,Math.PI*2);ctx.strokeStyle='rgba(255,226,157,.55)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();ctx.beginPath();ctx.arc(cx,cy,43,0,Math.PI*2);ctx.fillStyle='#101827';ctx.fill();ctx.strokeStyle='#d8b56a';ctx.lineWidth=3;ctx.stroke()}
 function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const angle=-(center+Math.PI/2);c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
-function isLeagueSimulationComplete(data){
- const fixtures=data?.league?.fixtures||[],results=data?.league?.results||{};
- return data?.status==='finished'&&fixtures.length>0&&fixtures.every(m=>!!results[m.id]);
-}
 function renderRooms(){
  const list=$('roomList');if(!list)return;
- if(!isAdmin()){list.innerHTML='<div class="empty-state">Odaya yalnızca geçerli oda koduyla katılabilirsin.</div>';return}
- if(!rooms.length){list.innerHTML='<div class="empty-state">Şu anda açık oyun odası bulunmuyor.</div>';return}
- const statusLabel={waiting:'Oyuncu bekliyor',drafting:'Draft devam ediyor',finished:'Lig aşaması'};
- list.innerHTML=`<div class="admin-room-list-head"><b>Yönetici oda listesi</b><span>${rooms.length} oda</span></div>`+rooms.map(r=>{
-  const members=(r.memberOrder||[]).length,capacity=Number(r.capacity||members),fixtures=r.league?.fixtures||[],results=r.league?.results||{},played=fixtures.filter(m=>!!results[m.id]).length,complete=isLeagueSimulationComplete(r);
-  return `<article class="admin-room-card"><div class="admin-room-card-main"><b>${esc(r.name||'İsimsiz oda')}</b><span class="muted">${esc(r.code||r.id)} · ${members}/${capacity} oyuncu</span><span class="muted">${statusLabel[r.status]||r.status} · ${fixtures.length?`${played}/${fixtures.length} maç oynandı`:'Henüz fikstür yok'}</span></div><div class="admin-room-card-actions"><button type="button" class="btn small secondary" data-admin-open-room="${esc(r.id)}">Odayı aç</button>${complete?`<button type="button" class="btn small danger" data-admin-close-room="${esc(r.id)}">Odayı kapat</button>`:''}</div></article>`
- }).join('');
- list.querySelectorAll('[data-admin-open-room]').forEach(b=>b.onclick=()=>enterRoom(b.dataset.adminOpenRoom,true));
- list.querySelectorAll('[data-admin-close-room]').forEach(b=>b.onclick=()=>closeAdminRoom(b.dataset.adminCloseRoom));
+ if(!isAdmin()){list.innerHTML='<p class="muted">Odaya yalnızca geçerli oda koduyla katılabilirsin.</p>';return}
+ const openRooms=(rooms||[]).filter(r=>r.status!=='cancelled');
+ if(!openRooms.length){list.innerHTML='<div class="empty-state">Şu anda açık oyun odası bulunmuyor.</div>';return}
+ list.innerHTML=`<div class="admin-room-list"><div class="admin-room-list-head"><b>Yönetici · Açık oyun odaları</b><span>${openRooms.length} oda</span></div>${openRooms.map(r=>{
+  const fixtures=r.league?.fixtures||[],results=r.league?.results||{},played=fixtures.filter(m=>results[m.id]).length;
+  const complete=fixtures.length>0&&played===fixtures.length;
+  const status=({waiting:'Oyuncu bekliyor',drafting:'Draft devam ediyor',finished:complete?'Lig tamamlandı':'Lig aşaması'})[r.status]||r.status;
+  return `<div class="admin-room-item"><div class="admin-room-info"><b>${esc(r.name||'İsimsiz oda')}</b><span>Kod: ${esc(r.code||r.id)} · ${(r.memberOrder||[]).length}/${Number(r.capacity||0)} oyuncu</span><small>${esc(status)}${fixtures.length?` · ${played}/${fixtures.length} maç`:''}</small></div><div class="admin-room-actions"><button type="button" class="btn ghost admin-open-room" data-room-id="${esc(r.id)}">İncele</button>${complete?`<button type="button" class="btn danger admin-close-room" data-room-id="${esc(r.id)}">Odayı kapat</button>`:''}</div></div>`;
+ }).join('')}</div>`;
+ list.querySelectorAll('.admin-open-room').forEach(btn=>btn.onclick=()=>enterRoom(btn.dataset.roomId,false,true));
+ list.querySelectorAll('.admin-close-room').forEach(btn=>btn.onclick=()=>closeListedRoom(btn.dataset.roomId));
+}
+function isLeagueSimulationComplete(data){
+ const fixtures=data?.league?.fixtures||[],results=data?.league?.results||{};
+ return fixtures.length>0&&fixtures.every(match=>!!results[match.id]);
+}
+async function closeListedRoom(id){
+ const target=(rooms||[]).find(r=>r.id===id);
+ if(!isAdmin()||!target||!isLeagueSimulationComplete(target)){msg('Oda ancak bütün lig maçları simüle edildikten sonra kapatılabilir.',true);return}
+ if(!confirm(`"${target.name||'Oyun odası'}" odasını kapatmak istiyor musun?`))return;
+ try{await updateDoc(doc(db,'rooms',id),{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});if(roomId===id)closeRoomUI();msg('Oyun odası kapatıldı.')}
+ catch(e){msg('Oda kapatılamadı: '+e.message,true)}
 }
 function renderRoom(){
  if(!room)return;
@@ -262,14 +271,14 @@ function renderRoom(){
  if(room.lastSpin?.at&&room.lastSpin.at!==lastWheelSpinAt){drawWheelSpin(room.lastSpin.slice);lastWheelSpinAt=room.lastSpin.at;spinCooldownUntil=Date.now()+3400;const spinAt=room.lastSpin.at;clearTimeout(spinCooldownTimer);spinCooldownTimer=setTimeout(()=>{if(room?.lastSpin?.at===spinAt){spinCooldownUntil=0;renderRoom()}},3450)}
  const locked=isActionLocked();clearTimeout(actionLockTimer);actionLockTimer=null;
  if(locked){actionLockTimer=setTimeout(()=>{if(room){renderRoom()}},Math.max(30,Number(room.actionLock.until)-Date.now()+40))}
- $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;
- const closeBtn=$('closeRoomBtn');if(closeBtn){closeBtn.classList.toggle('hidden',!isAdmin()||!isLeagueSimulationComplete(room));closeBtn.onclick=closeRoom;}
+ $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;const memberCount=$('roomMemberCount');if(memberCount){const count=(room.memberOrder||[]).length,capacity=Number(room.capacity||count);memberCount.textContent=`${count}/${capacity} oyuncu odada`;}
+ const closeBtn=$('closeRoomBtn');if(closeBtn){const canCloseOwn=room.ownerUid===user?.uid;const canAdminClose=isAdmin()&&isLeagueSimulationComplete(room);closeBtn.classList.toggle('hidden',!(canCloseOwn||canAdminClose));closeBtn.textContent=canCloseOwn?'Odamı kapat':'Bitmiş odayı kapat';closeBtn.onclick=closeRoom;}
  $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:locked?'Hamle penceresi açık · Bekleniyor':'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;
- $('startDraftBtn').classList.toggle('hidden',!(isAdmin()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
+ $('startDraftBtn').classList.toggle('hidden',!(canAdminRoomAction()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
  $('startDraftBtn').textContent='Draftı başlat';$('turnHeading').textContent=room.status==='drafting'?`${userName(currentTurnUid())} seçiyor · ${stageMessage(room.picks||[],room.memberOrder||[])}`:'Draft başlamadı';
  $('turnPill').textContent=room.status==='drafting'?(locked?'Sonuç penceresi açık':isMyTurn()?'Sıra sende':`Sıra: ${userName(currentTurnUid())}`):room.status==='finished'?'Draft tamamlandı':'Başlamayı bekliyor';
  $('spinBtn').disabled=!isMyTurn();$('spinBtn').textContent='🎡 Çarkı çevir';$('pickPanel').classList.add('hidden');
- if(room.pendingPick&&room.pendingPick.uid===user.uid&&room.pendingPick.club){selectedCountry=room.pendingPick.club;if(!locked)renderPlayerOptions(selectedCountry);else $('spinResult').textContent='Çark sonucu penceresi kapanınca futbolcunu seçebilirsin.'}
+ if(!roomInspectionMode&&room.pendingPick&&room.pendingPick.uid===user.uid&&room.pendingPick.club){selectedCountry=room.pendingPick.club;if(!locked)renderPlayerOptions(selectedCountry);else $('spinResult').textContent='Çark sonucu penceresi kapanınca futbolcunu seçebilirsin.'}
  else if(room.pendingPick){$('spinResult').textContent=`${userName(room.pendingPick.uid)} çark sonucunu uyguluyor: ${room.pendingPick.slice}.`}
  else if(locked){$('spinResult').textContent='Sonuç penceresi kapanana kadar yeni hamle yapılamaz.'}
  else if(room.status==='drafting'&&isMyTurn())$('spinResult').textContent=`Sıra sende! ${stageMessage(room.picks||[],room.memberOrder||[])}. Çarkı çevir.`;
@@ -285,9 +294,10 @@ function renderPlayerOptions(country){const panel=$('pickPanel');if(panel)panel.
 function playerCard(p){p=normalizePlayer(p||{});return `<div class="player-card"><div class="player-top"><div><b>${esc(p.name)}</b><small>${esc(p.club||p.country)} · ${esc(p.position)}</small></div></div></div>`}
 async function advanceEmptyCountry(club){if(!room||!room.pendingPick||room.pendingPick.club!==club||room.pendingPick.uid!==currentTurnUid())return;try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef);if(!s.exists())return;const d=s.data();if(!d.pendingPick||d.pendingPick.club!==club)return;const candidates=validPickCandidates(club,d.picks||[],d.pendingPick.uid,d.memberOrder||[]);if(candidates.length)return;const next=nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex);tx.update(roomRef,{pendingPick:null,turnIndex:next,turnStartedAt:Date.now(),lastSpin:{...(d.lastSpin||{}),slice:club,at:Date.now()},updatedAt:serverTimestamp()})});}catch(e){console.error(e)}}
 function scheduleTurnTimeout(){
+ if(roomInspectionMode)return;
  if(!room||room.status!=='drafting'||room.pendingPick||!room.memberOrder?.length)return;
  const uid=currentTurnUid();if(!uid||starterCount(room.picks||[],uid)>=11)return;
- // Süre sınırı ve otomatik çevirme yoktur; oyuncu istediği zaman kendi çarkını çevirir.
+ // Süre sınırı ve otomatik çevirme yoktur; oyuncu istediği kadar bekleyebilir.
  const turnKey=`${room.id||roomId}:${room.turnIndex}:${uid}`;
  if(scheduledTurnKey===turnKey)return;
  scheduledTurnKey=turnKey;
@@ -382,6 +392,13 @@ function makePostDraftModal(stage,title,subtitle){
 }
 function syncPostDraftModal(){
  if(!room||room.status!=='finished'||!user)return;
+ // Zorunlu işlem pencereleri yalnızca Draft sekmesinde gösterilir.
+ // Diğer sekmeler erişilebilir kalır; fikstür kilidi postDraftPhase ile korunur.
+ const activePane=document.querySelector('.nav-tab.active')?.dataset.pane||'draftPane';
+ if(activePane!=='draftPane'){
+  if($('postDraftModal'))closePostDraftModal();
+  return;
+ }
  const phase=room.postDraftPhase||'protection';
  if(phase==='tactics'&&!room.tacticsConfirmed?.[user.uid]){if(!$('postDraftModal')||$('postDraftModal').dataset.stage!=='tactics')chooseTactics();}
  else if(phase==='protection'&&!room.protectionDone?.[user.uid]){if(!$('postDraftModal')||$('postDraftModal').dataset.stage!=='protection')protectPlayer();}
@@ -393,7 +410,11 @@ async function protectPlayer(){
  if(!room||room.status!=='finished'||(room.postDraftPhase||'protection')!=='protection'||room.protectionDone?.[user.uid])return;
  try{
   const mine=myPicks().slice().sort((a,b)=>Number(a.starterIndex)-Number(b.starterIndex));
-  const secretRef=doc(db,'roomSecrets',`${roomId}_${user.uid}`),snap=await getDoc(secretRef);
+  const requestedRoomId=roomId,requestedUid=user.uid;
+  const secretRef=doc(db,'roomSecrets',`${requestedRoomId}_${requestedUid}`),snap=await getDoc(secretRef);
+  // Firestore yanıtı beklenirken kullanıcı başka sekmeye geçmiş olabilir.
+  // Eski async istek, modalı sonradan yeniden ekranın üzerine koymamalı.
+  if(!room||roomId!==requestedRoomId||user?.uid!==requestedUid||room.status!=='finished'||(room.postDraftPhase||'protection')!=='protection'||room.protectionDone?.[requestedUid]||document.querySelector('.nav-tab.active')?.dataset.pane!=='draftPane')return;
   const prior=[...new Set(snap.exists()?snap.data().protectedIds||[]:[])].filter(id=>mine.some(p=>p.id===id));
   const available=Math.max(0,Math.min(3,rightsFor('protectionRights'))-prior.length);
   const modal=makePostDraftModal('protection','Korunacak futbolcularını seç',`Koruma hakkın: ${rightsFor('protectionRights')}. En fazla ${available} yeni futbolcu seçebilirsin.`);
@@ -489,7 +510,7 @@ function showSwapReport(currentRoom){
  content.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px"><div style="padding:10px;background:#1e293b;border-radius:10px"><small>Talep</small><h3>${Number(result.requested||0)}</h3></div><div style="padding:10px;background:#14532d;border-radius:10px"><small>Başarılı</small><h3>${Number(result.completed||0)}</h3></div><div style="padding:10px;background:#7f1d1d;border-radius:10px"><small>Başarısız</small><h3>${Number(result.cancelled||0)}</h3></div></div><h3>Korunan futbolcular</h3>${protectedHtml||'<p>Koruma kaydı bulunamadı.</p>'}<h3 style="margin-top:16px">Takas sonuçları</h3>${outcomes||'<p>Herhangi bir takas talebi oluşturulmadı.</p>'}<p id="reportCountdown" style="color:#cbd5e1;text-align:center;margin-top:14px">10 saniye içinde kapanacak…</p><button id="closeSwapReport" class="btn primary" style="width:100%">Kapat</button>`;
  let remaining=10;const counter=content.querySelector('#reportCountdown');const interval=setInterval(()=>{remaining--;if(counter)counter.textContent=remaining>0?`${remaining} saniye içinde kapanacak…`:'Kapanıyor…';if(remaining<=0){clearInterval(interval);if($('postDraftModal')===modal)closePostDraftModal()}},1000);content.querySelector('#closeSwapReport').onclick=()=>{clearInterval(interval);closePostDraftModal()};
 }
-async function startDraft(){try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef),d=s.data();if(!(isAdmin()||d.ownerUid===user.uid))throw new Error('Yalnızca oda sahibi veya admin başlatabilir.');if(d.memberOrder.length<2)throw new Error('En az iki oyuncu gerekli.');if(d.status!=='waiting')throw new Error('Oyun zaten başladı.');const shuffled=[...d.memberOrder];for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}const protectionRights={},protectionRightsEarned={},swapRights={},swapRightsEarned={};for(const uid of shuffled){protectionRights[uid]=0;protectionRightsEarned[uid]=0;swapRights[uid]=0;swapRightsEarned[uid]=0;}tx.update(roomRef,{status:'drafting',memberOrder:shuffled,turnIndex:0,turnStartedAt:Date.now(),picks:[],pendingPick:null,draftStage:'starter',protectionRights,protectionRightsEarned,swapRights,swapRightsEarned,lastPickAnnouncement:null,updatedAt:serverTimestamp()})});msg('Draft başladı! Herkes 0 koruma ve 0 takas hakkıyla başladı. Her hak türünün üst sınırı 3.')}catch(e){msg(e.message,true)}}
+async function startDraft(){try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef),d=s.data();if(!(canAdminRoomAction()||d.ownerUid===user.uid))throw new Error('Yalnızca oda sahibi veya admin başlatabilir.');if(d.memberOrder.length<2)throw new Error('En az iki oyuncu gerekli.');if(d.status!=='waiting')throw new Error('Oyun zaten başladı.');const shuffled=[...d.memberOrder];for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}const protectionRights={},protectionRightsEarned={},swapRights={},swapRightsEarned={};for(const uid of shuffled){protectionRights[uid]=0;protectionRightsEarned[uid]=0;swapRights[uid]=0;swapRightsEarned[uid]=0;}tx.update(roomRef,{status:'drafting',memberOrder:shuffled,turnIndex:0,turnStartedAt:Date.now(),picks:[],pendingPick:null,draftStage:'starter',protectionRights,protectionRightsEarned,swapRights,swapRightsEarned,lastPickAnnouncement:null,updatedAt:serverTimestamp()})});msg('Draft başladı! Herkes 0 koruma ve 0 takas hakkıyla başladı. Her hak türünün üst sınırı 3.')}catch(e){msg(e.message,true)}}
 function renderSquad(){
  const allPicks=room?.picks||[],squad=myPicks(),formation=$('formation');
  formation.value='4-2-3-1';formation.disabled=true;
@@ -537,23 +558,49 @@ let dismissedMatchReportId=null;
 let lastSwapReportShown=null;
 let postDraftModalStage=null;
 function renderMatchReport(live,league){const box=$('matchReport');if(!box)return;if(!live||live.status!=='finished'){box.classList.add('hidden');return}const currentReportId=live.fixtureId||`${live.homeUid||live.homeName}-${live.awayUid||live.awayName}-${live.finishedAt||''}`;if(dismissedMatchReportId===currentReportId){box.classList.add('hidden');return}box.classList.remove('hidden');box.classList.add('match-report-modal');const r=live.stats||(live.fixtureId?(league?.results||{})[live.fixtureId]:null);if(!r){box.innerHTML='<div class="empty-state">Maç özeti bulunamadı.</div>';return}const goals=(r.events||[]).filter(e=>e.type==='goal').sort((a,b)=>a.minute-b.minute);const teamName=e=>e.team===live.homeUid?live.homeName:e.team===live.awayUid?live.awayName:'';const auditRows=(r.ruleAudit||[]).map(a=>`<tr><td>${esc(a.rule)}</td><td>${esc(a.homeValue)}</td><td>${esc(a.awayValue)}</td><td>${esc(a.homeEffects||'')}</td><td>${esc(a.awayEffects||'')}</td><td>${esc(a.winner||'Gol yok')}</td></tr>`).join('');const tactics=r.tacticsApplied?`<p class="muted"><b>Taktikler:</b> ${esc(live.homeName)} — ${esc(r.tacticsApplied.home.tactic)} / ${esc(r.tacticsApplied.home.passFocus)} / ${esc(r.tacticsApplied.home.pressType)} · ${esc(live.awayName)} — ${esc(r.tacticsApplied.away.tactic)} / ${esc(r.tacticsApplied.away.passFocus)} / ${esc(r.tacticsApplied.away.pressType)}</p>`:'';box.innerHTML=`<button type="button" class="match-report-close" aria-label="Maç özetini kapat">×</button><div class="eyebrow">ÇARK FUTBOL · MAÇ ÖZETİ</div><div class="match-report-head"><h2>${esc(live.homeName)} ${r.homeGoals} – ${r.awayGoals} ${esc(live.awayName)}</h2><div class="live-score"><span>${r.homeGoals}</span><i>–</i><span>${r.awayGoals}</span></div></div>${tactics}<h3>Gol kuralı ve bonus dökümü</h3><div style="overflow-x:auto"><table><thead><tr><th>Kural</th><th>${esc(live.homeName)} puanı</th><th>${esc(live.awayName)} puanı</th><th>${esc(live.homeName)} etkileri</th><th>${esc(live.awayName)} etkileri</th><th>Gol kazananı</th></tr></thead><tbody>${auditRows||'<tr><td colspan="6">Bu maç eski sürümde oynanmış; kural dökümü kayıtlı değil.</td></tr>'}</tbody></table></div><h3>Goller</h3><div class="arena-event-list">${goals.map(e=>`<div class="arena-event"><b>${e.minute}'</b><span>⚽ ${esc(e.playerName||'Bilinmeyen oyuncu')}</span><small>${esc(teamName(e))} · ${esc(e.reason||'')}</small></div>`).join('')||'<p class="muted">Gol olmadı.</p>'}</div>`;box.querySelector('.match-report-close').onclick=()=>{dismissedMatchReportId=currentReportId;box.classList.add('hidden')};}
-function renderLeague(){if(!room)return;const league=room.league||{},fixtures=league.fixtures||[],results=league.results||{};renderMatchReport(league.liveMatch,league);const played=fixtures.filter(m=>results[m.id]).length;$('leagueName').value=league.name||'Çark Futbol Ligi';$('createFixturesBtn').disabled=!(isAdmin()||room.ownerUid===user.uid)||room.status!=='finished'||room.postDraftPhase!=='complete'||fixtures.length>0;$('saveLeagueNameBtn').disabled=!(isAdmin()||room.ownerUid===user.uid);$('leagueStats').innerHTML=[['TAKIM',room.memberOrder.length],['TOPLAM MAÇ',fixtures.length||'—'],['OYNANAN',`${played}/${fixtures.length||0}`],['AŞAMA',played===fixtures.length&&fixtures.length?'Tamamlandı':played?'Devam ediyor':'Hazır değil']].map(([a,b])=>`<div class="stat"><small>${a}</small><b>${b}</b></div>`).join('');const rows=standings();$('standings').innerHTML=rows.length?`<table><thead><tr><th>#</th><th>Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody>${rows.map((t,i)=>`<tr class="${i===0&&played===fixtures.length&&fixtures.length?'champion':''}"><td>${i===0&&played===fixtures.length&&fixtures.length?'🏆':i+1}</td><td>${esc(t.name)}</td><td>${t.played}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join('')}</tbody></table>`:'<div class="empty-state">Lig puan tablosu için kadrolar tamamlanmalı.</div>';$('fixtureProgress').textContent=fixtures.length?`${played}/${fixtures.length} maç`:'Fikstür yok';if(!fixtures.length){$('fixtures').innerHTML='<div class="empty-state">İlk 11 tamamlandıktan sonra admin fikstürü oluşturabilir.</div>';return}const names=Object.fromEntries(rows.map(t=>[t.id,t.name]));$('fixtures').innerHTML=fixtures.map(m=>{const r=results[m.id];const adminCan=(isAdmin()||room.ownerUid===user.uid)&&!r;return `<div class="fixture"><div class="fixture-meta">${m.leg===1?'1. AŞAMA':'2. AŞAMA'} · ${m.round}. hafta</div><div class="fixture-main"><span>${esc(names[m.homeUid]||userName(m.homeUid))}</span><b>${r?`${r.homeGoals} – ${r.awayGoals}`:'vs'}</b><span>${esc(names[m.awayUid]||userName(m.awayUid))}</span></div>${r?`<button class="btn small secondary" data-open-report="${m.id}">Gol özeti</button>`:''}${adminCan?`<button class="btn small primary" data-sim="${m.id}">Maçı simüle et</button>`:''}</div>`}).join('');document.querySelectorAll('[data-sim]').forEach(b=>b.onclick=()=>simulateOne(b.dataset.sim));document.querySelectorAll('[data-open-report]').forEach(b=>b.onclick=()=>{const id=b.dataset.openReport,match=(room?.league?.fixtures||[]).find(x=>x.id===id),r=(room?.league?.results||{})[id];if(!match||!r){msg('Bu maçın raporu bulunamadı.',true);return}dismissedMatchReportId=null;const live={fixtureId:id,status:'finished',homeUid:match.homeUid,awayUid:match.awayUid,homeName:userName(match.homeUid),awayName:userName(match.awayUid),homeGoals:r.homeGoals,awayGoals:r.awayGoals,minute:90,stats:r};renderMatchReport(live,room.league);});}
-async function createFixtures(){if(!room)return;const teams=room.memberOrder||[];if(room.status!=='finished'||room.postDraftPhase!=='complete'||teams.some(id=>starterCount(room.picks||[],id)!==11)){msg('Her oyuncunun 11 futbolcusu tamamlanmalı.',true);return}try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef),d=s.data();if(d.league?.fixtures?.length)throw new Error('Fikstür zaten oluşturulmuş.');const fixtures=buildFixtures(d.memberOrder);tx.update(roomRef,{league:{name:$('leagueName').value.trim()||'Çark Futbol Ligi',fixtures,results:{},createdAt:Date.now()},updatedAt:serverTimestamp()})});msg('Çift devreli fikstür oluşturuldu.')}catch(e){msg(e.message,true)}}
-async function simulateOne(id){try{await runTransaction(db,async tx=>{const snap=await tx.get(roomRef),d=snap.data();if(!(user.uid===ADMIN_UID||user.uid===d.ownerUid))throw new Error('Maçları yalnızca admin veya oda sahibi başlatabilir.');const league=d.league||{},m=(league.fixtures||[]).find(x=>x.id===id);if(!m)throw new Error('Maç bulunamadı.');if(league.results?.[id])throw new Error('Bu maç zaten oynandı.');const makeTeam=uid=>({id:uid,name:d.members?.[uid]?.name||'Menajer',squad:(d.picks||[]).filter(p=>p.uid===uid).map(p=>({...p,starter:p.starterIndex!==undefined&&p.starterIndex!==null})),...(d.tactics?.[uid]||{})});const home=makeTeam(m.homeUid),away=makeTeam(m.awayUid),result=simulateMatch(home,away),results={...(league.results||{}),[id]:{...result,playedAt:Date.now()}};tx.update(roomRef,{'league.results':results,'league.liveMatch':{fixtureId:id,status:'finished',homeUid:m.homeUid,awayUid:m.awayUid,homeName:home.name,awayName:away.name,homeGoals:result.homeGoals,awayGoals:result.awayGoals,minute:90,stats:result,finishedAt:Date.now()},updatedAt:serverTimestamp()})});msg('Maç tamamlandı. Skor ve gol özeti kaydedildi.')}catch(e){msg(e.message||'Maç simülasyonu sırasında hata oluştu.',true)}}
-async function enterRoom(id,quiet=false){try{const ref=doc(db,'rooms',id);await runTransaction(db,async tx=>{const s=await tx.get(ref);if(!s.exists())throw new Error('Oda bulunamadı.');const d=s.data();if(!d.memberOrder.includes(user.uid)&&!isAdmin()){if(d.status!=='waiting')throw new Error('Bu oda başladı; yeni oyuncu katılamaz.');if(d.memberOrder.length>=d.capacity)throw new Error('Oda dolu.');tx.update(ref,{memberOrder:[...d.memberOrder,user.uid],members:{...d.members,[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},updatedAt:serverTimestamp()})}});if(roomUnsub)roomUnsub();writeStored(RESUME_ROOM_KEY,id);lastWheelSpinAt=0;spinCooldownUntil=0;lastSpinAnnouncementId=null;lastPickAnnouncementId=null;roomSnapshotInitialized=false;roomId=id;roomRef=doc(db,'rooms',id);roomUnsub=onSnapshot(roomRef,s=>{if(s.exists()){const nextRoom={id:s.id,...s.data()};const isFirstSnapshot=!roomSnapshotInitialized;room=nextRoom;if(isFirstSnapshot){lastSpinAnnouncementId=nextRoom.lastSpinAnnouncement?.id||null;lastPickAnnouncementId=nextRoom.lastPickAnnouncement?.id||null;pendingSpinAnnouncementId=null;}else{const spinAnnouncement=nextRoom.lastSpinAnnouncement;if(spinAnnouncement?.id&&spinAnnouncement.id!==lastSpinAnnouncementId&&spinAnnouncement.id!==pendingSpinAnnouncementId)queueSpinAnnouncement(spinAnnouncement);const pickAnnouncement=nextRoom.lastPickAnnouncement;if(pickAnnouncement?.id&&pickAnnouncement.id!==lastPickAnnouncementId)showPickAnnouncement(pickAnnouncement);}roomSnapshotInitialized=true;renderRoom()}else{room=null;closeRoomUI()}},e=>msg(e.message,true));$('roomView').classList.remove('hidden');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.pane==='draftPane'));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('hidden',p.id!=='draftPane'));if(!quiet)msg('Odaya bağlandın.')}catch(e){if(!quiet)msg(e.message,true);else console.warn('Odaya yeniden bağlanılamadı:',e)}}
-function closeRoomUI(){if(roomUnsub){roomUnsub();roomUnsub=null}room=null;roomId=null;roomRef=null;$('roomView').classList.add('hidden')}
-async function closeAdminRoom(id){
- if(!isAdmin()){msg('Bu işlem yalnızca admin tarafından yapılabilir.',true);return}
- const target=rooms.find(r=>r.id===id);
- if(!target||!isLeagueSimulationComplete(target)){msg('Yalnızca lig simülasyonu tamamlanan odalar kapatılabilir.',true);return}
- if(!confirm(`“${target.name||'İsimsiz oda'}” odasının lig simülasyonu tamamlandı. Oda kapatılsın mı?`))return;
+function renderLeague(){if(!room)return;const league=room.league||{},fixtures=league.fixtures||[],results=league.results||{};renderMatchReport(league.liveMatch,league);const played=fixtures.filter(m=>results[m.id]).length;$('leagueName').value=league.name||'Çark Futbol Ligi';$('createFixturesBtn').disabled=!(canAdminRoomAction()||room.ownerUid===user.uid)||room.status!=='finished'||room.postDraftPhase!=='complete'||fixtures.length>0;$('saveLeagueNameBtn').disabled=!(canAdminRoomAction()||room.ownerUid===user.uid);$('leagueStats').innerHTML=[['TAKIM',room.memberOrder.length],['TOPLAM MAÇ',fixtures.length||'—'],['OYNANAN',`${played}/${fixtures.length||0}`],['AŞAMA',played===fixtures.length&&fixtures.length?'Tamamlandı':played?'Devam ediyor':'Hazır değil']].map(([a,b])=>`<div class="stat"><small>${a}</small><b>${b}</b></div>`).join('');const rows=standings();$('standings').innerHTML=rows.length?`<table><thead><tr><th>#</th><th>Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody>${rows.map((t,i)=>`<tr class="${i===0&&played===fixtures.length&&fixtures.length?'champion':''}"><td>${i===0&&played===fixtures.length&&fixtures.length?'🏆':i+1}</td><td>${esc(t.name)}</td><td>${t.played}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join('')}</tbody></table>`:'<div class="empty-state">Lig puan tablosu için kadrolar tamamlanmalı.</div>';$('fixtureProgress').textContent=fixtures.length?`${played}/${fixtures.length} maç`:'Fikstür yok';if(!fixtures.length){$('fixtures').innerHTML='<div class="empty-state">İlk 11 tamamlandıktan sonra admin fikstürü oluşturabilir.</div>';return}const names=Object.fromEntries(rows.map(t=>[t.id,t.name]));$('fixtures').innerHTML=fixtures.map(m=>{const r=results[m.id];const adminCan=(canAdminRoomAction()||room.ownerUid===user.uid)&&!r;return `<div class="fixture"><div class="fixture-meta">${m.leg===1?'1. AŞAMA':'2. AŞAMA'} · ${m.round}. hafta</div><div class="fixture-main"><span>${esc(names[m.homeUid]||userName(m.homeUid))}</span><b>${r?`${r.homeGoals} – ${r.awayGoals}`:'vs'}</b><span>${esc(names[m.awayUid]||userName(m.awayUid))}</span></div>${r?`<button class="btn small secondary" data-open-report="${m.id}">Gol özeti</button>`:''}${adminCan?`<button class="btn small primary" data-sim="${m.id}">Maçı simüle et</button>`:''}</div>`}).join('');document.querySelectorAll('[data-sim]').forEach(b=>b.onclick=()=>simulateOne(b.dataset.sim));document.querySelectorAll('[data-open-report]').forEach(b=>b.onclick=()=>{const id=b.dataset.openReport,match=(room?.league?.fixtures||[]).find(x=>x.id===id),r=(room?.league?.results||{})[id];if(!match||!r){msg('Bu maçın raporu bulunamadı.',true);return}dismissedMatchReportId=null;const live={fixtureId:id,status:'finished',homeUid:match.homeUid,awayUid:match.awayUid,homeName:userName(match.homeUid),awayName:userName(match.awayUid),homeGoals:r.homeGoals,awayGoals:r.awayGoals,minute:90,stats:r};renderMatchReport(live,room.league);});}
+async function saveLeagueName(){
+ if(!roomRef||!room){msg('Önce bir odaya girmen gerekiyor.',true);return}
+ if(!(isAdmin()||room.ownerUid===user?.uid)){msg('Lig adını yalnızca oda sahibi veya admin değiştirebilir.',true);return}
+ const name=$('leagueName').value.trim().slice(0,40)||'Çark Futbol Ligi';
+ const button=$('saveLeagueNameBtn');
+ if(button){button.disabled=true;button.textContent='Kaydediliyor…'}
  try{
-  await updateDoc(doc(db,'rooms',id),{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});
-  if(roomId===id)closeRoomUI();
-  msg('Tamamlanan oyun odası kapatıldı.');
- }catch(e){msg('Oda kapatılamadı: '+(e.message||e),true)}
+  await updateDoc(roomRef,{'league.name':name,updatedAt:serverTimestamp()});
+  msg('Lig adı kaydedildi.');
+ }catch(e){msg('Lig adı kaydedilemedi: '+(e.message||e),true)}
+ finally{if(button){button.disabled=!(isAdmin()||room?.ownerUid===user?.uid);button.textContent='Adı kaydet'}}
 }
-async function closeRoom(){if(!isAdmin()||!roomRef||!room){msg('Odayı yalnızca admin kapatabilir.',true);return}if(!isLeagueSimulationComplete(room)){msg('Oda yalnızca lig simülasyonu tamamlandıktan sonra kapatılabilir.',true);return}if(!confirm('Lig simülasyonu tamamlanan bu oda kapatılsın mı?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg('Oda admin tarafından kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
+async function createFixtures(){if(!room)return;if(room.ownerUid!==user?.uid&&!isAdmin()){msg('Fikstürü yalnızca oda sahibi oluşturabilir.',true);return}const teams=room.memberOrder||[];if(room.status!=='finished'||room.postDraftPhase!=='complete'||teams.some(id=>starterCount(room.picks||[],id)!==11)){msg('Her oyuncunun 11 futbolcusu tamamlanmalı.',true);return}try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef),d=s.data();if(d.ownerUid!==user.uid&&!canAdminRoomAction())throw new Error('Fikstürü yalnızca oda sahibi oluşturabilir.');if(d.league?.fixtures?.length)throw new Error('Fikstür zaten oluşturulmuş.');const fixtures=buildFixtures(d.memberOrder);tx.update(roomRef,{league:{name:$('leagueName').value.trim()||'Çark Futbol Ligi',fixtures,results:{},createdAt:Date.now()},updatedAt:serverTimestamp()})});msg('Çift devreli fikstür oluşturuldu.')}catch(e){msg(e.message,true)}}
+async function simulateOne(id){try{await runTransaction(db,async tx=>{const snap=await tx.get(roomRef),d=snap.data();if(!(user.uid===ADMIN_UID||user.uid===d.ownerUid))throw new Error('Maçları yalnızca admin veya oda sahibi başlatabilir.');const league=d.league||{},m=(league.fixtures||[]).find(x=>x.id===id);if(!m)throw new Error('Maç bulunamadı.');if(league.results?.[id])throw new Error('Bu maç zaten oynandı.');const makeTeam=uid=>({id:uid,name:d.members?.[uid]?.name||'Menajer',squad:(d.picks||[]).filter(p=>p.uid===uid).map(p=>({...p,starter:p.starterIndex!==undefined&&p.starterIndex!==null})),...(d.tactics?.[uid]||{})});const home=makeTeam(m.homeUid),away=makeTeam(m.awayUid),result=simulateMatch(home,away),results={...(league.results||{}),[id]:{...result,playedAt:Date.now()}};tx.update(roomRef,{'league.results':results,'league.liveMatch':{fixtureId:id,status:'finished',homeUid:m.homeUid,awayUid:m.awayUid,homeName:home.name,awayName:away.name,homeGoals:result.homeGoals,awayGoals:result.awayGoals,minute:90,stats:result,finishedAt:Date.now()},updatedAt:serverTimestamp()})});msg('Maç tamamlandı. Skor ve gol özeti kaydedildi.')}catch(e){msg(e.message||'Maç simülasyonu sırasında hata oluştu.',true)}}
+async function enterRoom(id,quiet=false,adminInspect=false){
+ try{
+  if(adminInspect&&!isAdmin())throw new Error('Bu işlem yalnızca admin tarafından yapılabilir.');
+  const ref=doc(db,'rooms',id);
+  if(adminInspect){
+   const snap=await getDoc(ref);if(!snap.exists())throw new Error('Oda bulunamadı.');
+  }else{
+   await runTransaction(db,async tx=>{const s=await tx.get(ref);if(!s.exists())throw new Error('Oda bulunamadı.');const d=s.data();if(!d.memberOrder.includes(user.uid)){if(d.status!=='waiting')throw new Error('Bu oda başladı; yeni oyuncu katılamaz.');if(d.memberOrder.length>=d.capacity)throw new Error('Oda dolu.');tx.update(ref,{memberOrder:[...d.memberOrder,user.uid],members:{...d.members,[user.uid]:{name:profile.name||user.displayName||'Menajer',joinedAt:Date.now()}},updatedAt:serverTimestamp()})}});
+  }
+  if(roomUnsub){roomUnsub();roomUnsub=null}
+  roomInspectionMode=!!adminInspect;
+  if(!adminInspect)writeStored(RESUME_ROOM_KEY,id);
+  lastWheelSpinAt=0;spinCooldownUntil=0;lastSpinAnnouncementId=null;lastPickAnnouncementId=null;pendingSpinAnnouncementId=null;roomSnapshotInitialized=false;roomId=id;roomRef=ref;
+  roomUnsub=onSnapshot(roomRef,s=>{
+   if(s.exists()){
+    const nextRoom={id:s.id,...s.data()};const isFirstSnapshot=!roomSnapshotInitialized;room=nextRoom;
+    if(isFirstSnapshot){lastSpinAnnouncementId=nextRoom.lastSpinAnnouncement?.id||null;lastPickAnnouncementId=nextRoom.lastPickAnnouncement?.id||null;pendingSpinAnnouncementId=null;}
+    else{const spinAnnouncement=nextRoom.lastSpinAnnouncement;if(spinAnnouncement?.id&&spinAnnouncement.id!==lastSpinAnnouncementId&&spinAnnouncement.id!==pendingSpinAnnouncementId)queueSpinAnnouncement(spinAnnouncement);const pickAnnouncement=nextRoom.lastPickAnnouncement;if(pickAnnouncement?.id&&pickAnnouncement.id!==lastPickAnnouncementId)showPickAnnouncement(pickAnnouncement);}
+    roomSnapshotInitialized=true;renderRoom();
+   }else{room=null;closeRoomUI()}
+  },e=>msg(e.message,true));
+  $('roomView').classList.remove('hidden');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.pane==='draftPane'));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('hidden',p.id!=='draftPane'));
+  if(adminInspect)msg('Oda admin inceleme modunda açıldı; oyuncu olarak katılmadın.');
+  else if(!quiet)msg('Odaya bağlandın.');
+ }catch(e){if(!quiet)msg(e.message,true);else console.warn('Odaya yeniden bağlanılamadı:',e)}
+}
+function closeRoomUI(){if(roomUnsub){roomUnsub();roomUnsub=null}room=null;roomId=null;roomRef=null;roomInspectionMode=false;$('roomView').classList.add('hidden')}
+async function closeRoom(){if(!roomRef||!room){msg('Açık oda bulunamadı.',true);return}const ownerCanClose=room.ownerUid===user?.uid;const adminCanClose=isAdmin()&&isLeagueSimulationComplete(room);if(!ownerCanClose&&!adminCanClose){msg('Admin yalnızca bütün lig maçları simüle edilmiş odaları kapatabilir.',true);return}if(!confirm(ownerCanClose?'Kendi odanı kapatmak istediğine emin misin?':'Bütün lig maçları tamamlandı. Bu oyun odasını kapatmak istiyor musun?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg(ownerCanClose?'Odan kapatıldı.':'Tamamlanmış oyun odası kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
 async function leaveRoom(){closeRoomUI();msg('Oda görünümünden çıktın. Oda üyeliğin korunur.');}
 async function createRoom(e){
  e.preventDefault();
@@ -716,10 +763,27 @@ function bindUI(){
   }catch(err){msg('Admin girişi başarısız: '+authErrorMessage(err),true)}
   finally{if(submit){submit.disabled=false;submit.textContent='Admin olarak giriş yap'}}
  };
- $('logoutBtn').onclick=async()=>{
-  writeStored(RESUME_ROOM_KEY,null);profile=null;user=null;
-  if(roomsUnsub){roomsUnsub();roomsUnsub=null}
-  closeRoomUI();await signOut(auth);
+ $('logoutBtn').onclick=async(e)=>{
+  e?.preventDefault?.();
+  const button=$('logoutBtn');
+  if(button?.dataset.loggingOut==='1')return;
+  if(button){button.dataset.loggingOut='1';button.disabled=true;button.textContent='Çıkış yapılıyor…'}
+  try{
+   await authPersistenceReady;
+   // Firebase oturumunu önce kapat; UI temizliği auth state değişimini takip eder.
+   await signOut(auth);
+   writeStored(RESUME_ROOM_KEY,null);
+   profile=null;user=null;
+   if(roomsUnsub){roomsUnsub();roomsUnsub=null}
+   closeRoomUI();
+   $('authView').classList.remove('hidden');$('appView').classList.add('hidden');
+   if(button)button.classList.add('hidden');
+  }catch(err){
+   console.error('Çıkış işlemi başarısız:',err);
+   msg('Çıkış yapılamadı: '+(err?.message||'Firebase oturumu kapatılamadı.'),true);
+  }finally{
+   if(button){button.disabled=false;button.textContent='Çıkış Yap';delete button.dataset.loggingOut}
+  }
  };
  $('createRoomForm').onsubmit=createRoom;
  $('joinRoomForm').onsubmit=joinRoomByCode;
@@ -728,14 +792,20 @@ function bindUI(){
  $('leaveRoomBtn').onclick=leaveRoom;
  $('copyCodeBtn').onclick=async()=>{try{await navigator.clipboard.writeText(room.code||roomId);msg('Oda kodu kopyalandı.')}catch{msg('Oda kodu: '+(room.code||roomId))}};
  $('createFixturesBtn').onclick=createFixtures;$('saveLeagueNameBtn').onclick=saveLeagueName;
- document.querySelectorAll('.nav-tab').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.nav-tab').forEach(b=>b.onclick=(event)=>{
+  event?.preventDefault?.();
+  const target=document.getElementById(b.dataset.pane);
+  if(!target)return;
+  // Sekme değişirken modalı önce kaldır; ardından görünür paneli seç.
+  if(b.dataset.pane!=='draftPane')closePostDraftModal();
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x===b));
-  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.pane))
+  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x!==target));
+  if(b.dataset.pane==='draftPane')syncPostDraftModal();
  });
 }
 let resumeAttemptAt=0;
 async function resumeSavedRoom(){
- if(resumeInProgress||!user||!roomId&&roomUnsub)return;
+ if(resumeInProgress||roomInspectionMode||!user||!roomId&&roomUnsub)return;
  const saved=roomId||readStored(RESUME_ROOM_KEY);
  if(!saved)return;
  const now=Date.now();

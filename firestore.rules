@@ -40,9 +40,16 @@ service cloud.firestore {
         && request.resource.data.status == 'waiting'
         && request.resource.data.memberOrder is list
         && request.resource.data.memberOrder.size() == 1;
-      // Admin controls status changes/closure. Members may only change game-state fields
-      // while keeping room status and owner unchanged.
+      // Admin controls administrative changes. The room owner may close their own room;
+      // members may update only permitted game-state fields.
       allow update: if isAdmin() || (
+        // The room owner may close their own room at any stage.
+        verifiedUser()
+        && request.auth.uid == resource.data.ownerUid
+        && request.resource.data.status == 'cancelled'
+        && resource.data.status != 'cancelled'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','closedAt','updatedAt'])
+      ) || (
         // A visitor may join only a waiting room, without changing any other fields.
         verifiedUser()
         && resource.data.status == 'waiting'
@@ -56,11 +63,14 @@ service cloud.firestore {
         isRoomMember(resource.data)
         && (request.resource.data.status == resource.data.status
           || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
           || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
             && request.auth.uid == resource.data.ownerUid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','lastPickAnnouncement','turnStartedAt','updatedAt'])))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','updatedAt'])))
         && request.resource.data.ownerUid == resource.data.ownerUid
+        // League creation/results are controlled by the room owner, not ordinary members.
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['league'])
+          || request.auth.uid == resource.data.ownerUid || isAdmin())
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','protectionRights','swapRights',
           'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','updatedAt',
