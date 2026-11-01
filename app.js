@@ -249,7 +249,7 @@ function renderRooms(){
   const fixtures=r.league?.fixtures||[],results=r.league?.results||{},played=fixtures.filter(m=>results[m.id]).length;
   const complete=fixtures.length>0&&played===fixtures.length;
   const status=({waiting:'Oyuncu bekliyor',drafting:'Draft devam ediyor',finished:complete?'Lig tamamlandı':'Lig aşaması'})[r.status]||r.status;
-  return `<div class="admin-room-item"><div class="admin-room-info"><b>${esc(r.name||'İsimsiz oda')}</b><span>Kod: ${esc(r.code||r.id)} · ${(r.memberOrder||[]).length}/${Number(r.capacity||0)} oyuncu</span><small>${esc(status)}${fixtures.length?` · ${played}/${fixtures.length} maç`:''}</small></div><div class="admin-room-actions"><button type="button" class="btn ghost admin-open-room" data-room-id="${esc(r.id)}">İncele</button>${complete?`<button type="button" class="btn danger admin-close-room" data-room-id="${esc(r.id)}">Odayı kapat</button>`:''}</div></div>`;
+  return `<div class="admin-room-item"><div class="admin-room-info"><b>${esc(r.name||'İsimsiz oda')}</b><span>Kod: ${esc(r.code||r.id)} · ${(r.memberOrder||[]).length}/${Number(r.capacity||0)} oyuncu</span><small>${esc(status)}${fixtures.length?` · ${played}/${fixtures.length} maç`:''}</small></div><div class="admin-room-actions"><button type="button" class="btn ghost admin-open-room" data-room-id="${esc(r.id)}">İncele</button><button type="button" class="btn danger admin-close-room" data-room-id="${esc(r.id)}">Odayı kapat</button></div></div>`;
  }).join('')}</div>`;
  list.querySelectorAll('.admin-open-room').forEach(btn=>btn.onclick=()=>enterRoom(btn.dataset.roomId,false,true));
  list.querySelectorAll('.admin-close-room').forEach(btn=>btn.onclick=()=>closeListedRoom(btn.dataset.roomId));
@@ -260,7 +260,7 @@ function isLeagueSimulationComplete(data){
 }
 async function closeListedRoom(id){
  const target=(rooms||[]).find(r=>r.id===id);
- if(!isAdmin()||!target||!isLeagueSimulationComplete(target)){msg('Oda ancak bütün lig maçları simüle edildikten sonra kapatılabilir.',true);return}
+ if(!isAdmin()||!target){msg('Bu odayı kapatma yetkin yok veya oda bulunamadı.',true);return}
  if(!confirm(`"${target.name||'Oyun odası'}" odasını kapatmak istiyor musun?`))return;
  try{await updateDoc(doc(db,'rooms',id),{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});if(roomId===id)closeRoomUI();msg('Oyun odası kapatıldı.')}
  catch(e){msg('Oda kapatılamadı: '+e.message,true)}
@@ -272,7 +272,7 @@ function renderRoom(){
  const locked=isActionLocked();clearTimeout(actionLockTimer);actionLockTimer=null;
  if(locked){actionLockTimer=setTimeout(()=>{if(room){renderRoom()}},Math.max(30,Number(room.actionLock.until)-Date.now()+40))}
  $('roomTitle').textContent=room.name||'Çark Futbol Odası';$('roomCode').textContent=room.code||roomId;const memberCount=$('roomMemberCount');if(memberCount){const count=(room.memberOrder||[]).length,capacity=Number(room.capacity||count);memberCount.textContent=`${count}/${capacity} oyuncu odada`;}
- const closeBtn=$('closeRoomBtn');if(closeBtn){const canCloseOwn=room.ownerUid===user?.uid;const canAdminClose=isAdmin()&&isLeagueSimulationComplete(room);closeBtn.classList.toggle('hidden',!(canCloseOwn||canAdminClose));closeBtn.textContent=canCloseOwn?'Odamı kapat':'Bitmiş odayı kapat';closeBtn.onclick=closeRoom;}
+ const closeBtn=$('closeRoomBtn');if(closeBtn){const canCloseOwn=room.ownerUid===user?.uid;const canAdminClose=isAdmin();closeBtn.classList.toggle('hidden',!(canCloseOwn||canAdminClose));closeBtn.textContent=canCloseOwn?'Odamı kapat':'Odayı kapat';closeBtn.onclick=closeRoom;}
  $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:locked?'Hamle penceresi açık · Bekleniyor':'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;
  $('startDraftBtn').classList.toggle('hidden',!(canAdminRoomAction()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
  $('startDraftBtn').textContent='Draftı başlat';$('turnHeading').textContent=room.status==='drafting'?`${userName(currentTurnUid())} seçiyor · ${stageMessage(room.picks||[],room.memberOrder||[])}`:'Draft başlamadı';
@@ -600,7 +600,7 @@ async function enterRoom(id,quiet=false,adminInspect=false){
  }catch(e){if(!quiet)msg(e.message,true);else console.warn('Odaya yeniden bağlanılamadı:',e)}
 }
 function closeRoomUI(){if(roomUnsub){roomUnsub();roomUnsub=null}room=null;roomId=null;roomRef=null;roomInspectionMode=false;$('roomView').classList.add('hidden')}
-async function closeRoom(){if(!roomRef||!room){msg('Açık oda bulunamadı.',true);return}const ownerCanClose=room.ownerUid===user?.uid;const adminCanClose=isAdmin()&&isLeagueSimulationComplete(room);if(!ownerCanClose&&!adminCanClose){msg('Admin yalnızca bütün lig maçları simüle edilmiş odaları kapatabilir.',true);return}if(!confirm(ownerCanClose?'Kendi odanı kapatmak istediğine emin misin?':'Bütün lig maçları tamamlandı. Bu oyun odasını kapatmak istiyor musun?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg(ownerCanClose?'Odan kapatıldı.':'Tamamlanmış oyun odası kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
+async function closeRoom(){if(!roomRef||!room){msg('Açık oda bulunamadı.',true);return}const ownerCanClose=room.ownerUid===user?.uid;const adminCanClose=isAdmin();if(!ownerCanClose&&!adminCanClose){msg('Bu odayı kapatma yetkin yok.',true);return}if(!confirm(ownerCanClose&&!adminCanClose?'Kendi odanı kapatmak istediğine emin misin?':'Bu oyun odasını, lig fikstürü tamamlanmamış olsa bile kapatmak istiyor musun?'))return;try{await updateDoc(roomRef,{status:'cancelled',closedAt:Date.now(),updatedAt:serverTimestamp()});closeRoomUI();msg('Oyun odası kapatıldı.')}catch(e){msg('Oda kapatılamadı: '+e.message,true)}}
 async function leaveRoom(){closeRoomUI();msg('Oda görünümünden çıktın. Oda üyeliğin korunur.');}
 async function createRoom(e){
  e.preventDefault();
