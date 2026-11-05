@@ -307,9 +307,9 @@ function scheduleTurnTimeout(){
  if(room.pendingPick){
   const pending=room.pendingPick,started=Number(pending.startedAt||pending.at||Date.now());
   scheduledTurnKey=`pick:${room.id||roomId}:${pending.uid}:${pending.club}:${started}`;
-  const tick=()=>{const left=Math.max(0,20000-(Date.now()-started));$('turnPill').textContent=`Oyuncu seçimi: ${Math.ceil(left/1000)} sn`;};
+  const tick=()=>{const left=Math.max(0,30000-(Date.now()-started));$('turnPill').textContent=`Oyuncu seçimi: ${Math.ceil(left/1000)} sn`;};
   tick();draftCountdownTimer=setInterval(tick,250);
-  draftTimeoutTimer=setTimeout(()=>autoPickPending(pending.uid,pending.club,started).catch(e=>console.warn('Otomatik oyuncu seçimi:',e)),Math.max(0,20000-(Date.now()-started))+40);
+  draftTimeoutTimer=setTimeout(()=>autoPickPending(pending.uid,pending.club,started).catch(e=>console.warn('Otomatik oyuncu seçimi:',e)),Math.max(0,30000-(Date.now()-started))+40);
   return;
  }
  const uid=currentTurnUid();if(!uid||starterCount(room.picks||[],uid)>=11)return;
@@ -318,9 +318,9 @@ function scheduleTurnTimeout(){
   const started=Date.now();room.turnStartedAt=started;
   runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data();if(d.status==='drafting'&&d.turnIndex===room.turnIndex&&d.memberOrder[d.turnIndex%d.memberOrder.length]===uid&&!d.turnStartedAt)tx.update(roomRef,{turnStartedAt:started,updatedAt:serverTimestamp()})}).catch(e=>console.warn('Tur başlangıcı kaydedilemedi:',e));
  }
- const tick=()=>{const left=Math.max(0,15000-(Date.now()-Number(room.turnStartedAt||Date.now())));$('turnPill').textContent=`Sıra: ${userName(uid)} · ${Math.ceil(left/1000)} sn`;};
+ const tick=()=>{const left=Math.max(0,25000-(Date.now()-Number(room.turnStartedAt||Date.now())));$('turnPill').textContent=`Sıra: ${userName(uid)} · ${Math.ceil(left/1000)} sn`;};
  tick();draftCountdownTimer=setInterval(tick,250);
- draftTimeoutTimer=setTimeout(()=>spinFor(uid,true).catch(e=>console.warn('Otomatik çark:',e)),Math.max(0,15000-(Date.now()-Number(room.turnStartedAt||Date.now())))+40);
+ draftTimeoutTimer=setTimeout(()=>spinFor(uid,true).catch(e=>console.warn('Otomatik çark:',e)),Math.max(0,25000-(Date.now()-Number(room.turnStartedAt||Date.now())))+40);
 }
 function schedulePostDraftTimeout(){
  if(roomInspectionMode||!room||room.status!=='finished')return;
@@ -370,7 +370,7 @@ async function spinFor(requestedUid,automatic=false){
    if(d.pendingPick)throw new Error('Önce seçimini tamamla.');
    if(isActionLocked(d))throw new Error('Sonuç penceresi kapanana kadar beklemelisin.');
    if(starterCount(d.picks||[],uid)>=11)throw new Error('Bu oyuncunun ilk 11’i tamamlandı.');
-   if(automatic&&Date.now()-Number(d.turnStartedAt||0)<15000)throw new Error('Otomatik çevirme süresi henüz dolmadı.');
+   if(automatic&&Date.now()-Number(d.turnStartedAt||0)<25000)throw new Error('Otomatik çevirme süresi henüz dolmadı.');
    if(d.lastSpin?.at&&Date.now()-Number(d.lastSpin.at)<3400)throw new Error('Çarkın durmasını bekle.');
    const slice=WHEEL_SLICES[Math.floor(Math.random()*WHEEL_SLICES.length)],at=Date.now();
    const managerName=d.members?.[uid]?.name||'Menajer';
@@ -436,7 +436,7 @@ async function autoPickPending(uid,club,startedAt){
  try{
   await runTransaction(db,async tx=>{
    const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data(),pending=d.pendingPick;
-   if(d.status!=='drafting'||!pending||pending.uid!==uid||pending.club!==club||Number(pending.startedAt||pending.at)!==Number(startedAt)||Date.now()-startedAt<20000)return;
+   if(d.status!=='drafting'||!pending||pending.uid!==uid||pending.club!==club||Number(pending.startedAt||pending.at)!==Number(startedAt)||Date.now()-startedAt<30000)return;
    const candidates=validPickCandidates(club,d.picks||[],uid,d.memberOrder||[]);
    if(!candidates.length){tx.update(roomRef,{pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex),turnStartedAt:Date.now(),updatedAt:serverTimestamp()});return;}
    const picks=[...(d.picks||[])],filled=new Set(picks.filter(x=>x.uid===uid).map(x=>Number(x.starterIndex)).filter(i=>Number.isInteger(i)&&i>=0&&i<11));
