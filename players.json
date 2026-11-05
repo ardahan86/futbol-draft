@@ -3007,601 +3007,601 @@
       "id": "karma-takım-oyuncu-01",
       "club": "Karma Takım",
       "shirtNumber": 1,
-      "name": "Oyuncu 1",
-      "position": "Sağ kanat",
-      "attack": 70,
-      "defense": 18,
-      "overall": 70
+      "name": "Mike Maignan",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 87,
+      "overall": 87
     },
     {
       "id": "karma-takım-oyuncu-02",
       "club": "Karma Takım",
       "shirtNumber": 2,
-      "name": "Oyuncu 2",
-      "position": "Sağ bek",
-      "attack": 26,
-      "defense": 67,
-      "overall": 75
+      "name": "Gregor Kobel",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 87,
+      "overall": 87
     },
     {
       "id": "karma-takım-oyuncu-03",
       "club": "Karma Takım",
       "shirtNumber": 3,
-      "name": "Oyuncu 3",
-      "position": "Sağ bek",
-      "attack": 37,
-      "defense": 84,
-      "overall": 84
+      "name": "Diogo Costa",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 86,
+      "overall": 86
     },
     {
       "id": "karma-takım-oyuncu-04",
       "club": "Karma Takım",
       "shirtNumber": 4,
-      "name": "Oyuncu 4",
-      "position": "Merkez orta saha",
-      "attack": 71,
-      "defense": 48,
-      "overall": 77
+      "name": "Pedro Porro",
+      "position": "Sağ bek",
+      "attack": 82,
+      "defense": 78,
+      "overall": 83
     },
     {
       "id": "karma-takım-oyuncu-05",
       "club": "Karma Takım",
       "shirtNumber": 5,
-      "name": "Oyuncu 5",
-      "position": "Stoper",
-      "attack": 28,
+      "name": "David Raum",
+      "position": "Sol bek",
+      "attack": 82,
       "defense": 76,
-      "overall": 77
+      "overall": 83
     },
     {
       "id": "karma-takım-oyuncu-06",
       "club": "Karma Takım",
       "shirtNumber": 6,
-      "name": "Oyuncu 6",
-      "position": "Sol kanat",
-      "attack": 81,
-      "defense": 23,
-      "overall": 81
+      "name": "Nico Schlotterbeck",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 86,
+      "overall": 87
     },
     {
       "id": "karma-takım-oyuncu-07",
       "club": "Karma Takım",
       "shirtNumber": 7,
-      "name": "Oyuncu 7",
-      "position": "Sağ bek",
-      "attack": 15,
-      "defense": 82,
-      "overall": 88
+      "name": "Waldemar Anton",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 85,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-08",
       "club": "Karma Takım",
       "shirtNumber": 8,
-      "name": "Oyuncu 8",
+      "name": "Aymeric Laporte",
       "position": "Stoper",
       "attack": 1,
-      "defense": 60,
-      "overall": 65
+      "defense": 85,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-09",
       "club": "Karma Takım",
       "shirtNumber": 9,
-      "name": "Oyuncu 9",
-      "position": "Sağ bek",
-      "attack": 4,
-      "defense": 84,
-      "overall": 84
+      "name": "Felix Nmecha",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-10",
       "club": "Karma Takım",
       "shirtNumber": 10,
-      "name": "Oyuncu 10",
-      "position": "Stoper",
-      "attack": 33,
-      "defense": 80,
+      "name": "Adrien Rabiot",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
       "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-11",
       "club": "Karma Takım",
       "shirtNumber": 11,
-      "name": "Oyuncu 11",
-      "position": "Ofansif orta saha",
-      "attack": 63,
-      "defense": 57,
-      "overall": 64
+      "name": "Sandro Tonali",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-12",
       "club": "Karma Takım",
       "shirtNumber": 12,
-      "name": "Oyuncu 12",
-      "position": "Sağ bek",
-      "attack": 2,
-      "defense": 69,
-      "overall": 71
+      "name": "Luka Modrić",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-13",
       "club": "Karma Takım",
       "shirtNumber": 13,
-      "name": "Oyuncu 13",
-      "position": "Sağ kanat",
-      "attack": 66,
-      "defense": 15,
-      "overall": 66
+      "name": "Paulo Dybala",
+      "position": "Ofansif orta saha",
+      "attack": 85,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-14",
       "club": "Karma Takım",
       "shirtNumber": 14,
-      "name": "Oyuncu 14",
-      "position": "Sağ kanat",
-      "attack": 79,
-      "defense": 17,
-      "overall": 79
+      "name": "Lionel Messi",
+      "position": "Ofansif orta saha",
+      "attack": 89,
+      "defense": 1,
+      "overall": 89
     },
     {
       "id": "karma-takım-oyuncu-15",
       "club": "Karma Takım",
       "shirtNumber": 15,
-      "name": "Oyuncu 15",
-      "position": "Sol bek",
-      "attack": 21,
-      "defense": 74,
-      "overall": 78
+      "name": "Antoine Griezmann",
+      "position": "Ofansif orta saha",
+      "attack": 85,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-16",
       "club": "Karma Takım",
       "shirtNumber": 16,
-      "name": "Oyuncu 16",
-      "position": "Kaleci",
-      "attack": 5,
-      "defense": 81,
-      "overall": 81
+      "name": "Kingsley Coman",
+      "position": "Sağ kanat",
+      "attack": 79,
+      "defense": 1,
+      "overall": 83
     },
     {
       "id": "karma-takım-oyuncu-17",
       "club": "Karma Takım",
       "shirtNumber": 17,
-      "name": "Oyuncu 17",
-      "position": "Merkez orta saha",
-      "attack": 58,
-      "defense": 65,
-      "overall": 74
+      "name": "Nico Williams",
+      "position": "Sol kanat",
+      "attack": 79,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-18",
       "club": "Karma Takım",
       "shirtNumber": 18,
-      "name": "Oyuncu 18",
-      "position": "Merkez orta saha",
-      "attack": 55,
-      "defense": 85,
-      "overall": 85
+      "name": "Robert Lewandowski",
+      "position": "Santrfor",
+      "attack": 85,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-19",
       "club": "Karma Takım",
       "shirtNumber": 19,
-      "name": "Oyuncu 19",
+      "name": "Serhou Guirassy",
       "position": "Santrfor",
-      "attack": 88,
-      "defense": 40,
-      "overall": 88
+      "attack": 85,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-20",
       "club": "Karma Takım",
       "shirtNumber": 20,
-      "name": "Oyuncu 20",
-      "position": "Sol kanat",
-      "attack": 81,
-      "defense": 13,
-      "overall": 81
+      "name": "Cristiano Ronaldo",
+      "position": "Santrfor",
+      "attack": 88,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "chelsea-oyuncu-01",
       "club": "Chelsea",
       "shirtNumber": 1,
-      "name": "Oyuncu 1",
-      "position": "Ofansif orta saha",
-      "attack": 57,
-      "defense": 60,
-      "overall": 65
+      "name": "Robert Sánchez",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 80,
+      "overall": 80
     },
     {
       "id": "chelsea-oyuncu-02",
       "club": "Chelsea",
       "shirtNumber": 2,
-      "name": "Oyuncu 2",
+      "name": "Mike Penders",
       "position": "Kaleci",
-      "attack": 2,
-      "defense": 74,
-      "overall": 74
+      "attack": 1,
+      "defense": 78,
+      "overall": 78
     },
     {
       "id": "chelsea-oyuncu-03",
       "club": "Chelsea",
       "shirtNumber": 3,
-      "name": "Oyuncu 3",
-      "position": "Stoper",
-      "attack": 9,
-      "defense": 56,
-      "overall": 62
+      "name": "Gabriel Slonina",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 68,
+      "overall": 68
     },
     {
       "id": "chelsea-oyuncu-04",
       "club": "Chelsea",
       "shirtNumber": 4,
-      "name": "Oyuncu 4",
-      "position": "Merkez orta saha",
-      "attack": 60,
-      "defense": 87,
-      "overall": 87
+      "name": "Maxence Lacroix",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 82
     },
     {
       "id": "chelsea-oyuncu-05",
       "club": "Chelsea",
       "shirtNumber": 5,
-      "name": "Oyuncu 5",
-      "position": "Sağ bek",
-      "attack": 20,
-      "defense": 87,
-      "overall": 88
+      "name": "Levi Colwill",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 81,
+      "overall": 80
     },
     {
       "id": "chelsea-oyuncu-06",
       "club": "Chelsea",
       "shirtNumber": 6,
-      "name": "Oyuncu 6",
+      "name": "Wesley Fofana",
       "position": "Stoper",
-      "attack": 27,
-      "defense": 75,
+      "attack": 1,
+      "defense": 80,
       "overall": 79
     },
     {
       "id": "chelsea-oyuncu-07",
       "club": "Chelsea",
       "shirtNumber": 7,
-      "name": "Oyuncu 7",
-      "position": "Sağ kanat",
-      "attack": 70,
-      "defense": 12,
-      "overall": 70
+      "name": "Reece James",
+      "position": "Sağ bek",
+      "attack": 83,
+      "defense": 83,
+      "overall": 84
     },
     {
       "id": "chelsea-oyuncu-08",
       "club": "Chelsea",
       "shirtNumber": 8,
-      "name": "Oyuncu 8",
-      "position": "Merkez orta saha",
-      "attack": 79,
-      "defense": 71,
-      "overall": 83
+      "name": "Malo Gusto",
+      "position": "Sağ bek",
+      "attack": 75,
+      "defense": 75,
+      "overall": 79
     },
     {
       "id": "chelsea-oyuncu-09",
       "club": "Chelsea",
       "shirtNumber": 9,
-      "name": "Oyuncu 9",
-      "position": "Sağ bek",
-      "attack": 11,
-      "defense": 69,
-      "overall": 74
+      "name": "Pep Chavarría",
+      "position": "Sol bek",
+      "attack": 74,
+      "defense": 74,
+      "overall": 79
     },
     {
       "id": "chelsea-oyuncu-10",
       "club": "Chelsea",
       "shirtNumber": 10,
-      "name": "Oyuncu 10",
-      "position": "Kaleci",
-      "attack": 6,
-      "defense": 85,
-      "overall": 85
+      "name": "Jorrel Hato",
+      "position": "Sol bek",
+      "attack": 70,
+      "defense": 76,
+      "overall": 78
     },
     {
       "id": "chelsea-oyuncu-11",
       "club": "Chelsea",
       "shirtNumber": 11,
-      "name": "Oyuncu 11",
+      "name": "Moisés Caicedo",
       "position": "Merkez orta saha",
-      "attack": 50,
-      "defense": 46,
-      "overall": 64
+      "attack": 1,
+      "defense": 1,
+      "overall": 86
     },
     {
       "id": "chelsea-oyuncu-12",
       "club": "Chelsea",
       "shirtNumber": 12,
-      "name": "Oyuncu 12",
-      "position": "Sol kanat",
-      "attack": 88,
-      "defense": 33,
-      "overall": 88
+      "name": "Morgan Rogers",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "chelsea-oyuncu-13",
       "club": "Chelsea",
       "shirtNumber": 13,
-      "name": "Oyuncu 13",
-      "position": "Stoper",
-      "attack": 17,
-      "defense": 64,
-      "overall": 66
+      "name": "Valentín Barco",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 79
     },
     {
       "id": "chelsea-oyuncu-14",
       "club": "Chelsea",
       "shirtNumber": 14,
-      "name": "Oyuncu 14",
-      "position": "Sol bek",
-      "attack": 19,
-      "defense": 87,
-      "overall": 87
+      "name": "Jordan Henderson",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 78
     },
     {
       "id": "chelsea-oyuncu-15",
       "club": "Chelsea",
       "shirtNumber": 15,
-      "name": "Oyuncu 15",
-      "position": "Stoper",
-      "attack": 34,
-      "defense": 80,
-      "overall": 81
+      "name": "Cole Palmer",
+      "position": "Ofansif orta saha",
+      "attack": 85,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "chelsea-oyuncu-16",
       "club": "Chelsea",
       "shirtNumber": 16,
-      "name": "Oyuncu 16",
-      "position": "Stoper",
-      "attack": 22,
-      "defense": 78,
-      "overall": 79
+      "name": "Pedro Neto",
+      "position": "Sağ kanat",
+      "attack": 77,
+      "defense": 1,
+      "overall": 81
     },
     {
       "id": "chelsea-oyuncu-17",
       "club": "Chelsea",
       "shirtNumber": 17,
-      "name": "Oyuncu 17",
-      "position": "Sol kanat",
-      "attack": 62,
-      "defense": 8,
-      "overall": 62
+      "name": "Estêvão",
+      "position": "Sağ kanat",
+      "attack": 75,
+      "defense": 1,
+      "overall": 80
     },
     {
       "id": "chelsea-oyuncu-18",
       "club": "Chelsea",
       "shirtNumber": 18,
-      "name": "Oyuncu 18",
-      "position": "Sağ kanat",
-      "attack": 78,
-      "defense": 24,
-      "overall": 78
+      "name": "Mykhailo Mudryk",
+      "position": "Sol kanat",
+      "attack": 71,
+      "defense": 1,
+      "overall": 75
     },
     {
       "id": "chelsea-oyuncu-19",
       "club": "Chelsea",
       "shirtNumber": 19,
-      "name": "Oyuncu 19",
-      "position": "Sol bek",
-      "attack": 20,
-      "defense": 84,
-      "overall": 84
+      "name": "Danny Welbeck",
+      "position": "Santrfor",
+      "attack": 82,
+      "defense": 1,
+      "overall": 80
     },
     {
       "id": "chelsea-oyuncu-20",
       "club": "Chelsea",
       "shirtNumber": 20,
-      "name": "Oyuncu 20",
+      "name": "João Pedro",
       "position": "Santrfor",
-      "attack": 86,
-      "defense": 20,
-      "overall": 86
+      "attack": 83,
+      "defense": 1,
+      "overall": 83
     },
     {
       "id": "napoli-oyuncu-01",
       "club": "Napoli",
       "shirtNumber": 1,
-      "name": "Oyuncu 1",
-      "position": "Sol bek",
-      "attack": 6,
-      "defense": 87,
-      "overall": 88
+      "name": "Alex Meret",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 81,
+      "overall": 81
     },
     {
       "id": "napoli-oyuncu-02",
       "club": "Napoli",
       "shirtNumber": 2,
-      "name": "Oyuncu 2",
-      "position": "Sol bek",
-      "attack": 9,
-      "defense": 77,
-      "overall": 81
+      "name": "Vanja Milinković-Savić",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 80,
+      "overall": 80
     },
     {
       "id": "napoli-oyuncu-03",
       "club": "Napoli",
       "shirtNumber": 3,
-      "name": "Oyuncu 3",
-      "position": "Sol bek",
-      "attack": 24,
+      "name": "Nikita Contini",
+      "position": "Kaleci",
+      "attack": 1,
       "defense": 67,
-      "overall": 71
+      "overall": 67
     },
     {
       "id": "napoli-oyuncu-04",
       "club": "Napoli",
       "shirtNumber": 4,
-      "name": "Oyuncu 4",
-      "position": "Ofansif orta saha",
-      "attack": 64,
-      "defense": 53,
-      "overall": 79
+      "name": "Giovanni Di Lorenzo",
+      "position": "Sağ bek",
+      "attack": 73,
+      "defense": 79,
+      "overall": 82
     },
     {
       "id": "napoli-oyuncu-05",
       "club": "Napoli",
       "shirtNumber": 5,
-      "name": "Oyuncu 5",
+      "name": "Pasquale Mazzocchi",
       "position": "Sağ bek",
-      "attack": 20,
-      "defense": 67,
-      "overall": 74
+      "attack": 70,
+      "defense": 68,
+      "overall": 71
     },
     {
       "id": "napoli-oyuncu-06",
       "club": "Napoli",
       "shirtNumber": 6,
-      "name": "Oyuncu 6",
-      "position": "Sağ kanat",
-      "attack": 75,
-      "defense": 30,
-      "overall": 75
+      "name": "Leonardo Spinazzola",
+      "position": "Sol bek",
+      "attack": 76,
+      "defense": 76,
+      "overall": 80
     },
     {
       "id": "napoli-oyuncu-07",
       "club": "Napoli",
       "shirtNumber": 7,
-      "name": "Oyuncu 7",
-      "position": "Kaleci",
-      "attack": 3,
-      "defense": 82,
-      "overall": 82
+      "name": "Mathías Olivera",
+      "position": "Sol bek",
+      "attack": 69,
+      "defense": 77,
+      "overall": 77
     },
     {
       "id": "napoli-oyuncu-08",
       "club": "Napoli",
       "shirtNumber": 8,
-      "name": "Oyuncu 8",
-      "position": "Merkez orta saha",
-      "attack": 54,
-      "defense": 69,
-      "overall": 73
+      "name": "Amir Rrahmani",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 84,
+      "overall": 83
     },
     {
       "id": "napoli-oyuncu-09",
       "club": "Napoli",
       "shirtNumber": 9,
-      "name": "Oyuncu 9",
-      "position": "Sol kanat",
-      "attack": 81,
-      "defense": 17,
+      "name": "Alessandro Buongiorno",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
       "overall": 81
     },
     {
       "id": "napoli-oyuncu-10",
       "club": "Napoli",
       "shirtNumber": 10,
-      "name": "Oyuncu 10",
+      "name": "Sam Beukema",
       "position": "Stoper",
-      "attack": 29,
-      "defense": 86,
-      "overall": 87
+      "attack": 1,
+      "defense": 80,
+      "overall": 78
     },
     {
       "id": "napoli-oyuncu-11",
       "club": "Napoli",
       "shirtNumber": 11,
-      "name": "Oyuncu 11",
+      "name": "Benoît Badiashile",
       "position": "Stoper",
-      "attack": 17,
-      "defense": 83,
-      "overall": 84
+      "attack": 1,
+      "defense": 76,
+      "overall": 76
     },
     {
       "id": "napoli-oyuncu-12",
       "club": "Napoli",
       "shirtNumber": 12,
-      "name": "Oyuncu 12",
-      "position": "Sağ bek",
-      "attack": 5,
-      "defense": 73,
-      "overall": 75
+      "name": "Scott McTominay",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 86
     },
     {
       "id": "napoli-oyuncu-13",
       "club": "Napoli",
       "shirtNumber": 13,
-      "name": "Oyuncu 13",
-      "position": "Ofansif orta saha",
-      "attack": 69,
-      "defense": 68,
-      "overall": 71
+      "name": "Stanislav Lobotka",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 83
     },
     {
       "id": "napoli-oyuncu-14",
       "club": "Napoli",
       "shirtNumber": 14,
-      "name": "Oyuncu 14",
-      "position": "Sağ kanat",
-      "attack": 86,
-      "defense": 17,
-      "overall": 86
+      "name": "Zambo Anguissa",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 82
     },
     {
       "id": "napoli-oyuncu-15",
       "club": "Napoli",
       "shirtNumber": 15,
-      "name": "Oyuncu 15",
-      "position": "Kaleci",
-      "attack": 4,
-      "defense": 71,
-      "overall": 71
+      "name": "Kevin De Bruyne",
+      "position": "Ofansif orta saha",
+      "attack": 89,
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "napoli-oyuncu-16",
       "club": "Napoli",
       "shirtNumber": 16,
-      "name": "Oyuncu 16",
-      "position": "Kaleci",
-      "attack": 3,
-      "defense": 71,
-      "overall": 71
+      "name": "Matteo Politano",
+      "position": "Sağ kanat",
+      "attack": 78,
+      "defense": 1,
+      "overall": 80
     },
     {
       "id": "napoli-oyuncu-17",
       "club": "Napoli",
       "shirtNumber": 17,
-      "name": "Oyuncu 17",
-      "position": "Stoper",
-      "attack": 14,
-      "defense": 82,
-      "overall": 82
+      "name": "David Neres",
+      "position": "Sol kanat",
+      "attack": 75,
+      "defense": 1,
+      "overall": 81
     },
     {
       "id": "napoli-oyuncu-18",
       "club": "Napoli",
       "shirtNumber": 18,
-      "name": "Oyuncu 18",
-      "position": "Santrfor",
-      "attack": 69,
-      "defense": 7,
-      "overall": 69
+      "name": "Noa Lang",
+      "position": "Sol kanat",
+      "attack": 73,
+      "defense": 1,
+      "overall": 79
     },
     {
       "id": "napoli-oyuncu-19",
       "club": "Napoli",
       "shirtNumber": 19,
-      "name": "Oyuncu 19",
-      "position": "Merkez orta saha",
-      "attack": 66,
-      "defense": 52,
-      "overall": 66
+      "name": "Lorenzo Lucca",
+      "position": "Santrfor",
+      "attack": 77,
+      "defense": 1,
+      "overall": 75
     },
     {
       "id": "napoli-oyuncu-20",
       "club": "Napoli",
       "shirtNumber": 20,
-      "name": "Oyuncu 20",
-      "position": "Merkez orta saha",
-      "attack": 82,
-      "defense": 70,
-      "overall": 88
+      "name": "Rasmus Højlund",
+      "position": "Santrfor",
+      "attack": 78,
+      "defense": 1,
+      "overall": 78
     }
   ]
 }
