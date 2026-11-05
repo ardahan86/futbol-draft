@@ -98,6 +98,9 @@ const CLUB_CRESTS={
  'Atlético Madrid':'./assets/crests/Atletico Madrid.png',
  'Juventus':'./assets/crests/Juventus.png',
  'Manchester United':'./assets/crests/Manchester United.png',
+ 'Chelsea':'./assets/crests/Chelsea.png',
+ 'Napoli':'./assets/crests/Napoli.png',
+ 'Karma Takım':'./assets/crests/Karma Takım.png',
 };
 const SPECIAL_SPIN_RESULTS={PAS:{label:'PAS',src:'./assets/crests/PAS.png'},KORUMA:{label:'KORUMA',src:'./assets/crests/KORUMA.png'},TAKAS:{label:'TAKAS',src:'./assets/crests/TAKAS.png'}};
 function crestFallback(result){const initials=({'Galatasaray':'GS','Arsenal':'ARS','Beşiktaş':'BJK','Atlético Madrid':'ATM','Real Madrid':'RMA','Juventus':'JUV','PSG':'PSG','Fenerbahçe':'FB','Manchester City':'MCI','Bayern Münih':'FCB','Inter':'INT','Trabzonspor':'TS','Liverpool':'LIV','Barcelona':'BAR','Manchester United':'MUN','Chelsea':'CHE','Napoli':'NAP','Karma Takım':'KAR'})[result]||'FC';return `<div class="spin-crest-fallback" aria-label="${esc(result)} arması"><span>${esc(initials)}</span></div>`}
