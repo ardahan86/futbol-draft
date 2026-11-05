@@ -1,18 +1,30 @@
-ÇARK FUTBOL - GOL KURALLARI, TAKTİK, PAS ODAĞI VE PRES GÜNCELLEMESİ
+FUTBOL DRAFT – GÜNCELLEME DOĞRULAMA RAPORU
 
-Kontroller:
-- app.js JavaScript sözdizimi: BAŞARILI (node --check)
-- players.json futbolcu havuzu: 300 futbolcu
-- Gol motoru: 6 bağımsız kural
-- Taktik seçenekleri: Defansif, Dengeli, Hücumcu
-- Pas odağı seçenekleri: Savunmadan Uzun Top, Kısa Pas, Kanat Oyunu
-- Pres türleri: Önde Pres, Orta Blok Pres, Geride Pres
-- Bonus ve cezalar yalnızca 3., 4. ve 5. kuralların karşılaştırma değerlerinde uygulanır.
-- Gerçek futbolcu puanları ve genel Overall toplamı bonuslardan etkilenmez.
-- Gerçek Firebase ortamında uçtan uca test yapılmadı.
+Uygulanan kapsam:
+- Çark 20 dilimden 24 dilime çıkarıldı; eklenen dilimler TAKAS, Karma Takım, Chelsea ve Napoli.
+- Karma Takım, Chelsea ve Napoli için 20'şer geçici oyuncu eklendi. Her kadroda ilk 11'in doldurulabilmesi için gerekli mevkiler bulunur; oyuncu adları, mevkileri ve puanları daha sonra players.json üzerinden değiştirilebilir.
+- İlk 11'ini tamamlayan oyuncu drafttan çıkar; kalan oyuncuların çarkında TAKAS/KORUMA PAS sayılır.
+- Çark çevirmek için 15 saniye, takım sonucu sonrası oyuncu seçmek için 20 saniye süre ve otomatik işlem eklendi.
+- Koruma, takas ve taktik aşamalarına tüm oyuncular için ortak 60 saniyelik sayaç eklendi.
+- Süresinde koruma/takas yapmayan oyuncunun ilgili kullanılmamış hakları sıfırlanır; taktik seçmeyen oyuncuya rastgele taktik/pas/pres seçimi atanır.
+- Ana ekranda otomatik takas/koruma raporu gösterimi kaldırıldı; koruma/takas sonuç penceresi ve sabit rapor sekmesi korundu.
+- Maç detayları, ilgili fikstür satırının altındaki Maç Özeti düğmesiyle açılır.
+- Gol kuralı 1 Omurga Üstünlüğü olarak değiştirildi.
+- Gol kuralı 2 ev sahibi düşük Overall ise +30 telafi ve ardından 20 fark karşılaştırması şeklinde güncellendi.
+- Taktik, pas ve pres bonusları yeni değerlere güncellendi.
+- Firestore kurallarına yalnızca yeni bitiş/aşama zaman damgaları mevcut oyun akışı kapsamında izin listesine eklendi.
 
-Kurulum:
-1. ZIP içindeki dosyaları projenin mevcut dosyalarıyla değiştirerek yayımlayın.
-2. Firebase yapılandırmasını ve Firestore kurallarını mevcut projenizle aynı bırakın; bu güncelleme bunları değiştirmez.
-3. GitHub Pages veya kullandığınız barındırma ortamında siteyi yenileyin.
-4. Önce test odasında taktik, pas odağı ve pres türü seçimlerinin kaydedildiğini ve maç raporlarında doğru gol kurallarının kullanıldığını doğrulayın.
+Statik kontroller:
+- `node --check app.js`: BAŞARILI.
+- `players.json`: geçerli JSON, 360 oyuncu kaydı.
+- Yeni Karma Takım/Chelsea/Napoli kadroları: 20'şer oyuncu.
+- Çark dilim sayısı: 24.
+- `index.html`: açılış/kapanış etiket kontrolü başarılı.
+
+Sınırlar:
+- Firebase canlı ortamında çok kullanıcılı uçtan uca test yapılmadı.
+- Otomatik zaman aşımı işlemleri, odada bağlı en az bir oyuncunun tarayıcısı açıkken tetiklenir. Tüm kullanıcılar aynı anda çevrimdışı olursa istemci tarafındaki zamanlayıcı çalışamaz.
+- ZIP dosyası oluşturuldu; canlı Firebase Hosting veya GitHub Pages ortamına otomatik yayın yapılmadı.
+
+Yayın öncesi öneri:
+Önce test odasında 15/20/60 saniyelik süreleri, takas/koruma haklarının yanmasını, rastgele taktik atamasını, yeni üç kadroyu ve maç özeti açılımını birden fazla hesapla doğrulayın.

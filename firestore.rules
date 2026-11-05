@@ -63,7 +63,7 @@ service cloud.firestore {
         isRoomMember(resource.data)
         && (request.resource.data.status == resource.data.status
           || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
           || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
             && request.auth.uid == resource.data.ownerUid
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','updatedAt'])))
@@ -73,7 +73,7 @@ service cloud.firestore {
           || request.auth.uid == resource.data.ownerUid || isAdmin())
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','protectionRights','swapRights',
-          'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','updatedAt',
+          'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt',
           // Post-draft protection and swap workflow fields used by the app.
           'protectionDone','postDraftPhase','swapConfirmed','swapRequests','swapResolved','swapResults',
           'tacticsConfirmed'

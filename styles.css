@@ -499,3 +499,25 @@ body{background:radial-gradient(ellipse at 18% 5%,#193452 0,transparent 34%),rad
 .join-room-panel{margin-top:18px}
 .join-room-panel .inline-form{max-width:620px}
 #roomCodeInput{letter-spacing:.18em;font-weight:800;font-variant-numeric:tabular-nums}
+
+
+/* Inline match summaries: expanded beneath their corresponding fixture */
+.match-details {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--border, #334155);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, .72);
+  overflow-x: auto;
+}
+.match-report-inline { display: block; width: 100%; }
+.match-report-inline .match-report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.match-report-inline table { min-width: 680px; width: 100%; }
+.match-report-inline h3, .match-report-inline h4 { margin-top: 12px; }
