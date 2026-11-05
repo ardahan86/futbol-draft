@@ -175,13 +175,11 @@ function simulateMatch(home,away){
  if(h.spineTotal-a.spineTotal>=15){addGoal(home,h,'1. Omurga üstünlüğü (15+)');winner=teamLabel(home)}
  else if(a.spineTotal-h.spineTotal>=15){addGoal(away,a,'1. Omurga üstünlüğü (15+)');winner=teamLabel(away)}
  addAudit('1. Omurga üstünlüğü',h.spineTotal,a.spineTotal,15,'Taktik bonusu uygulanmaz','Taktik bonusu uygulanmaz',winner);
- // 2. Takım Overall Üstünlüğü: ev sahibi düşükse önce +30; ardından taktik Overall katkılarıyla fark kontrol edilir.
- const homeCompBase=h.overallTotal+(h.overallTotal<a.overallTotal?30:0);
- const awayCompBase=a.overallTotal;
- const hOverall=homeCompBase+overallTactic(home);
- const aOverall=awayCompBase+overallTactic(away);
- const hOverallEffects=[h.overallTotal<a.overallTotal?'+30 ev sahibi telafi bonusu':'',home.tactic==='balanced'?'+15 Dengeli':'',home.passFocus==='shortPass'?'+10 Kısa Pas':''].filter(Boolean);
- const aOverallEffects=[away.tactic==='balanced'?'+15 Dengeli':'',away.passFocus==='shortPass'?'+10 Kısa Pas':''].filter(Boolean);
+ // 2. Takım Overall Üstünlüğü: yalnızca ham Overall toplamı kullanılır; ev sahibi düşükse +30 telafi bonusu eklenir. Taktik, pas ve pres bonusu uygulanmaz.
+ const hOverall=h.overallTotal+(h.overallTotal<a.overallTotal?30:0);
+ const aOverall=a.overallTotal;
+ const hOverallEffects=[h.overallTotal<a.overallTotal?'+30 ev sahibi telafi bonusu':''].filter(Boolean);
+ const aOverallEffects=[];
  winner=null;
  if(hOverall-aOverall>=20){addGoal(home,h,'2. Takım Overall üstünlüğü (20+)');winner=teamLabel(home)}
  else if(aOverall-hOverall>=20){addGoal(away,a,'2. Takım Overall üstünlüğü (20+)');winner=teamLabel(away)}
