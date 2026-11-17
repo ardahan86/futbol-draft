@@ -4,7 +4,10 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function verifiedUser() { return signedIn() && request.auth.token.email_verified == true; }
     function isAdmin() { return signedIn() && request.auth.uid == "8Rq9OpXpSPf7JPgo5OyUVPVbrQu2"; }
-    function isRoomMember(roomData) { return verifiedUser() && request.auth.uid in roomData.memberOrder; }
+    // Oda üyeliği, oda oluşturulurken/katılırken doğrulanmış hesapla kurulur.
+    // Mevcut üyenin token'ındaki email_verified claim'i yenilenmemiş olsa bile
+    // oyun içi onay/yazma işlemleri kesilmesin; üyelik UID ile doğrulanır.
+    function isRoomMember(roomData) { return signedIn() && request.auth.uid in roomData.memberOrder; }
     function roomExists(roomId) { return exists(/databases/$(database)/documents/rooms/$(roomId)); }
     function roomFinished(roomId) { return roomExists(roomId) && get(/databases/$(database)/documents/rooms/$(roomId)).data.status == 'finished'; }
 
@@ -89,9 +92,10 @@ service cloud.firestore {
         || (verifiedUser() && resource.data.uid == request.auth.uid)
         || (verifiedUser() && roomFinished(resource.data.roomId)
           && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
-      allow create, update: if verifiedUser()
+      allow create, update: if signedIn()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.roomId is string
+        && secretId == request.resource.data.roomId + '_' + request.auth.uid
         && roomExists(request.resource.data.roomId)
         && request.auth.uid in get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.memberOrder
         && get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.status == 'finished'

@@ -521,7 +521,13 @@ async function finishProtectionSelection(selectedOverride=null){
   let all=false;
   await runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())throw new Error('Oda bulunamadı.');const d=snap.data();if(d.status!=='finished'||(d.postDraftPhase||'protection')!=='protection')throw new Error('Koruma aşaması açık değil.');if(d.protectionDone?.[user.uid])throw new Error('Koruma seçimini zaten tamamladın.');const done={...(d.protectionDone||{}),[user.uid]:true},rights={...(d.protectionRights||{})};if(prior.length+chosen.length===0)rights[user.uid]=0;all=(d.memberOrder||[]).every(id=>done[id]);tx.update(roomRef,{protectionDone:done,protectionRights:rights,postDraftPhase:all?'swaps':'protection',postDraftPhaseStartedAt:all?Date.now():Number(d.postDraftPhaseStartedAt||Date.now()),updatedAt:serverTimestamp()})});
   closePostDraftModal();msg(`Koruma onaylandı. ${prior.length+chosen.length} futbolcu korumalı.`+(all?' Takas aşaması açılıyor.':' Diğer oyuncular bekleniyor.'));
- }catch(e){msg(e.message||'Koruma aşaması tamamlanamadı.',true)}
+ }catch(e){
+  console.error('Koruma onayı kaydedilemedi:',e);
+  const detail = e?.code === 'permission-denied'
+    ? 'Firebase izin vermedi. Firestore kurallarını güncellediğinden emin ol.'
+    : (e.message||'Bilinmeyen kayıt hatası.');
+  msg('Koruma onayı kaydedilemedi: '+detail,true);
+ }
 }
 async function swapPlayer(){
  if(!room||room.status!=='finished'||room.postDraftPhase!=='swaps'||room.swapConfirmed?.[user.uid])return;
