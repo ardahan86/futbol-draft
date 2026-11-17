@@ -521,3 +521,83 @@ body{background:radial-gradient(ellipse at 18% 5%,#193452 0,transparent 34%),rad
 }
 .match-report-inline table { min-width: 680px; width: 100%; }
 .match-report-inline h3, .match-report-inline h4 { margin-top: 12px; }
+
+
+/* Compact Draft Center rights and per-player rights list */
+#turnPill {
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+}
+.special-rights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 10px auto 0;
+  max-width: 560px;
+}
+.rights-card {
+  grid-template-columns: 30px 1fr;
+  min-height: 58px;
+  padding: 7px 9px;
+  column-gap: 7px;
+  border-radius: 11px;
+}
+.rights-icon {
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  font-size: 1.15rem;
+}
+.rights-label { font-size: .58rem; letter-spacing: .1em; }
+.rights-card strong { font-size: 1.25rem; }
+.rights-player-list {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0;
+  margin-top: 2px;
+  padding: 5px 10px;
+  border: 1px solid rgba(148, 163, 184, .2);
+  border-radius: 11px;
+  background: rgba(7, 16, 30, .72);
+}
+.rights-player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 31px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, .13);
+  font-size: .78rem;
+}
+.rights-player-row:last-child { border-bottom: 0; }
+.rights-player-row > b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+.rights-player-row > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+.rights-player-row i {
+  min-width: 28px;
+  font-style: normal;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.rights-player-protection { color: #e8cc83; }
+.rights-player-swap { color: #82caff; }
+@media (max-width: 560px) {
+  .special-rights { gap: 7px; margin-top: 9px; }
+  .rights-card { min-height: 54px; padding: 6px 8px; grid-template-columns: 27px 1fr; }
+  .rights-icon { width: 26px; height: 26px; font-size: 1.05rem; }
+  .rights-player-list { padding: 4px 9px; }
+  .rights-player-row { min-height: 29px; font-size: .75rem; }
+}
