@@ -601,3 +601,61 @@ body{background:radial-gradient(ellipse at 18% 5%,#193452 0,transparent 34%),rad
   .rights-player-list { padding: 4px 9px; }
   .rights-player-row { min-height: 29px; font-size: .75rem; }
 }
+
+
+/* Futbol Draft update: compact persistent report statistics */
+#swapReportPane .report-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+#swapReportPane .report-stats .stat {
+  min-width: 0;
+  padding: 12px;
+}
+#swapReportPane .report-stats .stat small {
+  font-size: .68rem;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+#swapReportPane .report-stats .stat b {
+  margin-top: 4px;
+  font-size: 1.35rem;
+}
+#swapReportPane .report-stats .stat-requested {
+  background: linear-gradient(145deg, #374151, #1f2937);
+  border-color: rgba(156,163,175,.42);
+}
+#swapReportPane .report-stats .stat-requested small {
+  color: #d1d5db;
+}
+#swapReportPane .report-stats .stat-success {
+  background: linear-gradient(145deg, #14532d, #052e16);
+  border-color: rgba(34,197,94,.48);
+}
+#swapReportPane .report-stats .stat-success small {
+  color: #bbf7d0;
+}
+#swapReportPane .report-stats .stat-failed {
+  background: linear-gradient(145deg, #7f1d1d, #450a0a);
+  border-color: rgba(239,68,68,.55);
+}
+#swapReportPane .report-stats .stat-failed small {
+  color: #fecaca;
+}
+@media (max-width: 560px) {
+  #swapReportPane .report-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  #swapReportPane .report-stats .stat {
+    padding: 9px 7px;
+    border-radius: 10px;
+  }
+  #swapReportPane .report-stats .stat small {
+    font-size: .58rem;
+    letter-spacing: .035em;
+  }
+  #swapReportPane .report-stats .stat b {
+    font-size: 1.12rem;
+  }
+}
