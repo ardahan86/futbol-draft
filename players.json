@@ -3044,6 +3044,16 @@
       "overall": 83
     },
     {
+      "id": "karma-takım-daniel-mu-oz",
+      "club": "Karma Takım",
+      "shirtNumber": 21,
+      "name": "Daniel Muñoz",
+      "position": "Sağ bek",
+      "attack": 73,
+      "defense": 80,
+      "overall": 82
+    },
+    {
       "id": "karma-takım-oyuncu-05",
       "club": "Karma Takım",
       "shirtNumber": 5,
@@ -3051,6 +3061,16 @@
       "position": "Sol bek",
       "attack": 82,
       "defense": 76,
+      "overall": 83
+    },
+    {
+      "id": "karma-takım-maximilian-mittelst-dt",
+      "club": "Karma Takım",
+      "shirtNumber": 22,
+      "name": "Maximilian Mittelstädt",
+      "position": "Sol bek",
+      "attack": 79,
+      "defense": 80,
       "overall": 83
     },
     {
@@ -3084,14 +3104,14 @@
       "overall": 84
     },
     {
-      "id": "karma-takım-oyuncu-09",
+      "id": "karma-takım-gianluca-mancini",
       "club": "Karma Takım",
-      "shirtNumber": 9,
-      "name": "Felix Nmecha",
-      "position": "Merkez orta saha",
+      "shirtNumber": 23,
+      "name": "Gianluca Mancini",
+      "position": "Stoper",
       "attack": 1,
-      "defense": 1,
-      "overall": 85
+      "defense": 85,
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-10",
@@ -3124,6 +3144,16 @@
       "overall": 85
     },
     {
+      "id": "karma-takım-r-ben-neves",
+      "club": "Karma Takım",
+      "shirtNumber": 24,
+      "name": "Rúben Neves",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 85
+    },
+    {
       "id": "karma-takım-oyuncu-13",
       "club": "Karma Takım",
       "shirtNumber": 13,
@@ -3144,14 +3174,24 @@
       "overall": 89
     },
     {
-      "id": "karma-takım-oyuncu-15",
+      "id": "karma-takım-nico-paz",
       "club": "Karma Takım",
-      "shirtNumber": 15,
-      "name": "Antoine Griezmann",
+      "shirtNumber": 25,
+      "name": "Nico Paz",
       "position": "Ofansif orta saha",
-      "attack": 85,
+      "attack": 79,
       "defense": 1,
       "overall": 84
+    },
+    {
+      "id": "karma-takım-john-mcginn",
+      "club": "Karma Takım",
+      "shirtNumber": 26,
+      "name": "Ángel Di María",
+      "position": "Sağ kanat",
+      "attack": 85,
+      "defense": 1,
+      "overall": 82
     },
     {
       "id": "karma-takım-oyuncu-16",
@@ -3174,6 +3214,16 @@
       "overall": 84
     },
     {
+      "id": "karma-takım-sadio-man-",
+      "club": "Karma Takım",
+      "shirtNumber": 27,
+      "name": "Sadio Mané",
+      "position": "Sol kanat",
+      "attack": 78,
+      "defense": 1,
+      "overall": 82
+    },
+    {
       "id": "karma-takım-oyuncu-18",
       "club": "Karma Takım",
       "shirtNumber": 18,
@@ -3184,14 +3234,14 @@
       "overall": 84
     },
     {
-      "id": "karma-takım-oyuncu-19",
+      "id": "karma-takım-oyuncu-15",
       "club": "Karma Takım",
-      "shirtNumber": 19,
-      "name": "Serhou Guirassy",
+      "shirtNumber": 15,
+      "name": "Antoine Griezmann",
       "position": "Santrfor",
       "attack": 85,
       "defense": 1,
-      "overall": 85
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-20",
