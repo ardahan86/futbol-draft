@@ -24,27 +24,27 @@ Kaleci, sağ bek, iki stoper, sol bek, iki merkez orta saha, ofansif orta saha, 
 ## Gol kuralları
 Her kural bağımsızdır. Şartı sağlayan takım ilgili kuraldan +1 gol kazanır.
 
-1. **Omurga Üstünlüğü:** Kaleci (GK), Overall değeri en yüksek stoper (CB), Overall değeri en yüksek merkez orta saha (CM), ofansif orta saha (CAM) ve santrfor (ST) oyuncularının Overall puanları toplanır. İki takımın toplamı karşılaştırılır. Fark en az 15 Overall ise üstün takım +1 gol kazanır. Taktik bonusu uygulanmaz.
-2. **Takım Overall Üstünlüğü:** Ev sahibi takımın toplam Overall puanı rakibinden düşükse önce ev sahibinin toplamına +30 Overall eklenir. Ardından yeni puanlar karşılaştırılır; en az 20 puan üstün olan takım +1 gol kazanır. Bu kuralda taktik bonusu uygulanmaz.
-3. **Savunma Üstünlüğü:** Kaleci + iki stoper + sağ bek + sol bek oyuncularının DEF puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 DEF ise üstün takım +1 gol kazanır.
-4. **Orta Saha Üstünlüğü:** Ofansif orta saha + iki merkez orta saha oyuncularının Overall puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 Overall ise üstün takım +1 gol kazanır.
-5. **Hücum Üçlüsü Üstünlüğü:** Santrfor + sağ kanat + sol kanat oyuncularının ATT puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 ATT ise üstün takım +1 gol kazanır.
-6. **Toplam Hücum Gücü ve Ev Sahibi Bonusu:** Mevcut kural korunur. Ev sahibi takımın toplam ATT puanı düşükse karşılaştırma öncesi +20 ATT telafi bonusu uygulanır; yüksek ATT değerine sahip takım +1 gol kazanır.
+1. **Omurga Üstünlüğü:** Kaleci (GK), Overall değeri en yüksek stoper (CB), Overall değeri en yüksek merkez orta saha (CM), ofansif orta saha (CAM) ve santrfor (ST) oyuncularının Overall puanları toplanır. Fark en az **12 Overall** ise üstün takım +1 gol kazanır. Taktik bonusu uygulanmaz.
+2. **Takım Overall Üstünlüğü:** İki takımın 11 oyuncusunun toplam Overall puanı karşılaştırılır. Ev sahibi takımın toplamı rakibinden düşükse ev sahibine **+30 Overall** telafi bonusu uygulanır. Bonus sonrası fark en az **20 Overall** ise üstün takım +1 gol kazanır. Taktik bonusu uygulanmaz.
+3. **Savunma Üstünlüğü:** Kaleci + iki stoper + sağ bek + sol bek oyuncularının DEF puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az **18 DEF** ise üstün takım +1 gol kazanır.
+4. **Orta Saha Üstünlüğü:** Ofansif orta saha + iki merkez orta saha oyuncularının Overall puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az **9 Overall** ise üstün takım +1 gol kazanır.
+5. **Hücum Üçlüsü Üstünlüğü:** Santrfor + sağ kanat + sol kanat oyuncularının ATT puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az **9 ATT** ise üstün takım +1 gol kazanır.
+6. **Toplam Hücum Gücü:** İki takımın 11 oyuncusunun toplam ATT puanı karşılaştırılır. Ev sahibi takımın toplam ATT puanı rakibinden düşükse ev sahibine **+17 ATT** telafi bonusu uygulanır. Bonus sonrası fark en az **12 ATT** ise üstün takım +1 gol kazanır.
 
 ## Taktik bonusları
-- **Savunma:** +20 DEF.
-- **Dengeli:** +15 Overall.
-- **Hücum:** +20 ATT.
+- **Defansif:** +15 DEF; yalnızca 3. Savunma Üstünlüğü kuralında kullanılır.
+- **Dengeli:** +10 Overall; yalnızca 4. Orta Saha Üstünlüğü kuralında kullanılır.
+- **Hücum:** +10 ATT; yalnızca 5. Hücum Üçlüsü Üstünlüğü kuralında kullanılır.
 
 ## Pas tercihleri
-- **Uzun Top:** +15 DEF.
-- **Kısa Pas:** +10 Overall.
-- **Kanat Oyunu:** +15 ATT.
+- **Uzun Top:** +10 DEF; yalnızca 3. Savunma Üstünlüğü kuralında kullanılır.
+- **Kısa Pas:** +6 Overall; yalnızca 4. Orta Saha Üstünlüğü kuralında kullanılır.
+- **Kanat Oyunu:** +6 ATT; yalnızca 5. Hücum Üçlüsü Üstünlüğü kuralında kullanılır.
 
 ## Pres tarzları
-- **Önde Pres:** Rakibin savunma hesabından -15 DEF.
-- **2. Bölgede Karşıla:** Rakibin orta saha hesabından -10 Overall.
-- **Geri Yaslan:** Rakibin hücum hesabından -15 ATT.
+- **Geride Karşıla:** Rakibin 5. Hücum Üçlüsü hesabından -6 ATT.
+- **Orta Alanda Karşıla:** Rakibin 4. Orta Saha hesabından -6 Overall.
+- **Önde Pres:** Rakibin 3. Savunma hesabından -10 DEF.
 
 ## Lig maç raporları
-Fikstürdeki her maçın altında **Maç Özeti** düğmesi bulunur. Tıklandığında tüm kayıtlı maç detayları açılır pencere olmadan ilgili maçın altında genişler.
+Fikstürdeki her maçın altında **Maç Özeti** düğmesi bulunur. Tıklandığında yalnızca gol dakikaları ve gol atan futbolcuların adları görüntülenir.
