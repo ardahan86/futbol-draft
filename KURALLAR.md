@@ -49,3 +49,9 @@ Her kural bağımsızdır. Şartı sağlayan takım ilgili kuraldan +1 gol kazan
 
 ## Lig maç raporları
 Fikstürdeki her maçın altında **Maç Özeti** düğmesi bulunur. Tıklandığında yalnızca gol dakikaları ve gol atan futbolcuların adları görüntülenir.
+
+## Takas ve taktik süreleri
+- Takas aşaması 60 saniyedir.
+- Taktik, pas ve pres seçimi aşaması 60 saniyedir.
+- Her iki aşamanın başlangıç zamanı Firestore sunucu zaman damgasıyla kaydedilir; geri sayım cihazın yerel saatine bağlı değildir.
+- Süre dolduğunda aşama tüm oyuncular için aynı zaman esas alınarak kapatılır.

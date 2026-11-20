@@ -315,26 +315,55 @@ function scheduleTurnTimeout(){
  tick();draftCountdownTimer=setInterval(tick,250);
  draftTimeoutTimer=setTimeout(()=>spinFor(uid,true).catch(e=>console.warn('Otomatik çark:',e)),Math.max(0,25000-(Date.now()-Number(room.turnStartedAt||Date.now())))+40);
 }
+// Takas ve taktik aşamalarında cihaz saatleri yerine Firestore sunucu zamanına
+// göre çalışan ortak saat. updatedAt sunucu damgası, performance.now ise
+// cihazın saat değişimlerinden etkilenmeyen monotonik sayacıdır.
+let sharedClockAnchorServerMs=0;
+let sharedClockAnchorMonoMs=0;
+let sharedClockLastStampMs=0;
+function phaseTimestampMs(value){
+ if(value&&typeof value.toMillis==='function')return value.toMillis();
+ if(value instanceof Date)return value.getTime();
+ if(value&&Number.isFinite(value.seconds))return value.seconds*1000+Math.floor((value.nanoseconds||0)/1e6);
+ const n=Number(value);return Number.isFinite(n)?n:0;
+}
+function syncSharedClock(snapshot,data){
+ if(!snapshot||snapshot.metadata?.fromCache||snapshot.metadata?.hasPendingWrites)return;
+ const serverMs=phaseTimestampMs(data?.updatedAt);
+ if(!serverMs)return;
+ if(!sharedClockAnchorServerMs||serverMs>sharedClockLastStampMs){
+  sharedClockLastStampMs=serverMs;
+  sharedClockAnchorServerMs=serverMs+350;
+  sharedClockAnchorMonoMs=typeof performance!=='undefined'&&typeof performance.now==='function'?performance.now():Date.now();
+ }
+}
+function sharedNowMs(){
+ if(sharedClockAnchorServerMs&&typeof performance!=='undefined'&&typeof performance.now==='function'&&sharedClockAnchorMonoMs){
+  return sharedClockAnchorServerMs+(performance.now()-sharedClockAnchorMonoMs);
+ }
+ return Date.now();
+}
 function schedulePostDraftTimeout(){
  clearTimeout(postDraftTimeoutTimer);clearInterval(postDraftCountdownTimer);
  if(roomInspectionMode||!room||room.status!=='finished')return;
  const phase=room.postDraftPhase;if(!['swaps','tactics'].includes(phase))return;
- const started=Number(room.postDraftPhaseStartedAt||room.finishedAt||Date.now());
- const tick=()=>{const left=Math.max(0,60000-(Date.now()-started)),seconds=Math.ceil(left/1000),el=$('postDraftCountdown');if(el)el.textContent=String(seconds);if($('turnPill'))$('turnPill').textContent=String(seconds);};
+ const started=phaseTimestampMs(room.postDraftPhaseStartedAt||room.finishedAt||sharedNowMs());
+ const tick=()=>{const left=Math.max(0,60000-(sharedNowMs()-started)),seconds=Math.ceil(left/1000),el=$('postDraftCountdown');if(el)el.textContent=String(seconds);if($('turnPill'))$('turnPill').textContent=String(seconds);};
  tick();postDraftCountdownTimer=setInterval(tick,250);
- postDraftTimeoutTimer=setTimeout(()=>expirePostDraftPhase(phase,started).catch(e=>console.warn('Aşama zaman aşımı:',e)),Math.max(0,60000-(Date.now()-started))+80);
+ postDraftTimeoutTimer=setTimeout(()=>expirePostDraftPhase(phase,started).catch(e=>console.warn('Aşama zaman aşımı:',e)),Math.max(0,60000-(sharedNowMs()-started))+100);
 }
 async function expirePostDraftPhase(expectedPhase,startedAt){
  if(!roomRef)return;let shouldResolve=false;
  await runTransaction(db,async tx=>{
   const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data();
-  if(d.status!=='finished'||d.postDraftPhase!==expectedPhase||Number(d.postDraftPhaseStartedAt||0)!==Number(startedAt)||Date.now()-startedAt<60000)return;
+  const phaseStarted=phaseTimestampMs(d.postDraftPhaseStartedAt||0);
+  if(d.status!=='finished'||d.postDraftPhase!==expectedPhase||phaseStarted!==Number(startedAt)||sharedNowMs()-phaseStarted<60000)return;
   const ids=d.memberOrder||[];
   if(expectedPhase==='swaps'){
    const confirmed={...(d.swapConfirmed||{})},rights={...(d.swapRights||{})};
    ids.forEach(uid=>{if(!confirmed[uid]){confirmed[uid]=true;rights[uid]=0;}});
    shouldResolve=true;
-   tx.update(roomRef,{swapConfirmed:confirmed,swapRights:rights,postDraftPhaseStartedAt:Date.now(),updatedAt:serverTimestamp()});
+   tx.update(roomRef,{swapConfirmed:confirmed,swapRights:rights,updatedAt:serverTimestamp()});
   }else if(expectedPhase==='tactics'){
    const confirmed={...(d.tacticsConfirmed||{})},tactics={...(d.tactics||{})};
    const tacticChoices=['defensive','balanced','attacking'],passChoices=['longBall','shortPass','wingPlay'],pressChoices=['highPress','midBlock','deepBlock'];
@@ -416,7 +445,7 @@ async function pickPlayer(){
    const done=(d.memberOrder||[]).every(id=>starterCount(picks,id)>=11);
    const pickAnnouncement={id:`${at}_${user.uid}_${player.id}`,uid:user.uid,managerName,club:player.club,playerName:player.name,position:player.position,at,automatic:false};
    const updates={picks,pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],picks,d.turnIndex),turnStartedAt:at,lastPickAnnouncement:pickAnnouncement,actionLock:{id:pickAnnouncement.id,kind:'pick',startedAt:at,until:at+3000},updatedAt:serverTimestamp()};
-   if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=at;updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
+   if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=serverTimestamp();updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
    tx.update(roomRef,updates);
   });
  }catch(e){if(!/seçim sırası değişti|sonuç penceresi kapanana kadar|şu anda sıra sende değil/i.test(e.message||''))msg(e.message||'Oyuncu seçilemedi.',true);}
@@ -435,7 +464,7 @@ async function autoPickPending(uid,club,startedAt){
    if(starterCount(currentPicks,uid)>=11){
     const done=(d.memberOrder||[]).every(id=>starterCount(currentPicks,id)>=11),at=Date.now();
     const updates={pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],currentPicks,d.turnIndex),turnStartedAt:at,updatedAt:serverTimestamp()};
-    if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=at;updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
+    if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=serverTimestamp();updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
     tx.update(roomRef,updates);return;
    }
    const candidates=validPickCandidates(club,currentPicks,uid,d.memberOrder||[]);
@@ -450,7 +479,7 @@ async function autoPickPending(uid,club,startedAt){
    const managerName=d.members?.[uid]?.name||'Menajer';
    const announcement={id:`auto_${at}_${uid}_${player.id}`,uid,managerName,club:player.club,playerName:player.name,position:player.position,at,automatic:true};
    const updates={picks,pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],picks,d.turnIndex),turnStartedAt:at,lastPickAnnouncement:announcement,actionLock:{id:announcement.id,kind:'pick',startedAt:at,until:at+1200},updatedAt:serverTimestamp()};
-   if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=at;updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
+   if(done){updates.status='finished';updates.finishedAt=at;updates.postDraftPhase='swaps';updates.postDraftPhaseStartedAt=serverTimestamp();updates.swapRequests=[];updates.swapConfirmed={};updates.swapResolved=false;}
    tx.update(roomRef,updates);
   });
  }catch(e){console.warn('Otomatik oyuncu seçimi tamamlanamadı:',e);}
@@ -503,7 +532,7 @@ async function confirmMySwaps(requestsOverride=[]){
    const snap=await tx.get(roomRef);if(!snap.exists())throw new Error('Oda bulunamadı.');const d=snap.data();
    if(d.status!=='finished'||d.postDraftPhase!=='swaps')throw new Error('Takas aşaması açık değil.');
    if(d.swapConfirmed?.[user.uid])throw new Error('Takaslarını zaten onayladın.');
-   if(Date.now()-Number(d.postDraftPhaseStartedAt||0)>=60000)throw new Error('Takas süresi doldu.');
+   if(sharedNowMs()-phaseTimestampMs(d.postDraftPhaseStartedAt||0)>=60000)throw new Error('Takas süresi doldu.');
    const rights=Math.max(0,Math.min(3,Number(d.swapRights?.[user.uid]||0)));
    if(requestsOverride.length>rights)throw new Error('Takas hakkından fazla seçim yaptın.');
    const picks=d.picks||[],karma=d.karmaRoster||[];
@@ -549,7 +578,7 @@ async function resolveSwaps(){
    karma.splice(targetIndex,1);karma.push(returned);
   }
   const completedIds=completed.map(r=>r.id);
-  tx.update(roomRef,{picks,karmaRoster:karma,swapRights:rights,postDraftPhase:'tactics',postDraftPhaseStartedAt:Date.now(),tacticsConfirmed:{},tactics:{...(d.tactics||{})},swapResolved:true,swapResults:{requested:requests.length,completed:completed.length,cancelled:outcomes.length-completed.length,completedIds,outcomes,completedAt:Date.now()},updatedAt:serverTimestamp()});
+  tx.update(roomRef,{picks,karmaRoster:karma,swapRights:rights,postDraftPhase:'tactics',postDraftPhaseStartedAt:serverTimestamp(),tacticsConfirmed:{},tactics:{...(d.tactics||{})},swapResolved:true,swapResults:{requested:requests.length,completed:completed.length,cancelled:outcomes.length-completed.length,completedIds,outcomes,completedAt:Date.now()},updatedAt:serverTimestamp()});
  });
 }
 function renderPersistentSwapReport(){
@@ -566,7 +595,7 @@ async function chooseTactics(){
  const content=modal.querySelector('.post-draft-modal-content');
  content.innerHTML=`<label style="display:block;margin:12px 0 6px;font-weight:700">Taktik</label><select id="teamTactic" class="input" style="width:100%;padding:12px;border-radius:8px;background:#1e293b;color:#fff"><option value="defensive">Savunma</option><option value="balanced">Dengeli</option><option value="attacking">Hücum</option></select><label style="display:block;margin:16px 0 6px;font-weight:700">Pas odağı</label><select id="teamPassFocus" style="width:100%;padding:12px;border-radius:8px;background:#1e293b;color:#fff"><option value="shortPass">Kısa pas</option><option value="wingPlay">Kanat oyunu</option><option value="longBall">Uzun Top</option></select><label style="display:block;margin:16px 0 6px;font-weight:700">Pres türü</label><select id="teamPressType" style="width:100%;padding:12px;border-radius:8px;background:#1e293b;color:#fff"><option value="deepBlock">Geride Karşıla</option><option value="midBlock">Orta Alanda Karşıla</option><option value="highPress">Önde Pres</option></select><p style="color:#cbd5e1;font-size:.9rem;margin:14px 0">Bonus ve cezalar yalnızca ilgili kuralın karşılaştırma değerine uygulanır. Defansif + Uzun Top bonusları savunma hesabına; Dengeli + Kısa Pas bonusları orta saha hesabına; Hücum + Kanat Oyunu bonusları hücum üçlüsü hesabına uygulanır. Pres etkileri yalnızca ilgili rakip hesabından düşülür.</p><button id="confirmTactics" class="btn primary" style="width:100%">Seçimlerimi onayla</button><p id="tacticsWaiting" style="color:#cbd5e1;text-align:center;margin-top:10px"></p>`
  content.querySelector('#teamTactic').value=current.tactic||'balanced';content.querySelector('#teamPassFocus').value=current.passFocus||'shortPass';content.querySelector('#teamPressType').value=current.pressType||'midBlock';
- content.querySelector('#confirmTactics').onclick=async()=>{const tactic=content.querySelector('#teamTactic').value,passFocus=content.querySelector('#teamPassFocus').value,pressType=content.querySelector('#teamPressType').value;const btn=content.querySelector('#confirmTactics');btn.disabled=true;btn.textContent='Kaydediliyor…';try{let all=false;await runTransaction(db,async tx=>{const snap=await tx.get(roomRef),d=snap.data();if(d.postDraftPhase!=='tactics')throw new Error('Taktik seçimi aşaması açık değil.');if(d.tacticsConfirmed?.[user.uid])throw new Error('Seçimlerini zaten onayladın.');const tactics={...(d.tactics||{}),[user.uid]:{tactic,passFocus,pressType}},confirmed={...(d.tacticsConfirmed||{}),[user.uid]:true};all=(d.memberOrder||[]).every(id=>confirmed[id]);tx.update(roomRef,{tactics,tacticsConfirmed:confirmed,postDraftPhase:all?'complete':'tactics',postDraftPhaseStartedAt:all?Number(d.postDraftPhaseStartedAt||Date.now()):Number(d.postDraftPhaseStartedAt||Date.now()),updatedAt:serverTimestamp()})});closePostDraftModal();msg(all?'Tüm takımlar taktiklerini onayladı. Lig aşamasına geçebilirsiniz.':'Taktiklerin kaydedildi. Diğer oyuncuların onayı bekleniyor.');}catch(e){btn.disabled=false;btn.textContent='Seçimlerimi onayla';msg(e.message||'Taktikler kaydedilemedi.',true)}};
+ content.querySelector('#confirmTactics').onclick=async()=>{const tactic=content.querySelector('#teamTactic').value,passFocus=content.querySelector('#teamPassFocus').value,pressType=content.querySelector('#teamPressType').value;const btn=content.querySelector('#confirmTactics');btn.disabled=true;btn.textContent='Kaydediliyor…';try{let all=false;await runTransaction(db,async tx=>{const snap=await tx.get(roomRef),d=snap.data();if(d.postDraftPhase!=='tactics')throw new Error('Taktik seçimi aşaması açık değil.');if(sharedNowMs()-phaseTimestampMs(d.postDraftPhaseStartedAt||0)>=60000)throw new Error('Taktik seçimi süresi doldu.');if(d.tacticsConfirmed?.[user.uid])throw new Error('Seçimlerini zaten onayladın.');const tactics={...(d.tactics||{}),[user.uid]:{tactic,passFocus,pressType}},confirmed={...(d.tacticsConfirmed||{}),[user.uid]:true};all=(d.memberOrder||[]).every(id=>confirmed[id]);tx.update(roomRef,{tactics,tacticsConfirmed:confirmed,postDraftPhase:all?'complete':'tactics',updatedAt:serverTimestamp()})});closePostDraftModal();msg(all?'Tüm takımlar taktiklerini onayladı. Lig aşamasına geçebilirsiniz.':'Taktiklerin kaydedildi. Diğer oyuncuların onayı bekleniyor.');}catch(e){btn.disabled=false;btn.textContent='Seçimlerimi onayla';msg(e.message||'Taktikler kaydedilemedi.',true)}};
 }
 function showSwapReport(currentRoom){
  const result=currentRoom?.swapResults;if(!result)return;const reportId=`${currentRoom.id||roomId}_${result.completedAt||'done'}`;if(lastSwapReportShown===reportId)return;lastSwapReportShown=reportId;closePostDraftModal();
@@ -650,7 +679,7 @@ async function enterRoom(id,quiet=false,adminInspect=false){
   lastWheelSpinAt=0;spinCooldownUntil=0;lastSpinAnnouncementId=null;lastPickAnnouncementId=null;pendingSpinAnnouncementId=null;roomSnapshotInitialized=false;roomId=id;roomRef=ref;
   roomUnsub=onSnapshot(roomRef,s=>{
    if(s.exists()){
-    const nextRoom={id:s.id,...s.data()};const isFirstSnapshot=!roomSnapshotInitialized;room=nextRoom;
+    const nextRoom={id:s.id,...s.data()};syncSharedClock(s,nextRoom);const isFirstSnapshot=!roomSnapshotInitialized;room=nextRoom;
     if(isFirstSnapshot){lastSpinAnnouncementId=nextRoom.lastSpinAnnouncement?.id||null;lastPickAnnouncementId=nextRoom.lastPickAnnouncement?.id||null;pendingSpinAnnouncementId=null;}
     else{const spinAnnouncement=nextRoom.lastSpinAnnouncement;if(spinAnnouncement?.id&&spinAnnouncement.id!==lastSpinAnnouncementId&&spinAnnouncement.id!==pendingSpinAnnouncementId)queueSpinAnnouncement(spinAnnouncement);const pickAnnouncement=nextRoom.lastPickAnnouncement;if(pickAnnouncement?.id&&pickAnnouncement.id!==lastPickAnnouncementId)showPickAnnouncement(pickAnnouncement);}
     roomSnapshotInitialized=true;renderRoom();
