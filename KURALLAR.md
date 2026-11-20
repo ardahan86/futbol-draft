@@ -1,49 +1,105 @@
-# Futbol Draft – Oyun ve Gol Kuralları
+# Futbol Draft – Güncel Oyun, Gol ve Bonus Kuralları
 
-## Çark ve kadrolar
-- Çark 24 dilimlidir: mevcut kulüpler, PAS, KORUMA ve TAKAS ile yeni Karma Takım, Chelsea ve Napoli dilimleri.
-- Karma Takım, Chelsea ve Napoli'nin her biri 20 geçici oyuncudan oluşur. Oyuncular Oyuncu 1–20 olarak adlandırılmış, mevkileri ve puanları rastgele atanmıştır; daha sonra `players.json` üzerinden düzenlenebilir.
-- Sırası gelen oyuncuya çarkı çevirmesi için 15 saniye verilir. Süre dolarsa sistem otomatik çevirir.
-- Çarkta takım geldiğinde oyuncu seçimi için 20 saniye verilir. Süre dolarsa sistem o takımdan uygun ve boş mevkiye rastgele futbolcu seçer.
-- Herhangi bir oyuncu ilk 11'ini tamamladıktan sonra diğer oyuncular drafta devam ederken gelen TAKAS ve KORUMA dilimleri PAS sayılır; yeni hak verilmez.
+## 1. Çark ve draft
 
-## İlk 11
-Kaleci, sağ bek, iki stoper, sol bek, iki merkez orta saha, ofansif orta saha, sağ kanat, sol kanat ve santrfor olmak üzere 11 mevki doldurulur. İlk 11'ini tamamlayan oyuncu çark çevirmeyi bırakır. Yedek seçimi yoktur.
+- Çarkta 18 kulüp/kadro dilimi, 2 PAS, 2 KORUMA ve 1 FUTBOLCU KAYBET dilimi bulunur (23 dilim).
+- Karma Takım, Chelsea ve Napoli kadroları 20'şer oyuncudan oluşur.
+- Çarkı çevirme süresi 25 saniyedir. Süre dolarsa sistem otomatik çevirir.
+- Kulüp geldiğinde futbolcu seçme süresi 30 saniyedir. Süre dolarsa sistem uygun boş mevkiye rastgele futbolcu seçer.
+- Diziliş 4-2-3-1'dir; yedek oyuncu yoktur. İlk 11 tamamlandığında oyuncu draft sırasından çıkar.
+- Mevkiler: GK, RB, iki CB, LB, iki CM, CAM, RW, LW ve ST.
 
-## Koruma ve takas aşamaları
-1. Draft tamamlandığında koruma ekranı açılır. Tüm oyuncular için aynı anda başlayan 60 saniyelik süre bulunur. Süre içinde koruma işlemi yapmayan oyuncunun koruma hakları yanar.
-2. Koruma aşamasından sonra takas ekranı açılır. Tüm oyuncular için aynı anda başlayan 60 saniyelik süre bulunur. Süre içinde takas yapmayan oyuncunun takas hakları yanar.
-3. Takaslar aynı mevkideki oyuncular arasında yapılır. Korunan rakip oyuncuya yapılan takas başarısız olur.
-4. Koruma ve takas işlemlerinin sonuç penceresi korunur. Kalıcı rapor ayrıca **Koruma ve Takas Raporu** sekmesinde bulunur; ana ekranda otomatik rapor gösterimi yapılmaz.
+## 2. Özel çark dilimleri
 
-## Taktik seçimi
-- Takas aşamasından sonra taktik, pas tercihi ve pres tarzı seçimi açılır.
-- Tüm oyuncular için ortak 60 saniyelik süre bulunur. Süre içinde seçim yapmayan oyuncu için sistem her üç kategoriden rastgele seçim yapar.
+### PAS
+Futbolcu seçilmez ve sıra sonraki uygun oyuncuya geçer.
 
-## Gol kuralları
-Her kural bağımsızdır. Şartı sağlayan takım ilgili kuraldan +1 gol kazanır.
+### KORUMA
+- Koruma hakları çarktan kazanılır; her oyuncunun en fazla 3 koruma hakkı olabilir.
+- Draft tamamlandığında bütün oyuncular için aynı anda 60 saniyelik koruma penceresi açılır.
+- Oyuncular mevcut hakları kadar futbolcuyu koruyabilir.
+- Süre içinde onay vermeyen oyuncunun kullanılmamış koruma hakları yanar.
+- Koruma sistemi ve mevcut işleyişi korunmuştur.
 
-1. **Omurga Üstünlüğü:** Kaleci (GK), Overall değeri en yüksek stoper (CB), Overall değeri en yüksek merkez orta saha (CM), ofansif orta saha (CAM) ve santrfor (ST) oyuncularının Overall puanları toplanır. İki takımın toplamı karşılaştırılır. Fark en az 15 Overall ise üstün takım +1 gol kazanır. Taktik bonusu uygulanmaz.
-2. **Takım Overall Üstünlüğü:** Ev sahibi takımın toplam Overall puanı rakibinden düşükse önce ev sahibinin toplamına +30 Overall eklenir. Ardından yeni puanlar karşılaştırılır; en az 20 puan üstün olan takım +1 gol kazanır. Bu kuralda taktik bonusu uygulanmaz.
-3. **Savunma Üstünlüğü:** Kaleci + iki stoper + sağ bek + sol bek oyuncularının DEF puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 DEF ise üstün takım +1 gol kazanır.
-4. **Orta Saha Üstünlüğü:** Ofansif orta saha + iki merkez orta saha oyuncularının Overall puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 Overall ise üstün takım +1 gol kazanır.
-5. **Hücum Üçlüsü Üstünlüğü:** Santrfor + sağ kanat + sol kanat oyuncularının ATT puanları karşılaştırılır. İlgili taktik/pas bonusları ve rakip pres etkisi uygulandıktan sonra fark en az 15 ATT ise üstün takım +1 gol kazanır.
-6. **Toplam Hücum Gücü ve Ev Sahibi Bonusu:** Mevcut kural korunur. Ev sahibi takımın toplam ATT puanı düşükse karşılaştırma öncesi +20 ATT telafi bonusu uygulanır; yüksek ATT değerine sahip takım +1 gol kazanır.
+### FUTBOLCU KAYBET
+- Bu dilime gelindiğinde sistem, çeviren oyuncunun mevcut kadrosundan rastgele bir futbolcu seçer.
+- Seçilen futbolcu kadrodan çıkarılır ve kendi orijinal takımının oyuncu havuzuna geri döner; yeniden seçilebilir.
+- Oyuncunun o turdaki sırası tamamlanır ve sıra sonraki uygun oyuncuya geçer.
+- Kadroda kaybedilecek futbolcu yoksa oyuncunun sırası yine tamamlanır.
 
-## Taktik bonusları
-- **Savunma:** +20 DEF.
-- **Dengeli:** +15 Overall.
-- **Hücum:** +20 ATT.
+## 3. Draft sonrası aşamalar
 
-## Pas tercihleri
-- **Uzun Top:** +15 DEF.
-- **Kısa Pas:** +10 Overall.
-- **Kanat Oyunu:** +15 ATT.
+1. Draft tamamlanınca bütün oyuncular için aynı anda 60 saniyelik koruma aşaması açılır.
+2. Koruma aşaması tamamlanınca doğrudan bütün oyuncular için aynı anda 60 saniyelik taktik seçim aşaması açılır.
+3. Her oyuncu bir taktik, bir pas tercihi ve bir pres tarzı seçer.
+4. Süre içinde seçim yapmayan oyuncu için sistem her kategoriden rastgele seçim yapar.
+5. Takas sistemi ve takas raporu kaldırılmıştır.
 
-## Pres tarzları
-- **Önde Pres:** Rakibin savunma hesabından -15 DEF.
-- **2. Bölgede Karşıla:** Rakibin orta saha hesabından -10 Overall.
-- **Geri Yaslan:** Rakibin hücum hesabından -15 ATT.
+## 4. Gol kuralları
 
-## Lig maç raporları
-Fikstürdeki her maçın altında **Maç Özeti** düğmesi bulunur. Tıklandığında tüm kayıtlı maç detayları açılır pencere olmadan ilgili maçın altında genişler.
+Her kural bağımsız değerlendirilir. Şartı sağlayan takım 1 gol kazanır. Bonuslar yalnızca açıkça belirtildikleri ilgili kuralın hesabına uygulanır.
+
+### 1. Omurga üstünlüğü
+GK, Overall değeri en yüksek CB, Overall değeri en yüksek CM, CAM ve ST oyuncularının Overall puanları toplanır. Toplamlar arasında en az **9 Overall** farkı olan takım 1 gol kazanır. Taktik, pas ve pres bonusları uygulanmaz.
+
+### 2. Takım Overall üstünlüğü
+İlk 11'deki 11 futbolcunun Overall puanları toplanır. Ev sahibi takıma **+18 Overall** eklenir. Bonus sonrası en az **12 Overall** farkı olan takım 1 gol kazanır. Taktik, pas ve pres bonusları uygulanmaz.
+
+### 3. Savunma üstünlüğü
+GK, iki CB, RB ve LB futbolcularının DEF puanları toplanır.
+- Savunma taktiği: **+15 DEF**
+- Uzun Top: **+12 DEF**
+- Rakibin Önde Pres'i: **-10 DEF**
+
+Bonus ve cezalar sonrasında en az **15 DEF** farkı olan takım 1 gol kazanır.
+
+### 4. Orta saha üstünlüğü
+CAM ve iki CM futbolcularının Overall puanları toplanır.
+- Dengeli taktik: **+15 Overall**
+- Kısa Pas: **+12 Overall**
+- Rakibin Orta Alanda Karşıla presi: **-10 Overall**
+
+Bonus ve cezalar sonrasında en az **9 Overall** farkı olan takım 1 gol kazanır.
+
+### 5. Hücum üçlüsü üstünlüğü
+ST, RW ve LW futbolcularının ATT puanları toplanır.
+- Hücum taktiği: **+15 ATT**
+- Kanat Oyunu: **+12 ATT**
+- Rakibin Geride Karşıla presi: **-10 ATT**
+
+Bonus ve cezalar sonrasında en az **12 ATT** farkı olan takım 1 gol kazanır.
+
+### 6. Toplam hücum gücü
+İlk 11'deki 11 futbolcunun ATT puanları toplanır. Ev sahibi takıma **+15 ATT** eklenir. Bonus sonrası en az **9 ATT** farkı olan takım 1 gol kazanır. Taktik, pas ve pres bonusları uygulanmaz.
+
+## 5. Taktik, pas ve pres seçimleri
+
+### Taktik bonusları
+
+| Taktik | Bonus | Uygulandığı gol kuralı |
+|---|---:|---|
+| Savunma | +15 DEF | 3. Savunma üstünlüğü |
+| Dengeli | +15 Overall | 4. Orta saha üstünlüğü |
+| Hücum | +15 ATT | 5. Hücum üçlüsü üstünlüğü |
+
+### Pas tercihleri
+
+| Pas tercihi | Bonus | Uygulandığı gol kuralı |
+|---|---:|---|
+| Uzun Top | +12 DEF | 3. Savunma üstünlüğü |
+| Kısa Pas | +12 Overall | 4. Orta saha üstünlüğü |
+| Kanat Oyunu | +12 ATT | 5. Hücum üçlüsü üstünlüğü |
+
+### Pres tarzları
+
+Pres bonusları rakibin ilgili hesabından puan düşürür.
+
+| Pres tarzı | Rakibe uygulanan ceza | Etkilenen gol kuralı |
+|---|---:|---|
+| Geride Karşıla | -10 ATT | 5. Hücum üçlüsü |
+| Orta Alanda Karşıla | -10 Overall | 4. Orta saha |
+| Önde Pres | -10 DEF | 3. Savunma |
+
+## 6. Maç raporları
+
+Maç özeti, her golün hangi kuraldan geldiğini, karşılaştırılan puanları ve uygulanan bonus/cezaları gösterir. Her sağlanan gol kuralı skora 1 gol ekler.

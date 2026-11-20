@@ -66,19 +66,19 @@ service cloud.firestore {
         isRoomMember(resource.data)
         && (request.resource.data.status == resource.data.status
           || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','lastLostPlayerAnnouncement','actionLock','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt','protectionDone','postDraftPhase']))
           || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
             && request.auth.uid == resource.data.ownerUid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','updatedAt'])))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','updatedAt'])))
         && request.resource.data.ownerUid == resource.data.ownerUid
         // League creation/results are controlled by the room owner, not ordinary members.
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['league'])
           || request.auth.uid == resource.data.ownerUid || isAdmin())
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','protectionRights','swapRights',
-          'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt',
-          // Post-draft protection and swap workflow fields used by the app.
-          'protectionDone','postDraftPhase','swapConfirmed','swapRequests','swapResolved','swapResults',
+          'picks','pendingPick','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','lastLostPlayerAnnouncement','actionLock','protectionRights',
+          'protectionRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt',
+          // Post-draft protection and tactics workflow fields used by the app.
+          'protectionDone','postDraftPhase',
           'tacticsConfirmed'
         ])
       );

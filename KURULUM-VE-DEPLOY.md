@@ -1,4 +1,4 @@
-# Çark Futbol – yenilenmiş hesap sistemi
+# Futbol Draft – kurulum ve yayınlama
 
 ## İçerik
 - Mevcut `app.js`, `index.html`, `styles.css` ve `players.json` korunarak hesap akışı yenilendi.
@@ -25,3 +25,18 @@
 - Mevcut Firestore kullanıcı/oda verileri silinmez; kuralların uygulanması erişimi etkileyebilir. Özellikle yönetici UID'si ve mevcut kullanıcıların `emailVerified` durumu kontrol edilmeli.
 - Eski anonim/ doğrulanmamış hesaplar e-posta doğrulaması yapana kadar oda verilerine erişemez.
 - `firebase-config.js` dosyanı ve service-account private key dosyalarını paylaşma.
+
+
+## Kullanıcı hesabı sistemi
+- E-posta ve şifre ile hesap oluşturma ve giriş.
+- Kayıtta e-posta doğrulama bağlantısı gönderilir; doğrulanmamış hesaplar giriş yapamaz.
+- Kullanıcı adı/nickname 3–16 karakter olmalı; İngilizce harf, rakam ve alt çizgi kullanılabilir.
+- Nickname büyük/küçük harf duyarsız biçimde benzersizdir ve kayıt sonrası değiştirilemez.
+- Şifremi unuttum akışı ve Firebase Authentication local persistence kullanılır.
+- Önceki anonim misafir hesapları yeni e-posta hesaplarına otomatik bağlanmaz.
+
+### Hesap sistemi yayına alma kontrolü
+1. Firebase Console > Authentication > Sign-in method bölümünde Email/Password sağlayıcısını etkinleştir.
+2. Firestore Database > Rules bölümünde bu paketteki `firestore.rules` dosyasını inceleyip yayımla.
+3. Authentication > Settings > Authorized domains bölümünde sitenin alan adını doğrula.
+4. Dosyaları GitHub Pages'e yükle ve test et.
