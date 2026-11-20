@@ -1,26 +1,20 @@
 # Futbol Draft – Oyun ve Gol Kuralları
 
 ## Çark ve kadrolar
-- Çark 21 dilimlidir: 17 kulüp/kadro dilimi, 2 PAS ve 2 TAKAS dilimi bulunur. KORUMA ve Karma Takım dilimleri çarktan çıkarılmıştır.
-- PAS geldiğinde oyuncu seçme ekranı açılmaz; hak kullanılmış sayılır ve sıra doğrudan sonraki uygun menajere geçer.
-- Karma Takım ilk 11 draftında hiçbir koşulda seçilemez; kadrosu yalnızca takas aşamasında kullanılmak üzere 20 futbolcudan oluşur. Chelsea ve Napoli kadroları da 20’şer oyuncudan oluşur.
+- Çark 20 dilimden oluşur: 18 kulüp/kadro dilimi ve 2 PAS dilimi.
+- Karma Takım, Chelsea ve Napoli kadroları 20'şer futbolcudan oluşur. Karma Takım da diğer kulüpler gibi çarktan gelerek draftta seçilebilir.
+- PAS geldiğinde oyuncu seçme ekranı açılmaz ve sıra doğrudan sonraki uygun menajere geçer.
 - Sırası gelen oyuncuya çarkı çevirmesi için 25 saniye verilir. Süre dolarsa sistem otomatik çevirir.
 - Çarkta takım geldiğinde oyuncu seçimi için 30 saniye verilir. Süre dolarsa sistem o takımdan uygun ve boş mevkiye rastgele futbolcu seçer.
-- Herhangi bir oyuncu ilk 11’ini tamamladıktan sonra diğer oyuncular drafta devam ederken gelen TAKAS dilimleri PAS sayılır; yeni hak verilmez.
 
 ## İlk 11
 Kaleci, sağ bek, iki stoper, sol bek, iki merkez orta saha, ofansif orta saha, sağ kanat, sol kanat ve santrfor olmak üzere 11 mevki doldurulur. İlk 11'ini tamamlayan oyuncu çark çevirmeyi bırakır. Yedek seçimi yoktur.
 
-## Takas aşaması
-1. Draft tamamlanır tamamlanmaz tüm oyuncular için aynı anda başlayan 60 saniyelik takas süresi açılır.
-2. Oyuncular birbirlerinin kadrolarından takas yapamaz. Yalnızca Karma Takım kadrosundan futbolcu seçebilir.
-3. Oyuncu kendi kadrosundaki istediği futbolcuyu, Karma Takım kadrosundaki aynı mevkideki istediği futbolcuyla değiştirir. Aynı mevkiye sahip iki oyuncu arasında kutu numarası eşleşmesi aranmaz.
-4. Aynı Karma Takım futbolcusuna birden fazla oyuncu talepte bulunursa futbolcu Karma Takım kadrosunda kalır. O futbolcuyu isteyen tüm oyuncuların ilgili takas hakları yanar.
-5. Süre içinde kullanılmayan takas hakları yanar. Takas raporu **Takas Raporu** sekmesinde saklanır.
-
 ## Taktik seçimi
-- Takas aşamasından sonra taktik, pas tercihi ve pres tarzı seçimi açılır.
-- Tüm oyuncular için ortak 60 saniyelik süre bulunur. Süre içinde seçim yapmayan oyuncu için sistem her üç kategoriden rastgele seçim yapar.
+- Draft tamamlanır tamamlanmaz tüm oyuncular için aynı anda başlayan 60 saniyelik taktik, pas tercihi ve pres tarzı seçimi açılır.
+- Seçimlerini onaylayan oyuncular diğer oyuncuların onaylamasını bekler.
+- 60 saniye içinde onay vermeyen oyuncu için sistem taktik, pas tercihi ve pres tarzı kategorilerinin her birinden otomatik seçim yapar.
+- Tüm oyuncuların seçimleri onaylandığında veya süre sonunda otomatik tamamlandığında lig aşamasına geçilir.
 
 ## Gol kuralları
 Her kural bağımsızdır. Şartı sağlayan takım ilgili kuraldan +1 gol kazanır.
@@ -50,8 +44,7 @@ Her kural bağımsızdır. Şartı sağlayan takım ilgili kuraldan +1 gol kazan
 ## Lig maç raporları
 Fikstürdeki her maçın altında **Maç Özeti** düğmesi bulunur. Tıklandığında yalnızca gol dakikaları ve gol atan futbolcuların adları görüntülenir.
 
-## Takas ve taktik süreleri
-- Takas aşaması 60 saniyedir.
-- Taktik, pas ve pres seçimi aşaması 60 saniyedir.
-- Her iki aşamanın başlangıç zamanı Firestore sunucu zaman damgasıyla kaydedilir; geri sayım cihazın yerel saatine bağlı değildir.
-- Süre dolduğunda aşama tüm oyuncular için aynı zaman esas alınarak kapatılır.
+## Taktik seçimi süresi
+- Taktik, pas ve pres seçimi aşaması tüm oyuncular için ortak 60 saniyedir.
+- Aşamanın başlangıç zamanı Firestore sunucu zaman damgasıyla kaydedilir; geri sayım cihazın yerel saatine bağlı değildir.
+- Süre dolduğunda onay vermeyen oyunculara sistem otomatik seçim yapar ve aşama tüm oyuncular için tamamlanır.

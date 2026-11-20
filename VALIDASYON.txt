@@ -1,44 +1,23 @@
-FUTBOL DRAFT – GÜNCELLEME DOĞRULAMA RAPORU
+FUTBOL DRAFT – TAKASIN KALDIRILMASI VE KARMA TAKIM DRAFT GÜNCELLEMESİ
 
 Uygulanan kapsam:
-- Çark 20 dilimden 24 dilime çıkarıldı; eklenen dilimler TAKAS, Karma Takım, Chelsea ve Napoli.
-- Karma Takım, Chelsea ve Napoli için 20'şer geçici oyuncu eklendi. Her kadroda ilk 11'in doldurulabilmesi için gerekli mevkiler bulunur; oyuncu adları, mevkileri ve puanları daha sonra players.json üzerinden değiştirilebilir.
-- İlk 11'ini tamamlayan oyuncu drafttan çıkar; kalan oyuncuların çarkında TAKAS/KORUMA PAS sayılır.
-- Çark çevirmek için 15 saniye, takım sonucu sonrası oyuncu seçmek için 20 saniye süre ve otomatik işlem eklendi.
-- Koruma, takas ve taktik aşamalarına tüm oyuncular için ortak 60 saniyelik sayaç eklendi.
-- Süresinde koruma/takas yapmayan oyuncunun ilgili kullanılmamış hakları sıfırlanır; taktik seçmeyen oyuncuya rastgele taktik/pas/pres seçimi atanır.
-- Ana ekranda otomatik takas/koruma raporu gösterimi kaldırıldı; koruma/takas sonuç penceresi ve sabit rapor sekmesi korundu.
-- Maç detayları, ilgili fikstür satırının altındaki Maç Özeti düğmesiyle açılır.
-- Gol kuralı 1 Omurga Üstünlüğü olarak değiştirildi.
-- Gol kuralı 2 ev sahibi düşük Overall ise +30 telafi ve ardından 20 fark karşılaştırması şeklinde güncellendi.
-- Taktik, pas ve pres bonusları yeni değerlere güncellendi.
-- Firestore kurallarına yalnızca yeni bitiş/aşama zaman damgaları mevcut oyun akışı kapsamında izin listesine eklendi.
+- Çark 20 dilimdir: 18 kulüp/kadro dilimi ve 2 PAS dilimi.
+- TAKAS çark dilimleri kaldırıldı; Karma Takım bir çark dilimi olarak eklendi.
+- Karma Takım, diğer kulüpler gibi draft sırasında doğrudan seçilebilir.
+- Takas işlemleri, takas hakları, takas aşaması, takas raporu arayüzü ve bunlara ait uygulama kodları kaldırıldı.
+- Draft tamamlanınca tüm oyuncular için ortak 60 saniyelik taktik/pas/pres seçimi başlar.
+- Onay veren oyuncular diğer oyuncuların onayını bekler.
+- Süre sonunda onay vermeyen oyunculara sistem otomatik taktik, pas tercihi ve pres tarzı atar.
+- Gol kuralları, gol eşikleri, taktik bonusları, pas bonusları, pres etkileri, draft süreleri ve diğer oyun ayarları değiştirilmedi.
 
 Statik kontroller:
 - `node --check app.js`: BAŞARILI.
-- `players.json`: geçerli JSON, 360 oyuncu kaydı.
-- Yeni Karma Takım/Chelsea/Napoli kadroları: 20'şer oyuncu.
-- Çark dilim sayısı: 24.
-- `index.html`: açılış/kapanış etiket kontrolü başarılı.
+- `players.json`: geçerli JSON biçiminde.
+- `index.html`: takas raporu sekmesi ve paneli kaldırıldı.
+- Çark tanımı: 20 dilim, 1 Karma Takım dilimi, 2 PAS dilimi, TAKAS dilimi yok.
+- ZIP arşivi bütünlük kontrolü: yapılacak.
 
 Sınırlar:
 - Firebase canlı ortamında çok kullanıcılı uçtan uca test yapılmadı.
-- Otomatik zaman aşımı işlemleri, odada bağlı en az bir oyuncunun tarayıcısı açıkken tetiklenir. Tüm kullanıcılar aynı anda çevrimdışı olursa istemci tarafındaki zamanlayıcı çalışamaz.
-- ZIP dosyası oluşturuldu; canlı Firebase Hosting veya GitHub Pages ortamına otomatik yayın yapılmadı.
-
-Yayın öncesi öneri:
-Önce test odasında 15/20/60 saniyelik süreleri, takas/koruma haklarının yanmasını, rastgele taktik atamasını, yeni üç kadroyu ve maç özeti açılımını birden fazla hesapla doğrulayın.
-
-## Son gol motoru güncellemesi
-- Omurga üstünlüğü: 9 Overall.
-- Takım Overall üstünlüğü: tüm ev sahiplerine +18 Overall; bonus sonrası 12 Overall eşik.
-- Savunma üstünlüğü: 15 DEF.
-- Orta saha üstünlüğü: 9 Overall.
-- Hücum üçlüsü üstünlüğü: 12 ATT.
-- Toplam hücum gücü: tüm ev sahiplerine +15 ATT; bonus sonrası 9 ATT eşik.
-- Taktik bonuslarının tamamı +15 (Defansif DEF, Dengeli Overall, Hücum ATT).
-- Pas bonuslarının tamamı +12 (Uzun Top DEF, Kısa Pas Overall, Kanat Oyunu ATT).
-- Pres cezalarının tamamı rakibe -10 (Geride Karşıla ATT, Orta Alanda Karşıla Overall, Önde Pres DEF).
-- Taktik/pas/pres bonusları yalnızca 3, 4 ve 5. gol kurallarına uygulanır.
-- Statik doğrulama: `node --check app.js` başarılı; ZIP bütünlük testi başarılı.
-- Bu kontrol canlı Firebase ortamında çok kullanıcılı uçtan uca test anlamına gelmez.
+- Zaman aşımı ve otomatik seçim davranışı, istemci tarafındaki zamanlayıcıyla tetiklenir; gerçek ortamda birden fazla hesapla test edilmelidir.
+- Bu paket canlı Firebase Hosting veya GitHub Pages ortamına otomatik yayın yapmaz.
