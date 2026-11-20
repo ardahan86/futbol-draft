@@ -2,7 +2,8 @@
 
 ## Çark ve kadrolar
 - Çark 21 dilimlidir: 17 kulüp/kadro dilimi, 2 PAS ve 2 TAKAS dilimi bulunur. KORUMA ve Karma Takım dilimleri çarktan çıkarılmıştır.
-- Karma Takım kadrosu, takas aşamasında kullanılmak üzere 20 futbolcudan oluşur. Chelsea ve Napoli kadroları da 20’şer oyuncudan oluşur.
+- PAS geldiğinde oyuncu seçme ekranı açılmaz; hak kullanılmış sayılır ve sıra doğrudan sonraki uygun menajere geçer.
+- Karma Takım ilk 11 draftında hiçbir koşulda seçilemez; kadrosu yalnızca takas aşamasında kullanılmak üzere 20 futbolcudan oluşur. Chelsea ve Napoli kadroları da 20’şer oyuncudan oluşur.
 - Sırası gelen oyuncuya çarkı çevirmesi için 25 saniye verilir. Süre dolarsa sistem otomatik çevirir.
 - Çarkta takım geldiğinde oyuncu seçimi için 30 saniye verilir. Süre dolarsa sistem o takımdan uygun ve boş mevkiye rastgele futbolcu seçer.
 - Herhangi bir oyuncu ilk 11’ini tamamladıktan sonra diğer oyuncular drafta devam ederken gelen TAKAS dilimleri PAS sayılır; yeni hak verilmez.

@@ -13,6 +13,8 @@ const authPersistenceReady=setPersistence(auth,browserLocalPersistence);
 const $=id=>document.getElementById(id);
 const CLUBS=["Galatasaray","Fenerbahçe","Beşiktaş","Trabzonspor","Barcelona","Real Madrid","Inter","PSG","Bayern Münih","Manchester City","Arsenal","Liverpool","Atlético Madrid","Juventus","Manchester United","Karma Takım","Chelsea","Napoli"];
 const WHEEL_SLICES=["Galatasaray","PAS","Arsenal","Atlético Madrid","Beşiktaş","Real Madrid","PAS","Juventus","PSG","Fenerbahçe","Manchester City","Bayern Münih","Inter","TAKAS","Trabzonspor","Liverpool","Barcelona","Manchester United","TAKAS","Chelsea","Napoli"];
+// Draftta seçilebilir kulüpler yalnızca çarkın gerçek kulüp dilimleridir. Karma Takım sadece takas aşamasında kullanılır.
+const DRAFT_CLUBS=WHEEL_SLICES.filter(slice=>slice!=="PAS"&&slice!=="TAKAS"&&slice!=="Karma Takım");
 const CLUB_COLORS = {
   "Galatasaray": "#A90432",
   "Fenerbahçe": "#FFED00",
@@ -123,7 +125,7 @@ const STARTER_POSITIONS=['Kaleci','Sağ bek','Stoper','Stoper','Sol bek','Merkez
 function exactPos(p){return String(p?.position||'').trim().toLocaleLowerCase('tr-TR')}
 function starterCount(picks,uid){return picks.filter(p=>p.uid===uid&&p.starterIndex!==null&&p.starterIndex!==undefined&&Number(p.starterIndex)>=0&&Number(p.starterIndex)<11).length}
 function draftStage(){return 'starter'}
-function validPickCandidates(club,picks,uid,members){const mine=picks.filter(p=>p.uid===uid);if(starterCount(picks,uid)>=11)return [];const used=new Set(picks.map(p=>p.id));const filled=new Set(mine.map(p=>Number(p.starterIndex)).filter(i=>Number.isInteger(i)&&i>=0&&i<11));return players.filter(p=>p.club===club&&!used.has(p.id)&&STARTER_POSITIONS.some((pos,i)=>!filled.has(i)&&exactPos(p)===pos.toLocaleLowerCase('tr-TR')))}
+function validPickCandidates(club,picks,uid,members){if(!DRAFT_CLUBS.includes(club)||club==="Karma Takım")return [];const mine=picks.filter(p=>p.uid===uid);if(starterCount(picks,uid)>=11)return [];const used=new Set(picks.map(p=>p.id));const filled=new Set(mine.map(p=>Number(p.starterIndex)).filter(i=>Number.isInteger(i)&&i>=0&&i<11));return players.filter(p=>p.club===club&&!used.has(p.id)&&STARTER_POSITIONS.some((pos,i)=>!filled.has(i)&&exactPos(p)===pos.toLocaleLowerCase('tr-TR')))}
 function nextTurnIndex(members,picks,currentIndex){if(!members.length)return 0;for(let step=1;step<=members.length;step++){const idx=(currentIndex+step)%members.length,uid=members[idx];if(starterCount(picks,uid)<11)return idx;}return (currentIndex+1)%members.length}
 function stageMessage(){return 'İlk 11 seçim aşaması'}
 function posCode(p){const x=(p.position||'').toLocaleLowerCase('tr-TR');if(x.includes('kaleci'))return 'GK';if(x.includes('bek'))return 'FB';if(x.includes('stoper'))return 'CB';if(x.includes('orta'))return 'CM';if(x.includes('hücum')||x.includes('forvet')||x.includes('santr'))return 'ST';return 'CM'}
@@ -363,8 +365,8 @@ async function spinFor(requestedUid,automatic=false){
    const managerName=d.members?.[uid]?.name||'Menajer';
    const spinAnnouncement={id:`spin_${at}_${uid}`,uid,managerName,result:slice,at,automatic:!!automatic};
    const picks=[...(d.picks||[])];
-   const updates={lastSpin:{uid,slice,at,automatic:!!automatic},lastSpinAnnouncement:spinAnnouncement,actionLock:{id:spinAnnouncement.id,kind:'spin',startedAt:at,until:at+6300},turnStartedAt:at,updatedAt:serverTimestamp()};
-   if(CLUBS.includes(slice)){
+   const updates={lastSpin:{uid,slice,at,automatic:!!automatic},lastSpinAnnouncement:spinAnnouncement,actionLock:{id:spinAnnouncement.id,kind:'spin',startedAt:at,until:at+6300},pendingPick:null,turnStartedAt:at,updatedAt:serverTimestamp()};
+   if(DRAFT_CLUBS.includes(slice)){
     const candidates=validPickCandidates(slice,picks,uid,d.memberOrder||[]);
     if(candidates.length){
      // Oyuncu listesi açılır; futbolcu seçilene kadar sıra ve kadro değişmez.
@@ -389,7 +391,8 @@ async function spinFor(requestedUid,automatic=false){
 async function pickPlayer(){
  if(!room||!roomRef||!user)return;
  const club=room.pendingPick?.club;
- if(!club||room.pendingPick.uid!==user.uid||currentTurnUid()!==user.uid)return;
+ if(!club||!DRAFT_CLUBS.includes(club)||club==="Karma Takım"){msg('PAS ve Karma Takım için oyuncu seçilemez. Karma Takım yalnızca takas aşamasında kullanılır.',true);return;}
+ if(room.pendingPick.uid!==user.uid||currentTurnUid()!==user.uid)return;
  if(isActionLocked())return;
  const playerId=$('playerSelect')?.value;
  if(!playerId){msg('Lütfen bir futbolcu seç.',true);return;}
@@ -425,6 +428,10 @@ async function autoPickPending(uid,club,startedAt){
    const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data(),pending=d.pendingPick;
    if(d.status!=='drafting'||!pending||pending.uid!==uid||pending.club!==club||Number(pending.startedAt||pending.at)!==Number(startedAt)||Date.now()-startedAt<30000)return;
    const currentPicks=[...(d.picks||[])];
+   if(!DRAFT_CLUBS.includes(club)||club==="Karma Takım"){
+    const at=Date.now(),updates={pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],currentPicks,d.turnIndex),turnStartedAt:at,updatedAt:serverTimestamp()};
+    tx.update(roomRef,updates);return;
+   }
    if(starterCount(currentPicks,uid)>=11){
     const done=(d.memberOrder||[]).every(id=>starterCount(currentPicks,id)>=11),at=Date.now();
     const updates={pendingPick:null,turnIndex:nextTurnIndex(d.memberOrder||[],currentPicks,d.turnIndex),turnStartedAt:at,updatedAt:serverTimestamp()};
