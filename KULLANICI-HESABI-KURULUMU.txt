@@ -1,0 +1,27 @@
+ÇARK FUTBOL — KULLANICI HESABI SİSTEMİ
+
+Uygulanan:
+- E-posta ve şifre ile hesap oluşturma ve giriş.
+- Firebase Authentication local persistence.
+- Kayıtta e-posta doğrulama bağlantısı gönderimi.
+- Şifremi unuttum akışı.
+- 3–16 karakter sabit nickname.
+- Firestore transaction ile benzersiz nickname kaydı.
+- Nickname ve kullanıcı kimliğini istemciden değiştirmeyi engelleyen Firestore kuralları.
+- Admin hesabı mevcut ADMIN_UID ile korunur.
+- Misafir/anonim giriş formu kaldırıldı.
+
+YAYINA ALMADAN ÖNCE:
+1) Firebase Console > Authentication > Sign-in method > Email/Password etkinleştir.
+2) Firebase Console > Firestore Database > Rules içine bu paketteki firestore.rules dosyasını yayımla.
+3) Authorized domains listesinde GitHub Pages alan adının bulunduğunu kontrol et.
+4) Dosyaları GitHub Pages'e yükle.
+
+Nickname kuralları:
+- 3–16 karakter.
+- İngilizce harf, rakam ve alt çizgi.
+- Büyük/küçük harf farkı gözetilmez.
+- Kayıttan sonra değiştirilemez.
+- Aynı nickname ikinci kez alınamaz.
+
+Not: Önceki anonim misafir hesapları yeni e-posta hesaplarına otomatik bağlanmaz.

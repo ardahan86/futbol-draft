@@ -24,6 +24,26 @@
       "overall": 72
     },
     {
+      "id": "galatasaray-jankat-ylmaz",
+      "club": "Galatasaray",
+      "shirtNumber": 3,
+      "name": "Deniz Gül",
+      "position": "Santrfor",
+      "attack": 71,
+      "defense": 1,
+      "overall": 72
+    },
+    {
+      "id": "galatasaray-wilfried-singo",
+      "club": "Galatasaray",
+      "shirtNumber": 4,
+      "name": "Wilfried Singo",
+      "position": "Sağ bek",
+      "attack": 68,
+      "defense": 77,
+      "overall": 78
+    },
+    {
       "id": "galatasaray-davinson-sanchez",
       "club": "Galatasaray",
       "shirtNumber": 5,
@@ -47,31 +67,11 @@
       "id": "galatasaray-kaan-ayhan",
       "club": "Galatasaray",
       "shirtNumber": 8,
-      "name": "El Chadaille Bitshiabu",
-      "position": "Stoper",
-      "attack": 1,
+      "name": "Kaan Ayhan",
+      "position": "Sağ bek",
+      "attack": 73,
       "defense": 74,
-      "overall": 75
-    },
-    {
-      "id": "galatasaray-wilfried-singo",
-      "club": "Galatasaray",
-      "shirtNumber": 4,
-      "name": "Wilfried Singo",
-      "position": "Sağ bek",
-      "attack": 68,
-      "defense": 77,
-      "overall": 78
-    },
-    {
-      "id": "galatasaray-lesley-ugochukwu",
-      "club": "Galatasaray",
-      "shirtNumber": 15,
-      "name": "Roland Sallai",
-      "position": "Sağ bek",
-      "attack": 72,
-      "defense": 75,
-      "overall": 78
+      "overall": 73
     },
     {
       "id": "galatasaray-ismail-jakobs",
@@ -94,16 +94,6 @@
       "overall": 75
     },
     {
-      "id": "galatasaray-lucas-torreira",
-      "club": "Galatasaray",
-      "shirtNumber": 12,
-      "name": "Lucas Torreira",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 81
-    },
-    {
       "id": "galatasaray-gabriel-sara",
       "club": "Galatasaray",
       "shirtNumber": 11,
@@ -112,6 +102,16 @@
       "attack": 1,
       "defense": 1,
       "overall": 80
+    },
+    {
+      "id": "galatasaray-lucas-torreira",
+      "club": "Galatasaray",
+      "shirtNumber": 12,
+      "name": "Lucas Torreira",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 81
     },
     {
       "id": "galatasaray-mario-lemina",
@@ -124,22 +124,32 @@
       "overall": 78
     },
     {
+      "id": "galatasaray-ilkay-gundogan",
+      "club": "Galatasaray",
+      "shirtNumber": 14,
+      "name": "İlkay Gündoğan",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 78
+    },
+    {
+      "id": "galatasaray-lesley-ugochukwu",
+      "club": "Galatasaray",
+      "shirtNumber": 15,
+      "name": "Lesley Ugochukwu",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 76
+    },
+    {
       "id": "galatasaray-renato-nhaga",
       "club": "Galatasaray",
       "shirtNumber": 16,
       "name": "Aleksey Batrakov",
       "position": "Ofansif orta saha",
-      "attack": 80,
-      "defense": 1,
-      "overall": 82
-    },
-    {
-      "id": "galatasaray-ilkay-gundogan",
-      "club": "Galatasaray",
-      "shirtNumber": 14,
-      "name": "İlkay Gündoğan",
-      "position": "Ofansif orta saha",
-      "attack": 80,
+      "attack": 73,
       "defense": 1,
       "overall": 78
     },
@@ -164,16 +174,6 @@
       "overall": 79
     },
     {
-      "id": "yeni-oyuncu-1791975861169",
-      "club": "Galatasaray",
-      "shirtNumber": 6,
-      "name": "Rafael Leão",
-      "position": "Sol kanat",
-      "attack": 79,
-      "defense": 1,
-      "overall": 83
-    },
-    {
       "id": "galatasaray-bars-alper-ylmaz",
       "club": "Galatasaray",
       "shirtNumber": 19,
@@ -192,16 +192,6 @@
       "attack": 84,
       "defense": 1,
       "overall": 85
-    },
-    {
-      "id": "galatasaray-jankat-ylmaz",
-      "club": "Galatasaray",
-      "shirtNumber": 3,
-      "name": "Deniz Gül",
-      "position": "Santrfor",
-      "attack": 71,
-      "defense": 1,
-      "overall": 72
     },
     {
       "id": "fenerbahce-ederson",
@@ -224,6 +214,16 @@
       "overall": 73
     },
     {
+      "id": "fenerbahce-tark-cetin",
+      "club": "Fenerbahçe",
+      "shirtNumber": 3,
+      "name": "Tarık Çetin",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 69,
+      "overall": 69
+    },
+    {
       "id": "fenerbahce-milan-skriniar",
       "club": "Fenerbahçe",
       "shirtNumber": 4,
@@ -242,26 +242,6 @@
       "attack": 1,
       "defense": 82,
       "overall": 80
-    },
-    {
-      "id": "fenerbahce-tark-cetin",
-      "club": "Fenerbahçe",
-      "shirtNumber": 3,
-      "name": "Jayden Oosterwolde",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 75,
-      "overall": 76
-    },
-    {
-      "id": "fenerbahce-kojo-peprah-oppong",
-      "club": "Fenerbahçe",
-      "shirtNumber": 9,
-      "name": "Kojo Peprah Oppong",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 75,
-      "overall": 74
     },
     {
       "id": "fenerbahce-nelson-semedo",
@@ -284,14 +264,24 @@
       "overall": 73
     },
     {
-      "id": "fenerbahce-levent-mercan",
+      "id": "fenerbahce-yigit-efe-demir",
       "club": "Fenerbahçe",
-      "shirtNumber": 14,
-      "name": "Levent Mercan",
-      "position": "Sol bek",
-      "attack": 74,
-      "defense": 68,
-      "overall": 73
+      "shirtNumber": 8,
+      "name": "Vedat Muriqi",
+      "position": "Santrfor",
+      "attack": 83,
+      "defense": 1,
+      "overall": 81
+    },
+    {
+      "id": "fenerbahce-kojo-peprah-oppong",
+      "club": "Fenerbahçe",
+      "shirtNumber": 9,
+      "name": "Kojo Peprah Oppong",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 75,
+      "overall": 74
     },
     {
       "id": "fenerbahce-archie-brown",
@@ -304,14 +294,14 @@
       "overall": 73
     },
     {
-      "id": "fenerbahce-n-golo-kante",
+      "id": "fenerbahce-ismail-yuksek",
       "club": "Fenerbahçe",
-      "shirtNumber": 13,
-      "name": "N'Golo Kanté",
+      "shirtNumber": 11,
+      "name": "İsmail Yüksek",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
-      "overall": 83
+      "overall": 77
     },
     {
       "id": "fenerbahce-matteo-guendouzi",
@@ -324,24 +314,24 @@
       "overall": 81
     },
     {
-      "id": "fenerbahce-ismail-yuksek",
+      "id": "fenerbahce-n-golo-kante",
       "club": "Fenerbahçe",
-      "shirtNumber": 11,
-      "name": "İsmail Yüksek",
+      "shirtNumber": 13,
+      "name": "N'Golo Kanté",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
-      "overall": 77
+      "overall": 83
     },
     {
-      "id": "fenerbahce-marco-asensio",
+      "id": "fenerbahce-levent-mercan",
       "club": "Fenerbahçe",
-      "shirtNumber": 16,
-      "name": "Marco Asensio",
-      "position": "Ofansif orta saha",
-      "attack": 82,
-      "defense": 1,
-      "overall": 82
+      "shirtNumber": 14,
+      "name": "Levent Mercan",
+      "position": "Sol bek",
+      "attack": 74,
+      "defense": 68,
+      "overall": 73
     },
     {
       "id": "fenerbahce-irfan-can-kahveci",
@@ -354,6 +344,16 @@
       "overall": 74
     },
     {
+      "id": "fenerbahce-marco-asensio",
+      "club": "Fenerbahçe",
+      "shirtNumber": 16,
+      "name": "Marco Asensio",
+      "position": "Ofansif orta saha",
+      "attack": 82,
+      "defense": 1,
+      "overall": 82
+    },
+    {
       "id": "fenerbahce-kerem-akturkoglu",
       "club": "Fenerbahçe",
       "shirtNumber": 17,
@@ -362,16 +362,6 @@
       "attack": 75,
       "defense": 1,
       "overall": 79
-    },
-    {
-      "id": "fenerbahce-dorgeles-nene",
-      "club": "Fenerbahçe",
-      "shirtNumber": 19,
-      "name": "Dorgeles Nene",
-      "position": "Sol kanat",
-      "attack": 69,
-      "defense": 1,
-      "overall": 75
     },
     {
       "id": "fenerbahce-mason-greenwood",
@@ -384,6 +374,16 @@
       "overall": 83
     },
     {
+      "id": "fenerbahce-dorgeles-nene",
+      "club": "Fenerbahçe",
+      "shirtNumber": 19,
+      "name": "Dorgeles Nene",
+      "position": "Sol kanat",
+      "attack": 69,
+      "defense": 1,
+      "overall": 75
+    },
+    {
       "id": "fenerbahce-romelu-lukaku",
       "club": "Fenerbahçe",
       "shirtNumber": 20,
@@ -392,16 +392,6 @@
       "attack": 82,
       "defense": 1,
       "overall": 82
-    },
-    {
-      "id": "fenerbahce-yigit-efe-demir",
-      "club": "Fenerbahçe",
-      "shirtNumber": 8,
-      "name": "Vedat Muriqi",
-      "position": "Santrfor",
-      "attack": 83,
-      "defense": 1,
-      "overall": 81
     },
     {
       "id": "besiktas-alexander-nubel",
@@ -424,44 +414,14 @@
       "overall": 68
     },
     {
-      "id": "besiktas-emmanuel-agbadou",
+      "id": "besiktas-emir-yasar",
       "club": "Beşiktaş",
-      "shirtNumber": 8,
-      "name": "Emmanuel Agbadou",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Emir Yaşar",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 76,
-      "overall": 77
-    },
-    {
-      "id": "besiktas-emirhan-topcu",
-      "club": "Beşiktaş",
-      "shirtNumber": 10,
-      "name": "Emirhan Topçu",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 75,
-      "overall": 74
-    },
-    {
-      "id": "besiktas-tiago-djalo",
-      "club": "Beşiktaş",
-      "shirtNumber": 9,
-      "name": "Tiago Djaló",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 73,
-      "overall": 74
-    },
-    {
-      "id": "besiktas-yasin-ozcan",
-      "club": "Beşiktaş",
-      "shirtNumber": 11,
-      "name": "Yasin Özcan",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 70,
-      "overall": 70
+      "defense": 58,
+      "overall": 58
     },
     {
       "id": "besiktas-michael-murillo",
@@ -504,24 +464,44 @@
       "overall": 72
     },
     {
-      "id": "besiktas-orkun-kokcu",
+      "id": "besiktas-emmanuel-agbadou",
       "club": "Beşiktaş",
-      "shirtNumber": 14,
-      "name": "Orkun Kökçü",
-      "position": "Merkez orta saha",
+      "shirtNumber": 8,
+      "name": "Emmanuel Agbadou",
+      "position": "Stoper",
       "attack": 1,
-      "defense": 1,
-      "overall": 82
+      "defense": 76,
+      "overall": 77
     },
     {
-      "id": "besiktas-fabio-miretti",
+      "id": "besiktas-tiago-djalo",
       "club": "Beşiktaş",
-      "shirtNumber": 18,
-      "name": "Fabio Miretti",
-      "position": "Merkez orta saha",
+      "shirtNumber": 9,
+      "name": "Tiago Djaló",
+      "position": "Stoper",
       "attack": 1,
-      "defense": 1,
-      "overall": 75
+      "defense": 73,
+      "overall": 74
+    },
+    {
+      "id": "besiktas-emirhan-topcu",
+      "club": "Beşiktaş",
+      "shirtNumber": 10,
+      "name": "Emirhan Topçu",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 75,
+      "overall": 74
+    },
+    {
+      "id": "besiktas-yasin-ozcan",
+      "club": "Beşiktaş",
+      "shirtNumber": 11,
+      "name": "Yasin Özcan",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 70,
+      "overall": 70
     },
     {
       "id": "besiktas-wilfred-ndidi",
@@ -544,14 +524,14 @@
       "overall": 74
     },
     {
-      "id": "besiktas-junior-olaitan",
+      "id": "besiktas-orkun-kokcu",
       "club": "Beşiktaş",
-      "shirtNumber": 17,
-      "name": "Junior Olaitan",
-      "position": "Ofansif orta saha",
-      "attack": 69,
+      "shirtNumber": 14,
+      "name": "Orkun Kökçü",
+      "position": "Merkez orta saha",
+      "attack": 1,
       "defense": 1,
-      "overall": 71
+      "overall": 82
     },
     {
       "id": "besiktas-vaclav-cerny",
@@ -564,16 +544,6 @@
       "overall": 77
     },
     {
-      "id": "besiktas-emir-yasar",
-      "club": "Beşiktaş",
-      "shirtNumber": 3,
-      "name": "Milot Rashica",
-      "position": "Sağ kanat",
-      "attack": 71,
-      "defense": 1,
-      "overall": 74
-    },
-    {
       "id": "besiktas-leandro-trossard",
       "club": "Beşiktaş",
       "shirtNumber": 16,
@@ -584,14 +554,24 @@
       "overall": 82
     },
     {
-      "id": "besiktas-dusan-vlahovic",
+      "id": "besiktas-junior-olaitan",
       "club": "Beşiktaş",
-      "shirtNumber": 20,
-      "name": "Dušan Vlahović",
-      "position": "Santrfor",
-      "attack": 84,
+      "shirtNumber": 17,
+      "name": "Junior Olaitan",
+      "position": "Ofansif orta saha",
+      "attack": 69,
       "defense": 1,
-      "overall": 81
+      "overall": 71
+    },
+    {
+      "id": "besiktas-fabio-miretti",
+      "club": "Beşiktaş",
+      "shirtNumber": 18,
+      "name": "Fabio Miretti",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 75
     },
     {
       "id": "besiktas-hyeongyu-oh",
@@ -604,6 +584,16 @@
       "overall": 75
     },
     {
+      "id": "besiktas-dusan-vlahovic",
+      "club": "Beşiktaş",
+      "shirtNumber": 20,
+      "name": "Dušan Vlahović",
+      "position": "Santrfor",
+      "attack": 84,
+      "defense": 1,
+      "overall": 81
+    },
+    {
       "id": "trabzonspor-andre-onana",
       "club": "Trabzonspor",
       "shirtNumber": 1,
@@ -612,6 +602,16 @@
       "attack": 1,
       "defense": 78,
       "overall": 78
+    },
+    {
+      "id": "trabzonspor-ahmet-dogan-yldrm",
+      "club": "Trabzonspor",
+      "shirtNumber": 2,
+      "name": "Ahmet Doğan Yıldırım",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 57,
+      "overall": 57
     },
     {
       "id": "trabzonspor-onuralp-cevikkan",
@@ -644,16 +644,6 @@
       "overall": 76
     },
     {
-      "id": "trabzonspor-chibuike-nwaiwu",
-      "club": "Trabzonspor",
-      "shirtNumber": 7,
-      "name": "Chibuike Nwaiwu",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 72,
-      "overall": 72
-    },
-    {
       "id": "trabzonspor-cenk-ozkacar",
       "club": "Trabzonspor",
       "shirtNumber": 6,
@@ -664,22 +654,22 @@
       "overall": 72
     },
     {
+      "id": "trabzonspor-chibuike-nwaiwu",
+      "club": "Trabzonspor",
+      "shirtNumber": 7,
+      "name": "Chibuike Nwaiwu",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 72,
+      "overall": 72
+    },
+    {
       "id": "trabzonspor-wagner-pina",
       "club": "Trabzonspor",
       "shirtNumber": 8,
       "name": "Wagner Pina",
       "position": "Sağ bek",
       "attack": 66,
-      "defense": 66,
-      "overall": 72
-    },
-    {
-      "id": "trabzonspor-mustafa-eskihellac",
-      "club": "Trabzonspor",
-      "shirtNumber": 10,
-      "name": "Mustafa Eskihellaç",
-      "position": "Sol bek",
-      "attack": 67,
       "defense": 66,
       "overall": 72
     },
@@ -694,30 +684,20 @@
       "overall": 71
     },
     {
-      "id": "trabzonspor-fabinho",
+      "id": "trabzonspor-mustafa-eskihellac",
       "club": "Trabzonspor",
-      "shirtNumber": 13,
-      "name": "Fabinho",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 82
+      "shirtNumber": 10,
+      "name": "Mustafa Eskihellaç",
+      "position": "Sol bek",
+      "attack": 67,
+      "defense": 66,
+      "overall": 72
     },
     {
       "id": "trabzonspor-batista-mendy",
       "club": "Trabzonspor",
       "shirtNumber": 11,
       "name": "Batista Mendy",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 75
-    },
-    {
-      "id": "trabzonspor-benjamin-bouchouari",
-      "club": "Trabzonspor",
-      "shirtNumber": 15,
-      "name": "Ruslan Malinovskyi",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
@@ -734,6 +714,16 @@
       "overall": 72
     },
     {
+      "id": "trabzonspor-fabinho",
+      "club": "Trabzonspor",
+      "shirtNumber": 13,
+      "name": "Fabinho",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 82
+    },
+    {
       "id": "trabzonspor-ozan-tufan",
       "club": "Trabzonspor",
       "shirtNumber": 14,
@@ -742,6 +732,26 @@
       "attack": 1,
       "defense": 1,
       "overall": 72
+    },
+    {
+      "id": "trabzonspor-benjamin-bouchouari",
+      "club": "Trabzonspor",
+      "shirtNumber": 15,
+      "name": "Ruslan Malinovskyi",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 75
+    },
+    {
+      "id": "trabzonspor-ruslan-malinovskyi",
+      "club": "Trabzonspor",
+      "shirtNumber": 16,
+      "name": "Ruslan Malinovskyi",
+      "position": "Ofansif orta saha",
+      "attack": 78,
+      "defense": 1,
+      "overall": 75
     },
     {
       "id": "trabzonspor-ernest-muci",
@@ -754,16 +764,6 @@
       "overall": 75
     },
     {
-      "id": "trabzonspor-mohamed-salah",
-      "club": "Trabzonspor",
-      "shirtNumber": 19,
-      "name": "Mohamed Salah",
-      "position": "Sağ kanat",
-      "attack": 83,
-      "defense": 1,
-      "overall": 87
-    },
-    {
       "id": "trabzonspor-aral-simsir",
       "club": "Trabzonspor",
       "shirtNumber": 18,
@@ -774,14 +774,14 @@
       "overall": 76
     },
     {
-      "id": "trabzonspor-ruslan-malinovskyi",
+      "id": "trabzonspor-mohamed-salah",
       "club": "Trabzonspor",
-      "shirtNumber": 16,
-      "name": "Noah Saviolo",
-      "position": "Sol kanat",
-      "attack": 62,
+      "shirtNumber": 19,
+      "name": "Mohamed Salah",
+      "position": "Sağ kanat",
+      "attack": 83,
       "defense": 1,
-      "overall": 69
+      "overall": 87
     },
     {
       "id": "trabzonspor-paul-onuachu",
@@ -792,16 +792,6 @@
       "attack": 78,
       "defense": 1,
       "overall": 77
-    },
-    {
-      "id": "trabzonspor-ahmet-dogan-yldrm",
-      "club": "Trabzonspor",
-      "shirtNumber": 2,
-      "name": "Franculino",
-      "position": "Santrfor",
-      "attack": 73,
-      "defense": 1,
-      "overall": 74
     },
     {
       "id": "barcelona-joan-garcia",
@@ -824,34 +814,14 @@
       "overall": 81
     },
     {
-      "id": "barcelona-pau-cubarsi",
+      "id": "barcelona-dominik-livakovic",
       "club": "Barcelona",
-      "shirtNumber": 6,
-      "name": "Pau Cubarsí",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Dominik Livaković",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 85,
-      "overall": 86
-    },
-    {
-      "id": "barcelona-eric-garcia",
-      "club": "Barcelona",
-      "shirtNumber": 8,
-      "name": "Eric García",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 86,
-      "overall": 85
-    },
-    {
-      "id": "barcelona-andreas-christensen",
-      "club": "Barcelona",
-      "shirtNumber": 7,
-      "name": "Andreas Christensen",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 81,
-      "overall": 79
+      "defense": 78,
+      "overall": 78
     },
     {
       "id": "barcelona-jules-kounde",
@@ -864,16 +834,6 @@
       "overall": 85
     },
     {
-      "id": "barcelona-dominik-livakovic",
-      "club": "Barcelona",
-      "shirtNumber": 3,
-      "name": "Xavi Espart",
-      "position": "Sağ bek",
-      "attack": 64,
-      "defense": 64,
-      "overall": 67
-    },
-    {
       "id": "barcelona-joao-cancelo",
       "club": "Barcelona",
       "shirtNumber": 5,
@@ -882,6 +842,36 @@
       "attack": 84,
       "defense": 77,
       "overall": 83
+    },
+    {
+      "id": "barcelona-pau-cubarsi",
+      "club": "Barcelona",
+      "shirtNumber": 6,
+      "name": "Pau Cubarsí",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 85,
+      "overall": 86
+    },
+    {
+      "id": "barcelona-andreas-christensen",
+      "club": "Barcelona",
+      "shirtNumber": 7,
+      "name": "Andreas Christensen",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 81,
+      "overall": 79
+    },
+    {
+      "id": "barcelona-eric-garcia",
+      "club": "Barcelona",
+      "shirtNumber": 8,
+      "name": "Eric García",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 86,
+      "overall": 85
     },
     {
       "id": "barcelona-alejandro-balde",
@@ -894,14 +884,14 @@
       "overall": 82
     },
     {
-      "id": "barcelona-marc-bernal",
+      "id": "barcelona-xavi-espart",
       "club": "Barcelona",
-      "shirtNumber": 14,
-      "name": "Rodri",
-      "position": "Merkez orta saha",
-      "attack": 1,
+      "shirtNumber": 10,
+      "name": "Karim Adeyemi",
+      "position": "Sağ kanat",
+      "attack": 72,
       "defense": 1,
-      "overall": 90
+      "overall": 82
     },
     {
       "id": "barcelona-pedri",
@@ -934,6 +924,16 @@
       "overall": 83
     },
     {
+      "id": "barcelona-marc-bernal",
+      "club": "Barcelona",
+      "shirtNumber": 14,
+      "name": "Rodri",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 90
+    },
+    {
       "id": "barcelona-fermin-lopez",
       "club": "Barcelona",
       "shirtNumber": 15,
@@ -962,16 +962,6 @@
       "attack": 87,
       "defense": 1,
       "overall": 90
-    },
-    {
-      "id": "barcelona-xavi-espart",
-      "club": "Barcelona",
-      "shirtNumber": 10,
-      "name": "Karim Adeyemi",
-      "position": "Sağ kanat",
-      "attack": 72,
-      "defense": 1,
-      "overall": 82
     },
     {
       "id": "barcelona-raphinha",
@@ -1034,14 +1024,14 @@
       "overall": 84
     },
     {
-      "id": "real-madrid-konate",
+      "id": "real-madrid-dean-huijsen",
       "club": "Real Madrid",
-      "shirtNumber": 6,
-      "name": "Konaté",
+      "shirtNumber": 4,
+      "name": "Dean Huijsen",
       "position": "Stoper",
       "attack": 1,
-      "defense": 84,
-      "overall": 84
+      "defense": 82,
+      "overall": 81
     },
     {
       "id": "real-madrid-antonio-rudiger",
@@ -1054,14 +1044,24 @@
       "overall": 83
     },
     {
-      "id": "real-madrid-dean-huijsen",
+      "id": "real-madrid-konate",
       "club": "Real Madrid",
-      "shirtNumber": 4,
-      "name": "Dean Huijsen",
+      "shirtNumber": 6,
+      "name": "Konaté",
       "position": "Stoper",
       "attack": 1,
-      "defense": 82,
-      "overall": 81
+      "defense": 84,
+      "overall": 84
+    },
+    {
+      "id": "real-madrid-raul-asencio",
+      "club": "Real Madrid",
+      "shirtNumber": 7,
+      "name": "Yan Diomande",
+      "position": "Sağ kanat",
+      "attack": 75,
+      "defense": 1,
+      "overall": 84
     },
     {
       "id": "real-madrid-trent-alexander-arnold",
@@ -1097,11 +1097,21 @@
       "id": "real-madrid-ferland-mendy",
       "club": "Real Madrid",
       "shirtNumber": 11,
-      "name": "Álvaro Carreras",
+      "name": "Ferland Mendy",
       "position": "Sol bek",
-      "attack": 77,
-      "defense": 75,
-      "overall": 81
+      "attack": 74,
+      "defense": 78,
+      "overall": 80
+    },
+    {
+      "id": "real-madrid-jude-bellingham",
+      "club": "Real Madrid",
+      "shirtNumber": 12,
+      "name": "Jude Bellingham",
+      "position": "Ofansif orta saha",
+      "attack": 83,
+      "defense": 1,
+      "overall": 90
     },
     {
       "id": "real-madrid-federico-valverde",
@@ -1124,16 +1134,6 @@
       "overall": 84
     },
     {
-      "id": "real-madrid-endrick",
-      "club": "Real Madrid",
-      "shirtNumber": 20,
-      "name": "Bernardo Silva",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 84
-    },
-    {
       "id": "real-madrid-eduardo-camavinga",
       "club": "Real Madrid",
       "shirtNumber": 15,
@@ -1144,16 +1144,6 @@
       "overall": 81
     },
     {
-      "id": "real-madrid-jude-bellingham",
-      "club": "Real Madrid",
-      "shirtNumber": 12,
-      "name": "Jude Bellingham",
-      "position": "Ofansif orta saha",
-      "attack": 83,
-      "defense": 1,
-      "overall": 90
-    },
-    {
       "id": "real-madrid-arda-guler",
       "club": "Real Madrid",
       "shirtNumber": 16,
@@ -1162,26 +1152,6 @@
       "attack": 85,
       "defense": 1,
       "overall": 83
-    },
-    {
-      "id": "real-madrid-rodrygo",
-      "club": "Real Madrid",
-      "shirtNumber": 19,
-      "name": "Rodrygo",
-      "position": "Sağ kanat",
-      "attack": 79,
-      "defense": 1,
-      "overall": 84
-    },
-    {
-      "id": "real-madrid-raul-asencio",
-      "club": "Real Madrid",
-      "shirtNumber": 7,
-      "name": "Yan Diomande",
-      "position": "Sağ kanat",
-      "attack": 75,
-      "defense": 1,
-      "overall": 84
     },
     {
       "id": "real-madrid-vinicius-junior",
@@ -1204,6 +1174,26 @@
       "overall": 91
     },
     {
+      "id": "real-madrid-rodrygo",
+      "club": "Real Madrid",
+      "shirtNumber": 19,
+      "name": "Rodrygo",
+      "position": "Sağ kanat",
+      "attack": 79,
+      "defense": 1,
+      "overall": 84
+    },
+    {
+      "id": "real-madrid-endrick",
+      "club": "Real Madrid",
+      "shirtNumber": 20,
+      "name": "Bernardo Silva",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 84
+    },
+    {
       "id": "inter-yann-sommer",
       "club": "Inter",
       "shirtNumber": 1,
@@ -1222,6 +1212,16 @@
       "attack": 1,
       "defense": 76,
       "overall": 76
+    },
+    {
+      "id": "inter-raffaele-di-gennaro",
+      "club": "Inter",
+      "shirtNumber": 3,
+      "name": "Raffaele Di Gennaro",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 68,
+      "overall": 68
     },
     {
       "id": "inter-alessandro-bastoni",
@@ -1244,22 +1244,12 @@
       "overall": 83
     },
     {
-      "id": "inter-john-stones",
-      "club": "Inter",
-      "shirtNumber": 8,
-      "name": "John Stones",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 83,
-      "overall": 82
-    },
-    {
       "id": "inter-benjamin-pavard",
       "club": "Inter",
       "shirtNumber": 6,
       "name": "Benjamin Pavard",
-      "position": "Stoper",
-      "attack": 1,
+      "position": "Sağ bek",
+      "attack": 75,
       "defense": 81,
       "overall": 80
     },
@@ -1274,24 +1264,24 @@
       "overall": 78
     },
     {
+      "id": "inter-john-stones",
+      "club": "Inter",
+      "shirtNumber": 8,
+      "name": "John Stones",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 82
+    },
+    {
       "id": "inter-denzel-dumfries",
       "club": "Inter",
       "shirtNumber": 9,
       "name": "Djed Spence",
-      "position": "Sağ bek",
+      "position": "Sol bek",
       "attack": 71,
       "defense": 76,
       "overall": 80
-    },
-    {
-      "id": "inter-luis-henrique",
-      "club": "Inter",
-      "shirtNumber": 18,
-      "name": "Luis Henrique",
-      "position": "Sağ bek",
-      "attack": 72,
-      "defense": 1,
-      "overall": 77
     },
     {
       "id": "inter-federico-dimarco",
@@ -1344,16 +1334,6 @@
       "overall": 82
     },
     {
-      "id": "inter-curtis-jones",
-      "club": "Inter",
-      "shirtNumber": 17,
-      "name": "Curtis Jones",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 80
-    },
-    {
       "id": "inter-petar-sucic",
       "club": "Inter",
       "shirtNumber": 15,
@@ -1362,16 +1342,6 @@
       "attack": 1,
       "defense": 1,
       "overall": 78
-    },
-    {
-      "id": "inter-raffaele-di-gennaro",
-      "club": "Inter",
-      "shirtNumber": 3,
-      "name": "Andy Diouf",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 76
     },
     {
       "id": "inter-henrikh-mkhitaryan",
@@ -1384,14 +1354,24 @@
       "overall": 81
     },
     {
-      "id": "inter-lautaro-martinez",
+      "id": "inter-curtis-jones",
       "club": "Inter",
-      "shirtNumber": 20,
-      "name": "Lautaro Martínez",
-      "position": "Santrfor",
-      "attack": 88,
+      "shirtNumber": 17,
+      "name": "Curtis Jones",
+      "position": "Merkez orta saha",
+      "attack": 1,
       "defense": 1,
-      "overall": 87
+      "overall": 80
+    },
+    {
+      "id": "inter-luis-henrique",
+      "club": "Inter",
+      "shirtNumber": 18,
+      "name": "Luis Henrique",
+      "position": "Sağ bek",
+      "attack": 72,
+      "defense": 1,
+      "overall": 77
     },
     {
       "id": "inter-marcus-thuram",
@@ -1404,14 +1384,14 @@
       "overall": 85
     },
     {
-      "id": "psg-matvey-safonov",
-      "club": "PSG",
-      "shirtNumber": 2,
-      "name": "Matvey Safonov",
-      "position": "Kaleci",
-      "attack": 1,
-      "defense": 83,
-      "overall": 83
+      "id": "inter-lautaro-martinez",
+      "club": "Inter",
+      "shirtNumber": 20,
+      "name": "Lautaro Martínez",
+      "position": "Santrfor",
+      "attack": 88,
+      "defense": 1,
+      "overall": 87
     },
     {
       "id": "psg-lucas-chevalier",
@@ -1424,44 +1404,24 @@
       "overall": 80
     },
     {
-      "id": "psg-willian-pacho",
+      "id": "psg-matvey-safonov",
       "club": "PSG",
-      "shirtNumber": 6,
-      "name": "Willian Pacho",
-      "position": "Stoper",
+      "shirtNumber": 2,
+      "name": "Matvey Safonov",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 90,
-      "overall": 89
+      "defense": 83,
+      "overall": 83
     },
     {
-      "id": "psg-marquinhos",
+      "id": "psg-alessandro-longoni",
       "club": "PSG",
-      "shirtNumber": 5,
-      "name": "Marquinhos",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Alessandro Longoni",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 89,
-      "overall": 87
-    },
-    {
-      "id": "psg-lucas-hernandez",
-      "club": "PSG",
-      "shirtNumber": 10,
-      "name": "Lucas Hernández",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 82,
-      "overall": 81
-    },
-    {
-      "id": "psg-illia-zabarnyi",
-      "club": "PSG",
-      "shirtNumber": 7,
-      "name": "Illia Zabarnyi",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 81,
-      "overall": 80
+      "defense": 65,
+      "overall": 65
     },
     {
       "id": "psg-achraf-hakimi",
@@ -1474,14 +1434,34 @@
       "overall": 88
     },
     {
-      "id": "psg-nuno-mendes",
+      "id": "psg-marquinhos",
       "club": "PSG",
-      "shirtNumber": 9,
-      "name": "Nuno Mendes",
-      "position": "Sol bek",
-      "attack": 80,
-      "defense": 84,
+      "shirtNumber": 5,
+      "name": "Marquinhos",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 89,
+      "overall": 87
+    },
+    {
+      "id": "psg-willian-pacho",
+      "club": "PSG",
+      "shirtNumber": 6,
+      "name": "Willian Pacho",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 90,
       "overall": 89
+    },
+    {
+      "id": "psg-illia-zabarnyi",
+      "club": "PSG",
+      "shirtNumber": 7,
+      "name": "Illia Zabarnyi",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 81,
+      "overall": 80
     },
     {
       "id": "psg-lucas-beraldo",
@@ -1492,6 +1472,26 @@
       "attack": 79,
       "defense": 78,
       "overall": 80
+    },
+    {
+      "id": "psg-nuno-mendes",
+      "club": "PSG",
+      "shirtNumber": 9,
+      "name": "Nuno Mendes",
+      "position": "Sol bek",
+      "attack": 80,
+      "defense": 84,
+      "overall": 89
+    },
+    {
+      "id": "psg-lucas-hernandez",
+      "club": "PSG",
+      "shirtNumber": 10,
+      "name": "Lucas Hernández",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 82,
+      "overall": 81
     },
     {
       "id": "psg-vitinha",
@@ -1554,14 +1554,14 @@
       "overall": 79
     },
     {
-      "id": "psg-desire-doue",
+      "id": "psg-ousmane-dembele",
       "club": "PSG",
-      "shirtNumber": 19,
-      "name": "Désiré Doué",
+      "shirtNumber": 17,
+      "name": "Ousmane Dembélé",
       "position": "Sağ kanat",
-      "attack": 79,
+      "attack": 83,
       "defense": 1,
-      "overall": 86
+      "overall": 90
     },
     {
       "id": "psg-khvicha-kvaratskhelia",
@@ -1574,24 +1574,14 @@
       "overall": 89
     },
     {
-      "id": "psg-alessandro-longoni",
+      "id": "psg-desire-doue",
       "club": "PSG",
-      "shirtNumber": 3,
-      "name": "Mika Godts",
-      "position": "Sol kanat",
-      "attack": 71,
+      "shirtNumber": 19,
+      "name": "Désiré Doué",
+      "position": "Sağ kanat",
+      "attack": 79,
       "defense": 1,
-      "overall": 78
-    },
-    {
-      "id": "psg-ousmane-dembele",
-      "club": "PSG",
-      "shirtNumber": 17,
-      "name": "Ousmane Dembélé",
-      "position": "Santrfor",
-      "attack": 89,
-      "defense": 1,
-      "overall": 90
+      "overall": 86
     },
     {
       "id": "psg-ferran",
@@ -1624,20 +1614,20 @@
       "overall": 79
     },
     {
+      "id": "bayern-munih-sven-ulreich",
+      "club": "Bayern Münih",
+      "shirtNumber": 3,
+      "name": "Sven Ulreich",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 73,
+      "overall": 73
+    },
+    {
       "id": "bayern-munih-dayot-upamecano",
       "club": "Bayern Münih",
       "shirtNumber": 4,
       "name": "Dayot Upamecano",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 87,
-      "overall": 87
-    },
-    {
-      "id": "bayern-munih-jonathan-tah",
-      "club": "Bayern Münih",
-      "shirtNumber": 6,
-      "name": "Jonathan Tah",
       "position": "Stoper",
       "attack": 1,
       "defense": 87,
@@ -1654,6 +1644,16 @@
       "overall": 83
     },
     {
+      "id": "bayern-munih-jonathan-tah",
+      "club": "Bayern Münih",
+      "shirtNumber": 6,
+      "name": "Jonathan Tah",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 87,
+      "overall": 87
+    },
+    {
       "id": "bayern-munih-hiroki-ito",
       "club": "Bayern Münih",
       "shirtNumber": 7,
@@ -1662,16 +1662,6 @@
       "attack": 1,
       "defense": 80,
       "overall": 78
-    },
-    {
-      "id": "bayern-munih-konrad-laimer",
-      "club": "Bayern Münih",
-      "shirtNumber": 11,
-      "name": "Konrad Laimer",
-      "position": "Sağ bek",
-      "attack": 78,
-      "defense": 81,
-      "overall": 85
     },
     {
       "id": "bayern-munih-josip-stanisic",
@@ -1684,6 +1674,16 @@
       "overall": 80
     },
     {
+      "id": "bayern-munih-sacha-boey",
+      "club": "Bayern Münih",
+      "shirtNumber": 9,
+      "name": "Sacha Boey",
+      "position": "Sağ bek",
+      "attack": 66,
+      "defense": 75,
+      "overall": 75
+    },
+    {
       "id": "bayern-munih-alphonso-davies",
       "club": "Bayern Münih",
       "shirtNumber": 10,
@@ -1694,14 +1694,14 @@
       "overall": 82
     },
     {
-      "id": "bayern-munih-sven-ulreich",
+      "id": "bayern-munih-konrad-laimer",
       "club": "Bayern Münih",
-      "shirtNumber": 3,
-      "name": "Nathaniel Brown",
-      "position": "Sol bek",
-      "attack": 76,
-      "defense": 73,
-      "overall": 81
+      "shirtNumber": 11,
+      "name": "Konrad Laimer",
+      "position": "Sağ bek",
+      "attack": 78,
+      "defense": 81,
+      "overall": 85
     },
     {
       "id": "bayern-munih-joshua-kimmich",
@@ -1754,14 +1754,14 @@
       "overall": 83
     },
     {
-      "id": "bayern-munih-sacha-boey",
+      "id": "bayern-munih-serge-gnabry",
       "club": "Bayern Münih",
-      "shirtNumber": 9,
-      "name": "Lennart Karl",
-      "position": "Ofansif orta saha",
-      "attack": 73,
+      "shirtNumber": 17,
+      "name": "Serge Gnabry",
+      "position": "Sağ kanat",
+      "attack": 79,
       "defense": 1,
-      "overall": 77
+      "overall": 83
     },
     {
       "id": "bayern-munih-michael-olise",
@@ -1772,16 +1772,6 @@
       "attack": 89,
       "defense": 1,
       "overall": 90
-    },
-    {
-      "id": "bayern-munih-serge-gnabry",
-      "club": "Bayern Münih",
-      "shirtNumber": 17,
-      "name": "Serge Gnabry",
-      "position": "Sağ kanat",
-      "attack": 79,
-      "defense": 1,
-      "overall": 83
     },
     {
       "id": "bayern-munih-luis-diaz",
@@ -1824,6 +1814,16 @@
       "overall": 80
     },
     {
+      "id": "manchester-city-marcus-bettinelli",
+      "club": "Manchester City",
+      "shirtNumber": 3,
+      "name": "Marcus Bettinelli",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 69,
+      "overall": 69
+    },
+    {
       "id": "manchester-city-ruben-dias",
       "club": "Manchester City",
       "shirtNumber": 4,
@@ -1854,6 +1854,16 @@
       "overall": 85
     },
     {
+      "id": "manchester-city-vitor-reis",
+      "club": "Manchester City",
+      "shirtNumber": 7,
+      "name": "Vitor Reis",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 76,
+      "overall": 76
+    },
+    {
       "id": "manchester-city-abdukodir-khusanov",
       "club": "Manchester City",
       "shirtNumber": 8,
@@ -1862,36 +1872,6 @@
       "attack": 1,
       "defense": 83,
       "overall": 82
-    },
-    {
-      "id": "manchester-city-matheus-nunes",
-      "club": "Manchester City",
-      "shirtNumber": 10,
-      "name": "Matheus Nunes",
-      "position": "Sağ bek",
-      "attack": 80,
-      "defense": 78,
-      "overall": 83
-    },
-    {
-      "id": "manchester-city-vitor-reis",
-      "club": "Manchester City",
-      "shirtNumber": 7,
-      "name": "Rico Lewis",
-      "position": "Sağ bek",
-      "attack": 74,
-      "defense": 74,
-      "overall": 77
-    },
-    {
-      "id": "manchester-city-nico-o-reilly",
-      "club": "Manchester City",
-      "shirtNumber": 16,
-      "name": "Nico O'Reilly",
-      "position": "Sol bek",
-      "attack": 78,
-      "defense": 81,
-      "overall": 83
     },
     {
       "id": "manchester-city-rayan-ait-nouri",
@@ -1904,14 +1884,24 @@
       "overall": 81
     },
     {
-      "id": "manchester-city-enzo-fernandez",
+      "id": "manchester-city-matheus-nunes",
       "club": "Manchester City",
-      "shirtNumber": 13,
-      "name": "Enzo Fernández",
+      "shirtNumber": 10,
+      "name": "Matheus Nunes",
+      "position": "Sağ bek",
+      "attack": 80,
+      "defense": 78,
+      "overall": 83
+    },
+    {
+      "id": "manchester-city-mateo-kovacic",
+      "club": "Manchester City",
+      "shirtNumber": 11,
+      "name": "Mateo Kovačić",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
-      "overall": 86
+      "overall": 81
     },
     {
       "id": "manchester-city-elliot-anderson",
@@ -1924,14 +1914,14 @@
       "overall": 84
     },
     {
-      "id": "manchester-city-mateo-kovacic",
+      "id": "manchester-city-enzo-fernandez",
       "club": "Manchester City",
-      "shirtNumber": 11,
-      "name": "Mateo Kovačić",
+      "shirtNumber": 13,
+      "name": "Enzo Fernández",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
-      "overall": 81
+      "overall": 86
     },
     {
       "id": "manchester-city-rayan-cherki",
@@ -1954,24 +1944,14 @@
       "overall": 84
     },
     {
-      "id": "manchester-city-antoine-semenyo",
+      "id": "manchester-city-nico-o-reilly",
       "club": "Manchester City",
-      "shirtNumber": 18,
-      "name": "Antoine Semenyo",
-      "position": "Sağ kanat",
-      "attack": 79,
-      "defense": 1,
-      "overall": 85
-    },
-    {
-      "id": "manchester-city-iliman-ndiaye",
-      "club": "Manchester City",
-      "shirtNumber": 20,
-      "name": "Savinho",
-      "position": "Sağ kanat",
-      "attack": 76,
-      "defense": 1,
-      "overall": 80
+      "shirtNumber": 16,
+      "name": "Nico O'Reilly",
+      "position": "Sol bek",
+      "attack": 78,
+      "defense": 81,
+      "overall": 83
     },
     {
       "id": "manchester-city-jeremy-doku",
@@ -1984,14 +1964,14 @@
       "overall": 84
     },
     {
-      "id": "manchester-city-marcus-bettinelli",
+      "id": "manchester-city-antoine-semenyo",
       "club": "Manchester City",
-      "shirtNumber": 3,
-      "name": "Iliman Ndiaye",
-      "position": "Sol kanat",
-      "attack": 74,
+      "shirtNumber": 18,
+      "name": "Antoine Semenyo",
+      "position": "Sağ kanat",
+      "attack": 79,
       "defense": 1,
-      "overall": 82
+      "overall": 85
     },
     {
       "id": "manchester-city-erling-haaland",
@@ -2002,6 +1982,16 @@
       "attack": 92,
       "defense": 1,
       "overall": 91
+    },
+    {
+      "id": "manchester-city-iliman-ndiaye",
+      "club": "Manchester City",
+      "shirtNumber": 20,
+      "name": "Omar Marmoush",
+      "position": "Sol kanat",
+      "attack": 76,
+      "defense": 1,
+      "overall": 82
     },
     {
       "id": "arsenal-david-raya",
@@ -2024,14 +2014,14 @@
       "overall": 78
     },
     {
-      "id": "arsenal-gabriel-magalhaes",
+      "id": "arsenal-illan-meslier",
       "club": "Arsenal",
-      "shirtNumber": 5,
-      "name": "Gabriel Magalhães",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 91,
-      "overall": 89
+      "shirtNumber": 3,
+      "name": "Kai Havertz",
+      "position": "Santrfor",
+      "attack": 79,
+      "defense": 1,
+      "overall": 81
     },
     {
       "id": "arsenal-william-saliba",
@@ -2044,24 +2034,14 @@
       "overall": 88
     },
     {
-      "id": "arsenal-ezri-konsa",
+      "id": "arsenal-gabriel-magalhaes",
       "club": "Arsenal",
-      "shirtNumber": 10,
-      "name": "Ezri Konsa",
+      "shirtNumber": 5,
+      "name": "Gabriel Magalhães",
       "position": "Stoper",
       "attack": 1,
-      "defense": 86,
-      "overall": 84
-    },
-    {
-      "id": "arsenal-jurrien-timber",
-      "club": "Arsenal",
-      "shirtNumber": 7,
-      "name": "Jurriën Timber",
-      "position": "Sağ bek",
-      "attack": 76,
-      "defense": 83,
-      "overall": 84
+      "defense": 91,
+      "overall": 89
     },
     {
       "id": "arsenal-ben-white",
@@ -2072,6 +2052,16 @@
       "attack": 75,
       "defense": 81,
       "overall": 81
+    },
+    {
+      "id": "arsenal-jurrien-timber",
+      "club": "Arsenal",
+      "shirtNumber": 7,
+      "name": "Jurriën Timber",
+      "position": "Sağ bek",
+      "attack": 76,
+      "defense": 83,
+      "overall": 84
     },
     {
       "id": "arsenal-piero-hincapie",
@@ -2094,6 +2084,16 @@
       "overall": 82
     },
     {
+      "id": "arsenal-ezri-konsa",
+      "club": "Arsenal",
+      "shirtNumber": 10,
+      "name": "Ezri Konsa",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 86,
+      "overall": 84
+    },
+    {
       "id": "arsenal-declan-rice",
       "club": "Arsenal",
       "shirtNumber": 11,
@@ -2104,12 +2104,12 @@
       "overall": 88
     },
     {
-      "id": "arsenal-bruno-guimaraes",
+      "id": "arsenal-martin-degaard",
       "club": "Arsenal",
-      "shirtNumber": 15,
-      "name": "Bruno Guimarães",
-      "position": "Merkez orta saha",
-      "attack": 1,
+      "shirtNumber": 12,
+      "name": "Martin Ødegaard",
+      "position": "Ofansif orta saha",
+      "attack": 88,
       "defense": 1,
       "overall": 86
     },
@@ -2134,12 +2134,12 @@
       "overall": 83
     },
     {
-      "id": "arsenal-martin-degaard",
+      "id": "arsenal-bruno-guimaraes",
       "club": "Arsenal",
-      "shirtNumber": 12,
-      "name": "Martin Ødegaard",
-      "position": "Ofansif orta saha",
-      "attack": 88,
+      "shirtNumber": 15,
+      "name": "Bruno Guimarães",
+      "position": "Merkez orta saha",
+      "attack": 1,
       "defense": 1,
       "overall": 86
     },
@@ -2154,16 +2154,6 @@
       "overall": 84
     },
     {
-      "id": "arsenal-bukayo-saka",
-      "club": "Arsenal",
-      "shirtNumber": 18,
-      "name": "Bukayo Saka",
-      "position": "Sağ kanat",
-      "attack": 85,
-      "defense": 1,
-      "overall": 87
-    },
-    {
       "id": "arsenal-noni-madueke",
       "club": "Arsenal",
       "shirtNumber": 17,
@@ -2172,6 +2162,16 @@
       "attack": 74,
       "defense": 1,
       "overall": 80
+    },
+    {
+      "id": "arsenal-bukayo-saka",
+      "club": "Arsenal",
+      "shirtNumber": 18,
+      "name": "Bukayo Saka",
+      "position": "Sağ kanat",
+      "attack": 85,
+      "defense": 1,
+      "overall": 87
     },
     {
       "id": "arsenal-christos-tzolis",
@@ -2194,16 +2194,6 @@
       "overall": 86
     },
     {
-      "id": "arsenal-illan-meslier",
-      "club": "Arsenal",
-      "shirtNumber": 3,
-      "name": "Kai Havertz",
-      "position": "Santrfor",
-      "attack": 79,
-      "defense": 1,
-      "overall": 81
-    },
-    {
       "id": "liverpool-alisson-becker",
       "club": "Liverpool",
       "shirtNumber": 1,
@@ -2222,6 +2212,16 @@
       "attack": 1,
       "defense": 83,
       "overall": 83
+    },
+    {
+      "id": "liverpool-freddie-woodman",
+      "club": "Liverpool",
+      "shirtNumber": 3,
+      "name": "Freddie Woodman",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 71,
+      "overall": 71
     },
     {
       "id": "liverpool-virgil-van-dijk",
@@ -2264,13 +2264,23 @@
       "overall": 77
     },
     {
-      "id": "liverpool-jeremie-frimpong",
+      "id": "liverpool-giovanni-leoni",
       "club": "Liverpool",
-      "shirtNumber": 11,
-      "name": "Jeremie Frimpong",
-      "position": "Sağ bek",
-      "attack": 74,
-      "defense": 72,
+      "shirtNumber": 8,
+      "name": "Bradley Barcola",
+      "position": "Sol kanat",
+      "attack": 78,
+      "defense": 1,
+      "overall": 85
+    },
+    {
+      "id": "liverpool-milos-kerkez",
+      "club": "Liverpool",
+      "shirtNumber": 9,
+      "name": "Milos Kerkez",
+      "position": "Sol bek",
+      "attack": 75,
+      "defense": 76,
       "overall": 81
     },
     {
@@ -2284,34 +2294,14 @@
       "overall": 79
     },
     {
-      "id": "liverpool-milos-kerkez",
+      "id": "liverpool-jeremie-frimpong",
       "club": "Liverpool",
-      "shirtNumber": 9,
-      "name": "Milos Kerkez",
-      "position": "Sol bek",
-      "attack": 75,
-      "defense": 76,
+      "shirtNumber": 11,
+      "name": "Jeremie Frimpong",
+      "position": "Sağ bek",
+      "attack": 74,
+      "defense": 72,
       "overall": 81
-    },
-    {
-      "id": "liverpool-freddie-woodman",
-      "club": "Liverpool",
-      "shirtNumber": 3,
-      "name": "Kostas Tsimikas",
-      "position": "Sol bek",
-      "attack": 73,
-      "defense": 74,
-      "overall": 76
-    },
-    {
-      "id": "liverpool-ryan-gravenberch",
-      "club": "Liverpool",
-      "shirtNumber": 13,
-      "name": "Ryan Gravenberch",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 85
     },
     {
       "id": "liverpool-alexis-mac-allister",
@@ -2324,24 +2314,14 @@
       "overall": 84
     },
     {
-      "id": "liverpool-wataru-endo",
+      "id": "liverpool-ryan-gravenberch",
       "club": "Liverpool",
-      "shirtNumber": 16,
-      "name": "Wataru Endo",
+      "shirtNumber": 13,
+      "name": "Ryan Gravenberch",
       "position": "Merkez orta saha",
       "attack": 1,
       "defense": 1,
-      "overall": 78
-    },
-    {
-      "id": "liverpool-florian-wirtz",
-      "club": "Liverpool",
-      "shirtNumber": 15,
-      "name": "Florian Wirtz",
-      "position": "Ofansif orta saha",
-      "attack": 86,
-      "defense": 1,
-      "overall": 86
+      "overall": 85
     },
     {
       "id": "liverpool-dominik-szoboszlai",
@@ -2354,6 +2334,26 @@
       "overall": 86
     },
     {
+      "id": "liverpool-florian-wirtz",
+      "club": "Liverpool",
+      "shirtNumber": 15,
+      "name": "Florian Wirtz",
+      "position": "Ofansif orta saha",
+      "attack": 86,
+      "defense": 1,
+      "overall": 86
+    },
+    {
+      "id": "liverpool-wataru-endo",
+      "club": "Liverpool",
+      "shirtNumber": 16,
+      "name": "Wataru Endo",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 78
+    },
+    {
       "id": "liverpool-federico-chiesa",
       "club": "Liverpool",
       "shirtNumber": 17,
@@ -2362,16 +2362,6 @@
       "attack": 75,
       "defense": 1,
       "overall": 80
-    },
-    {
-      "id": "liverpool-giovanni-leoni",
-      "club": "Liverpool",
-      "shirtNumber": 8,
-      "name": "Bradley Barcola",
-      "position": "Sol kanat",
-      "attack": 78,
-      "defense": 1,
-      "overall": 85
     },
     {
       "id": "liverpool-cody-gakpo",
@@ -2424,14 +2414,14 @@
       "overall": 82
     },
     {
-      "id": "atletico-madrid-david-hancko",
+      "id": "atletico-madrid-salvador-esquivel",
       "club": "Atlético Madrid",
-      "shirtNumber": 5,
-      "name": "Dávid Hancko",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Salvador Esquivel",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 83,
-      "overall": 83
+      "defense": 64,
+      "overall": 64
     },
     {
       "id": "atletico-madrid-cristian-romero",
@@ -2444,6 +2434,16 @@
       "overall": 82
     },
     {
+      "id": "atletico-madrid-david-hancko",
+      "club": "Atlético Madrid",
+      "shirtNumber": 5,
+      "name": "Dávid Hancko",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 83
+    },
+    {
       "id": "atletico-madrid-robin-le-normand",
       "club": "Atlético Madrid",
       "shirtNumber": 6,
@@ -2452,16 +2452,6 @@
       "attack": 1,
       "defense": 81,
       "overall": 81
-    },
-    {
-      "id": "atletico-madrid-marcos-llorente",
-      "club": "Atlético Madrid",
-      "shirtNumber": 10,
-      "name": "Marcos Llorente",
-      "position": "Sağ bek",
-      "attack": 80,
-      "defense": 79,
-      "overall": 85
     },
     {
       "id": "atletico-madrid-marc-pubill",
@@ -2484,24 +2474,24 @@
       "overall": 85
     },
     {
-      "id": "atletico-madrid-morten-hjulmand",
+      "id": "atletico-madrid-arnau-sola",
       "club": "Atlético Madrid",
-      "shirtNumber": 14,
-      "name": "Morten Hjulmand",
-      "position": "Merkez orta saha",
-      "attack": 1,
+      "shirtNumber": 9,
+      "name": "Giuliano",
+      "position": "Sağ kanat",
+      "attack": 75,
       "defense": 1,
-      "overall": 83
+      "overall": 82
     },
     {
-      "id": "atletico-madrid-pablo-barrios",
+      "id": "atletico-madrid-marcos-llorente",
       "club": "Atlético Madrid",
-      "shirtNumber": 12,
-      "name": "Pablo Barrios",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 83
+      "shirtNumber": 10,
+      "name": "Marcos Llorente",
+      "position": "Sağ bek",
+      "attack": 80,
+      "defense": 79,
+      "overall": 85
     },
     {
       "id": "atletico-madrid-koke",
@@ -2514,12 +2504,52 @@
       "overall": 81
     },
     {
+      "id": "atletico-madrid-pablo-barrios",
+      "club": "Atlético Madrid",
+      "shirtNumber": 12,
+      "name": "Pablo Barrios",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 83
+    },
+    {
       "id": "atletico-madrid-johnny-cardoso",
       "club": "Atlético Madrid",
       "shirtNumber": 13,
       "name": "Johnny Cardoso",
       "position": "Merkez orta saha",
       "attack": 1,
+      "defense": 1,
+      "overall": 80
+    },
+    {
+      "id": "atletico-madrid-morten-hjulmand",
+      "club": "Atlético Madrid",
+      "shirtNumber": 14,
+      "name": "Morten Hjulmand",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 83
+    },
+    {
+      "id": "atletico-madrid-alex-baena",
+      "club": "Atlético Madrid",
+      "shirtNumber": 15,
+      "name": "Álex Baena",
+      "position": "Ofansif orta saha",
+      "attack": 83,
+      "defense": 1,
+      "overall": 83
+    },
+    {
+      "id": "atletico-madrid-kang-in-lee",
+      "club": "Atlético Madrid",
+      "shirtNumber": 16,
+      "name": "Kang-in Lee",
+      "position": "Ofansif orta saha",
+      "attack": 81,
       "defense": 1,
       "overall": 80
     },
@@ -2532,46 +2562,6 @@
       "attack": 1,
       "defense": 1,
       "overall": 72
-    },
-    {
-      "id": "atletico-madrid-arnau-sola",
-      "club": "Atlético Madrid",
-      "shirtNumber": 9,
-      "name": "Giuliano",
-      "position": "Sağ kanat",
-      "attack": 75,
-      "defense": 1,
-      "overall": 82
-    },
-    {
-      "id": "atletico-madrid-kang-in-lee",
-      "club": "Atlético Madrid",
-      "shirtNumber": 16,
-      "name": "Kang-in Lee",
-      "position": "Sağ kanat",
-      "attack": 81,
-      "defense": 1,
-      "overall": 80
-    },
-    {
-      "id": "atletico-madrid-alex-baena",
-      "club": "Atlético Madrid",
-      "shirtNumber": 15,
-      "name": "Álex Baena",
-      "position": "Sol kanat",
-      "attack": 83,
-      "defense": 1,
-      "overall": 83
-    },
-    {
-      "id": "atletico-madrid-ademola-lookman",
-      "club": "Atlético Madrid",
-      "shirtNumber": 20,
-      "name": "Ademola Lookman",
-      "position": "Sol kanat",
-      "attack": 73,
-      "defense": 1,
-      "overall": 83
     },
     {
       "id": "atletico-madrid-julian-alvarez",
@@ -2594,14 +2584,24 @@
       "overall": 83
     },
     {
-      "id": "atletico-madrid-salvador-esquivel",
+      "id": "atletico-madrid-ademola-lookman",
       "club": "Atlético Madrid",
-      "shirtNumber": 3,
-      "name": "Jonathan David",
-      "position": "Santrfor",
-      "attack": 79,
+      "shirtNumber": 20,
+      "name": "Ademola Lookman",
+      "position": "Sol kanat",
+      "attack": 73,
       "defense": 1,
-      "overall": 80
+      "overall": 83
+    },
+    {
+      "id": "juventus-mattia-perin",
+      "club": "Juventus",
+      "shirtNumber": 1,
+      "name": "Mattia Perin",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 76,
+      "overall": 76
     },
     {
       "id": "juventus-michele-di-gregorio",
@@ -2634,16 +2634,6 @@
       "overall": 86
     },
     {
-      "id": "juventus-pierre-kalulu",
-      "club": "Juventus",
-      "shirtNumber": 8,
-      "name": "Pierre Kalulu",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 83,
-      "overall": 81
-    },
-    {
       "id": "juventus-federico-gatti",
       "club": "Juventus",
       "shirtNumber": 5,
@@ -2672,6 +2662,16 @@
       "attack": 72,
       "defense": 76,
       "overall": 79
+    },
+    {
+      "id": "juventus-pierre-kalulu",
+      "club": "Juventus",
+      "shirtNumber": 8,
+      "name": "Pierre Kalulu",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 81
     },
     {
       "id": "juventus-andrea-cambiaso",
@@ -2704,26 +2704,6 @@
       "overall": 84
     },
     {
-      "id": "juventus-khephren-thuram",
-      "club": "Juventus",
-      "shirtNumber": 14,
-      "name": "Khephren Thuram",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 81
-    },
-    {
-      "id": "juventus-weston-mckennie",
-      "club": "Juventus",
-      "shirtNumber": 16,
-      "name": "Weston McKennie",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 80
-    },
-    {
       "id": "juventus-douglas-luiz",
       "club": "Juventus",
       "shirtNumber": 12,
@@ -2744,14 +2724,14 @@
       "overall": 78
     },
     {
-      "id": "juventus-francisco-conceicao",
+      "id": "juventus-khephren-thuram",
       "club": "Juventus",
-      "shirtNumber": 17,
-      "name": "Francisco Conceição",
-      "position": "Sağ kanat",
-      "attack": 76,
+      "shirtNumber": 14,
+      "name": "Khephren Thuram",
+      "position": "Merkez orta saha",
+      "attack": 1,
       "defense": 1,
-      "overall": 80
+      "overall": 81
     },
     {
       "id": "juventus-fabio-miretti",
@@ -2764,6 +2744,26 @@
       "overall": 78
     },
     {
+      "id": "juventus-weston-mckennie",
+      "club": "Juventus",
+      "shirtNumber": 16,
+      "name": "Weston McKennie",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 80
+    },
+    {
+      "id": "juventus-francisco-conceicao",
+      "club": "Juventus",
+      "shirtNumber": 17,
+      "name": "Francisco Conceição",
+      "position": "Sağ kanat",
+      "attack": 76,
+      "defense": 1,
+      "overall": 80
+    },
+    {
       "id": "juventus-kenan-yldz",
       "club": "Juventus",
       "shirtNumber": 18,
@@ -2774,22 +2774,12 @@
       "overall": 84
     },
     {
-      "id": "juventus-mattia-perin",
-      "club": "Juventus",
-      "shirtNumber": 1,
-      "name": "Nico González",
-      "position": "Sol kanat",
-      "attack": 74,
-      "defense": 1,
-      "overall": 79
-    },
-    {
       "id": "juventus-jonathan-david",
       "club": "Juventus",
       "shirtNumber": 19,
-      "name": "Nick Woltemade",
+      "name": "Jonathan David",
       "position": "Santrfor",
-      "attack": 80,
+      "attack": 79,
       "defense": 1,
       "overall": 80
     },
@@ -2824,14 +2814,14 @@
       "overall": 76
     },
     {
-      "id": "manchester-united-harry-maguire",
+      "id": "manchester-united-tom-heaton",
       "club": "Manchester United",
-      "shirtNumber": 5,
-      "name": "Harry Maguire",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Tom Heaton",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 83,
-      "overall": 82
+      "defense": 67,
+      "overall": 67
     },
     {
       "id": "manchester-united-matthijs-de-ligt",
@@ -2844,6 +2834,16 @@
       "overall": 82
     },
     {
+      "id": "manchester-united-harry-maguire",
+      "club": "Manchester United",
+      "shirtNumber": 5,
+      "name": "Harry Maguire",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 82
+    },
+    {
       "id": "manchester-united-lisandro-martinez",
       "club": "Manchester United",
       "shirtNumber": 6,
@@ -2852,16 +2852,6 @@
       "attack": 1,
       "defense": 82,
       "overall": 82
-    },
-    {
-      "id": "manchester-united-leny-yoro",
-      "club": "Manchester United",
-      "shirtNumber": 10,
-      "name": "Leny Yoro",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 79,
-      "overall": 78
     },
     {
       "id": "manchester-united-noussair-mazraoui",
@@ -2894,34 +2884,14 @@
       "overall": 79
     },
     {
-      "id": "manchester-united-youri-tielemans",
+      "id": "manchester-united-leny-yoro",
       "club": "Manchester United",
-      "shirtNumber": 14,
-      "name": "Youri Tielemans",
-      "position": "Merkez orta saha",
+      "shirtNumber": 10,
+      "name": "Leny Yoro",
+      "position": "Stoper",
       "attack": 1,
-      "defense": 1,
-      "overall": 85
-    },
-    {
-      "id": "manchester-united-carlos-baleba",
-      "club": "Manchester United",
-      "shirtNumber": 16,
-      "name": "Kobbie Mainoo",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 81
-    },
-    {
-      "id": "manchester-united-andrey-santos",
-      "club": "Manchester United",
-      "shirtNumber": 13,
-      "name": "Andrey Santos",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 80
+      "defense": 79,
+      "overall": 78
     },
     {
       "id": "manchester-united-bruno-fernandes",
@@ -2944,14 +2914,44 @@
       "overall": 78
     },
     {
-      "id": "manchester-united-bryan-mbeumo",
+      "id": "manchester-united-andrey-santos",
       "club": "Manchester United",
-      "shirtNumber": 18,
-      "name": "Bryan Mbeumo",
-      "position": "Sağ kanat",
-      "attack": 78,
+      "shirtNumber": 13,
+      "name": "Andrey Santos",
+      "position": "Merkez orta saha",
+      "attack": 1,
       "defense": 1,
-      "overall": 84
+      "overall": 80
+    },
+    {
+      "id": "manchester-united-youri-tielemans",
+      "club": "Manchester United",
+      "shirtNumber": 14,
+      "name": "Youri Tielemans",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 85
+    },
+    {
+      "id": "manchester-united-manuel-ugarte",
+      "club": "Manchester United",
+      "shirtNumber": 15,
+      "name": "Manuel Ugarte",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 77
+    },
+    {
+      "id": "manchester-united-carlos-baleba",
+      "club": "Manchester United",
+      "shirtNumber": 16,
+      "name": "Kobbie Mainoo",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 81
     },
     {
       "id": "manchester-united-amad-diallo",
@@ -2964,6 +2964,16 @@
       "overall": 79
     },
     {
+      "id": "manchester-united-bryan-mbeumo",
+      "club": "Manchester United",
+      "shirtNumber": 18,
+      "name": "Bryan Mbeumo",
+      "position": "Sağ kanat",
+      "attack": 78,
+      "defense": 1,
+      "overall": 84
+    },
+    {
       "id": "manchester-united-matheus-cunha",
       "club": "Manchester United",
       "shirtNumber": 19,
@@ -2972,16 +2982,6 @@
       "attack": 79,
       "defense": 1,
       "overall": 84
-    },
-    {
-      "id": "manchester-united-tom-heaton",
-      "club": "Manchester United",
-      "shirtNumber": 3,
-      "name": "Marcus Rashford",
-      "position": "Sol kanat",
-      "attack": 78,
-      "defense": 1,
-      "overall": 82
     },
     {
       "id": "manchester-united-benjamin-sesko",
@@ -2994,14 +2994,14 @@
       "overall": 82
     },
     {
-      "id": "manchester-united-manuel-ugarte",
-      "club": "Manchester United",
-      "shirtNumber": 15,
-      "name": "Joshua Zirkzee",
-      "position": "Santrfor",
-      "attack": 76,
+      "id": "yeni-oyuncu-1791975861169",
+      "club": "Galatasaray",
+      "shirtNumber": 6,
+      "name": "Rafael Leão",
+      "position": "Sol kanat",
+      "attack": 79,
       "defense": 1,
-      "overall": 77
+      "overall": 83
     },
     {
       "id": "karma-takım-oyuncu-01",
@@ -3044,16 +3044,6 @@
       "overall": 83
     },
     {
-      "id": "karma-takım-daniel-mu-oz",
-      "club": "Karma Takım",
-      "shirtNumber": 21,
-      "name": "Daniel Muñoz",
-      "position": "Sağ bek",
-      "attack": 73,
-      "defense": 80,
-      "overall": 82
-    },
-    {
       "id": "karma-takım-oyuncu-05",
       "club": "Karma Takım",
       "shirtNumber": 5,
@@ -3061,16 +3051,6 @@
       "position": "Sol bek",
       "attack": 82,
       "defense": 76,
-      "overall": 83
-    },
-    {
-      "id": "karma-takım-maximilian-mittelst-dt",
-      "club": "Karma Takım",
-      "shirtNumber": 22,
-      "name": "Maximilian Mittelstädt",
-      "position": "Sol bek",
-      "attack": 79,
-      "defense": 80,
       "overall": 83
     },
     {
@@ -3104,14 +3084,14 @@
       "overall": 84
     },
     {
-      "id": "karma-takım-gianluca-mancini",
+      "id": "karma-takım-oyuncu-09",
       "club": "Karma Takım",
-      "shirtNumber": 23,
-      "name": "Gianluca Mancini",
-      "position": "Stoper",
+      "shirtNumber": 9,
+      "name": "Felix Nmecha",
+      "position": "Merkez orta saha",
       "attack": 1,
-      "defense": 85,
-      "overall": 84
+      "defense": 1,
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-10",
@@ -3144,16 +3124,6 @@
       "overall": 85
     },
     {
-      "id": "karma-takım-r-ben-neves",
-      "club": "Karma Takım",
-      "shirtNumber": 24,
-      "name": "Rúben Neves",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 85
-    },
-    {
       "id": "karma-takım-oyuncu-13",
       "club": "Karma Takım",
       "shirtNumber": 13,
@@ -3174,24 +3144,14 @@
       "overall": 89
     },
     {
-      "id": "karma-takım-nico-paz",
+      "id": "karma-takım-oyuncu-15",
       "club": "Karma Takım",
-      "shirtNumber": 25,
-      "name": "Nico Paz",
+      "shirtNumber": 15,
+      "name": "Antoine Griezmann",
       "position": "Ofansif orta saha",
-      "attack": 79,
-      "defense": 1,
-      "overall": 84
-    },
-    {
-      "id": "karma-takım-john-mcginn",
-      "club": "Karma Takım",
-      "shirtNumber": 26,
-      "name": "Ángel Di María",
-      "position": "Sağ kanat",
       "attack": 85,
       "defense": 1,
-      "overall": 82
+      "overall": 84
     },
     {
       "id": "karma-takım-oyuncu-16",
@@ -3214,16 +3174,6 @@
       "overall": 84
     },
     {
-      "id": "karma-takım-sadio-man-",
-      "club": "Karma Takım",
-      "shirtNumber": 27,
-      "name": "Sadio Mané",
-      "position": "Sol kanat",
-      "attack": 78,
-      "defense": 1,
-      "overall": 82
-    },
-    {
       "id": "karma-takım-oyuncu-18",
       "club": "Karma Takım",
       "shirtNumber": 18,
@@ -3234,14 +3184,14 @@
       "overall": 84
     },
     {
-      "id": "karma-takım-oyuncu-15",
+      "id": "karma-takım-oyuncu-19",
       "club": "Karma Takım",
-      "shirtNumber": 15,
-      "name": "Antoine Griezmann",
+      "shirtNumber": 19,
+      "name": "Serhou Guirassy",
       "position": "Santrfor",
       "attack": 85,
       "defense": 1,
-      "overall": 84
+      "overall": 85
     },
     {
       "id": "karma-takım-oyuncu-20",
@@ -3272,6 +3222,16 @@
       "attack": 1,
       "defense": 78,
       "overall": 78
+    },
+    {
+      "id": "chelsea-oyuncu-03",
+      "club": "Chelsea",
+      "shirtNumber": 3,
+      "name": "Gabriel Slonina",
+      "position": "Kaleci",
+      "attack": 1,
+      "defense": 68,
+      "overall": 68
     },
     {
       "id": "chelsea-oyuncu-04",
@@ -3354,6 +3314,16 @@
       "overall": 86
     },
     {
+      "id": "chelsea-oyuncu-12",
+      "club": "Chelsea",
+      "shirtNumber": 12,
+      "name": "Morgan Rogers",
+      "position": "Merkez orta saha",
+      "attack": 1,
+      "defense": 1,
+      "overall": 84
+    },
+    {
       "id": "chelsea-oyuncu-13",
       "club": "Chelsea",
       "shirtNumber": 13,
@@ -3374,16 +3344,6 @@
       "overall": 78
     },
     {
-      "id": "chelsea-oyuncu-03",
-      "club": "Chelsea",
-      "shirtNumber": 3,
-      "name": "Roméo Lavia",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 78
-    },
-    {
       "id": "chelsea-oyuncu-15",
       "club": "Chelsea",
       "shirtNumber": 15,
@@ -3392,16 +3352,6 @@
       "attack": 85,
       "defense": 1,
       "overall": 85
-    },
-    {
-      "id": "chelsea-oyuncu-12",
-      "club": "Chelsea",
-      "shirtNumber": 12,
-      "name": "Morgan Rogers",
-      "position": "Ofansif orta saha",
-      "attack": 82,
-      "defense": 1,
-      "overall": 84
     },
     {
       "id": "chelsea-oyuncu-16",
@@ -3434,16 +3384,6 @@
       "overall": 75
     },
     {
-      "id": "chelsea-oyuncu-20",
-      "club": "Chelsea",
-      "shirtNumber": 20,
-      "name": "João Pedro",
-      "position": "Santrfor",
-      "attack": 83,
-      "defense": 1,
-      "overall": 83
-    },
-    {
       "id": "chelsea-oyuncu-19",
       "club": "Chelsea",
       "shirtNumber": 19,
@@ -3452,6 +3392,16 @@
       "attack": 82,
       "defense": 1,
       "overall": 80
+    },
+    {
+      "id": "chelsea-oyuncu-20",
+      "club": "Chelsea",
+      "shirtNumber": 20,
+      "name": "João Pedro",
+      "position": "Santrfor",
+      "attack": 83,
+      "defense": 1,
+      "overall": 83
     },
     {
       "id": "napoli-oyuncu-01",
@@ -3474,44 +3424,14 @@
       "overall": 80
     },
     {
-      "id": "napoli-oyuncu-08",
+      "id": "napoli-oyuncu-03",
       "club": "Napoli",
-      "shirtNumber": 8,
-      "name": "Amir Rrahmani",
-      "position": "Stoper",
+      "shirtNumber": 3,
+      "name": "Nikita Contini",
+      "position": "Kaleci",
       "attack": 1,
-      "defense": 84,
-      "overall": 83
-    },
-    {
-      "id": "napoli-oyuncu-09",
-      "club": "Napoli",
-      "shirtNumber": 9,
-      "name": "Alessandro Buongiorno",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 83,
-      "overall": 81
-    },
-    {
-      "id": "napoli-oyuncu-10",
-      "club": "Napoli",
-      "shirtNumber": 10,
-      "name": "Sam Beukema",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 80,
-      "overall": 78
-    },
-    {
-      "id": "napoli-oyuncu-11",
-      "club": "Napoli",
-      "shirtNumber": 11,
-      "name": "Benoît Badiashile",
-      "position": "Stoper",
-      "attack": 1,
-      "defense": 76,
-      "overall": 76
+      "defense": 67,
+      "overall": 67
     },
     {
       "id": "napoli-oyuncu-04",
@@ -3554,6 +3474,46 @@
       "overall": 77
     },
     {
+      "id": "napoli-oyuncu-08",
+      "club": "Napoli",
+      "shirtNumber": 8,
+      "name": "Amir Rrahmani",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 84,
+      "overall": 83
+    },
+    {
+      "id": "napoli-oyuncu-09",
+      "club": "Napoli",
+      "shirtNumber": 9,
+      "name": "Alessandro Buongiorno",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 83,
+      "overall": 81
+    },
+    {
+      "id": "napoli-oyuncu-10",
+      "club": "Napoli",
+      "shirtNumber": 10,
+      "name": "Sam Beukema",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 80,
+      "overall": 78
+    },
+    {
+      "id": "napoli-oyuncu-11",
+      "club": "Napoli",
+      "shirtNumber": 11,
+      "name": "Benoît Badiashile",
+      "position": "Stoper",
+      "attack": 1,
+      "defense": 76,
+      "overall": 76
+    },
+    {
       "id": "napoli-oyuncu-12",
       "club": "Napoli",
       "shirtNumber": 12,
@@ -3582,16 +3542,6 @@
       "attack": 1,
       "defense": 1,
       "overall": 82
-    },
-    {
-      "id": "napoli-oyuncu-03",
-      "club": "Napoli",
-      "shirtNumber": 3,
-      "name": "Billy Gilmour",
-      "position": "Merkez orta saha",
-      "attack": 1,
-      "defense": 1,
-      "overall": 75
     },
     {
       "id": "napoli-oyuncu-15",
@@ -3634,16 +3584,6 @@
       "overall": 79
     },
     {
-      "id": "napoli-oyuncu-20",
-      "club": "Napoli",
-      "shirtNumber": 20,
-      "name": "Rasmus Højlund",
-      "position": "Santrfor",
-      "attack": 78,
-      "defense": 1,
-      "overall": 78
-    },
-    {
       "id": "napoli-oyuncu-19",
       "club": "Napoli",
       "shirtNumber": 19,
@@ -3652,6 +3592,16 @@
       "attack": 77,
       "defense": 1,
       "overall": 75
+    },
+    {
+      "id": "napoli-oyuncu-20",
+      "club": "Napoli",
+      "shirtNumber": 20,
+      "name": "Rasmus Højlund",
+      "position": "Santrfor",
+      "attack": 78,
+      "defense": 1,
+      "overall": 78
     }
   ]
 }
