@@ -159,56 +159,55 @@ function simulateMatch(home,away){
  let winner=null;
 
  // 1. Omurga üstünlüğü: GK + en iyi CB + en iyi CM + CAM + ST; taktik bonusu uygulanmaz.
- if(h.spineTotal-a.spineTotal>=12){addGoal(home,h,'1. Omurga üstünlüğü (12+ Overall)');winner=teamLabel(home)}
- else if(a.spineTotal-h.spineTotal>=12){addGoal(away,a,'1. Omurga üstünlüğü (12+ Overall)');winner=teamLabel(away)}
- addAudit('1. Omurga üstünlüğü',h.spineTotal,a.spineTotal,12,'Taktik bonusu uygulanmaz','Taktik bonusu uygulanmaz',winner);
+ if(h.spineTotal-a.spineTotal>=9){addGoal(home,h,'1. Omurga üstünlüğü (9+ Overall)');winner=teamLabel(home)}
+ else if(a.spineTotal-h.spineTotal>=9){addGoal(away,a,'1. Omurga üstünlüğü (9+ Overall)');winner=teamLabel(away)}
+ addAudit('1. Omurga üstünlüğü',h.spineTotal,a.spineTotal,9,'Taktik bonusu uygulanmaz','Taktik bonusu uygulanmaz',winner);
 
- // 2. Takım Overall üstünlüğü: ev sahibi düşükse +30 Overall; taktik bonusu uygulanmaz.
- const hOverall=h.overallTotal+(h.overallTotal<a.overallTotal?30:0);
+ // 2. Takım Overall üstünlüğü: tüm ev sahiplerine +18 Overall; taktik bonusu uygulanmaz.
+ const hOverall=h.overallTotal+18;
  const aOverall=a.overallTotal;
- const hOverallEffects=[h.overallTotal<a.overallTotal?'+30 ev sahibi telafi bonusu':''].filter(Boolean);
+ const hOverallEffects=['+18 ev sahibi bonusu'];
  winner=null;
- if(hOverall-aOverall>=20){addGoal(home,h,'2. Takım Overall üstünlüğü (20+ Overall)');winner=teamLabel(home)}
- else if(aOverall-hOverall>=20){addGoal(away,a,'2. Takım Overall üstünlüğü (20+ Overall)');winner=teamLabel(away)}
- addAudit('2. Takım Overall üstünlüğü',hOverall,aOverall,20,hOverallEffects.join(', ')||'Ek etki yok','Taktik bonusu uygulanmaz',winner);
+ if(hOverall-aOverall>=12){addGoal(home,h,'2. Takım Overall üstünlüğü (12+ Overall)');winner=teamLabel(home)}
+ else if(aOverall-hOverall>=12){addGoal(away,a,'2. Takım Overall üstünlüğü (12+ Overall)');winner=teamLabel(away)}
+ addAudit('2. Takım Overall üstünlüğü',hOverall,aOverall,12,hOverallEffects.join(', ')||'Ek etki yok','Taktik bonusu uygulanmaz',winner);
 
- // 3. Savunma üstünlüğü: Defansif +15 DEF, Uzun Top +10 DEF; rakibin Önde Pres'i -10 DEF.
- const hDefEffects=[home.tactic==='defensive'?'+15 Defansif':'',home.passFocus==='longBall'?'+10 Uzun Top':'',away.pressType==='highPress'?'−10 rakibin Önde Pres’i':''].filter(Boolean);
- const aDefEffects=[away.tactic==='defensive'?'+15 Defansif':'',away.passFocus==='longBall'?'+10 Uzun Top':'',home.pressType==='highPress'?'−10 rakibin Önde Pres’i':''].filter(Boolean);
- const hDef=h.defenseTotal+Number(home.tactic==='defensive'?15:0)+Number(home.passFocus==='longBall'?10:0)-Number(away.pressType==='highPress'?10:0);
- const aDef=a.defenseTotal+Number(away.tactic==='defensive'?15:0)+Number(away.passFocus==='longBall'?10:0)-Number(home.pressType==='highPress'?10:0);
+ // 3. Savunma üstünlüğü: Defansif +15 DEF, Uzun Top +12 DEF; rakibin Önde Pres'i -10 DEF.
+ const hDefEffects=[home.tactic==='defensive'?'+15 Defansif':'',home.passFocus==='longBall'?'+12 Uzun Top':'',away.pressType==='highPress'?'−10 rakibin Önde Pres’i':''].filter(Boolean);
+ const aDefEffects=[away.tactic==='defensive'?'+15 Defansif':'',away.passFocus==='longBall'?'+12 Uzun Top':'',home.pressType==='highPress'?'−10 rakibin Önde Pres’i':''].filter(Boolean);
+ const hDef=h.defenseTotal+Number(home.tactic==='defensive'?15:0)+Number(home.passFocus==='longBall'?12:0)-Number(away.pressType==='highPress'?10:0);
+ const aDef=a.defenseTotal+Number(away.tactic==='defensive'?15:0)+Number(away.passFocus==='longBall'?12:0)-Number(home.pressType==='highPress'?10:0);
  winner=null;
- if(hDef-aDef>=18){addGoal(home,h,'3. Savunma üstünlüğü (18+ DEF)');winner=teamLabel(home)}
- else if(aDef-hDef>=18){addGoal(away,a,'3. Savunma üstünlüğü (18+ DEF)');winner=teamLabel(away)}
- addAudit('3. Savunma üstünlüğü',hDef,aDef,18,hDefEffects.join(', ')||'Ek etki yok',aDefEffects.join(', ')||'Ek etki yok',winner);
+ if(hDef-aDef>=15){addGoal(home,h,'3. Savunma üstünlüğü (15+ DEF)');winner=teamLabel(home)}
+ else if(aDef-hDef>=15){addGoal(away,a,'3. Savunma üstünlüğü (15+ DEF)');winner=teamLabel(away)}
+ addAudit('3. Savunma üstünlüğü',hDef,aDef,15,hDefEffects.join(', ')||'Ek etki yok',aDefEffects.join(', ')||'Ek etki yok',winner);
 
- // 4. Orta saha üstünlüğü: Dengeli +10 Overall, Kısa Pas +6 Overall; rakibin Orta Alanda Karşıla'sı -6 Overall.
- const hMidEffects=[home.tactic==='balanced'?'+10 Dengeli':'',home.passFocus==='shortPass'?'+6 Kısa Pas':'',away.pressType==='midBlock'?'−6 rakibin Orta Alanda Karşıla presi':''].filter(Boolean);
- const aMidEffects=[away.tactic==='balanced'?'+10 Dengeli':'',away.passFocus==='shortPass'?'+6 Kısa Pas':'',home.pressType==='midBlock'?'−6 rakibin Orta Alanda Karşıla presi':''].filter(Boolean);
- const hMid=h.midfieldTotal+Number(home.tactic==='balanced'?10:0)+Number(home.passFocus==='shortPass'?6:0)-Number(away.pressType==='midBlock'?6:0);
- const aMid=a.midfieldTotal+Number(away.tactic==='balanced'?10:0)+Number(away.passFocus==='shortPass'?6:0)-Number(home.pressType==='midBlock'?6:0);
+ // 4. Orta saha üstünlüğü: Dengeli +15 Overall, Kısa Pas +12 Overall; rakibin Orta Alanda Karşıla'sı -10 Overall.
+ const hMidEffects=[home.tactic==='balanced'?'+15 Dengeli':'',home.passFocus==='shortPass'?'+12 Kısa Pas':'',away.pressType==='midBlock'?'−10 rakibin Orta Alanda Karşıla presi':''].filter(Boolean);
+ const aMidEffects=[away.tactic==='balanced'?'+15 Dengeli':'',away.passFocus==='shortPass'?'+12 Kısa Pas':'',home.pressType==='midBlock'?'−10 rakibin Orta Alanda Karşıla presi':''].filter(Boolean);
+ const hMid=h.midfieldTotal+Number(home.tactic==='balanced'?15:0)+Number(home.passFocus==='shortPass'?12:0)-Number(away.pressType==='midBlock'?10:0);
+ const aMid=a.midfieldTotal+Number(away.tactic==='balanced'?15:0)+Number(away.passFocus==='shortPass'?12:0)-Number(home.pressType==='midBlock'?10:0);
  winner=null;
  if(hMid-aMid>=9){addGoal(home,h,'4. Orta saha üstünlüğü (9+ Overall)');winner=teamLabel(home)}
  else if(aMid-hMid>=9){addGoal(away,a,'4. Orta saha üstünlüğü (9+ Overall)');winner=teamLabel(away)}
  addAudit('4. Orta saha üstünlüğü',hMid,aMid,9,hMidEffects.join(', ')||'Ek etki yok',aMidEffects.join(', ')||'Ek etki yok',winner);
 
- // 5. Hücum üçlüsü üstünlüğü: Hücum +10 ATT, Kanat Oyunu +6 ATT; rakibin Geride Karşıla'sı -6 ATT.
- const hAtkEffects=[home.tactic==='attacking'?'+10 Hücum':'',home.passFocus==='wingPlay'?'+6 Kanat Oyunu':'',away.pressType==='deepBlock'?'−6 rakibin Geride Karşıla presi':''].filter(Boolean);
- const aAtkEffects=[away.tactic==='attacking'?'+10 Hücum':'',away.passFocus==='wingPlay'?'+6 Kanat Oyunu':'',home.pressType==='deepBlock'?'−6 rakibin Geride Karşıla presi':''].filter(Boolean);
- const hAtk=h.attackTrioTotal+Number(home.tactic==='attacking'?10:0)+Number(home.passFocus==='wingPlay'?6:0)-Number(away.pressType==='deepBlock'?6:0);
- const aAtk=a.attackTrioTotal+Number(away.tactic==='attacking'?10:0)+Number(away.passFocus==='wingPlay'?6:0)-Number(home.pressType==='deepBlock'?6:0);
+ // 5. Hücum üçlüsü üstünlüğü: Hücum +15 ATT, Kanat Oyunu +12 ATT; rakibin Geride Karşıla'sı -10 ATT.
+ const hAtkEffects=[home.tactic==='attacking'?'+15 Hücum':'',home.passFocus==='wingPlay'?'+12 Kanat Oyunu':'',away.pressType==='deepBlock'?'−10 rakibin Geride Karşıla presi':''].filter(Boolean);
+ const aAtkEffects=[away.tactic==='attacking'?'+15 Hücum':'',away.passFocus==='wingPlay'?'+12 Kanat Oyunu':'',home.pressType==='deepBlock'?'−10 rakibin Geride Karşıla presi':''].filter(Boolean);
+ const hAtk=h.attackTrioTotal+Number(home.tactic==='attacking'?15:0)+Number(home.passFocus==='wingPlay'?12:0)-Number(away.pressType==='deepBlock'?10:0);
+ const aAtk=a.attackTrioTotal+Number(away.tactic==='attacking'?15:0)+Number(away.passFocus==='wingPlay'?12:0)-Number(home.pressType==='deepBlock'?10:0);
  winner=null;
- if(hAtk-aAtk>=9){addGoal(home,h,'5. Hücum üçlüsü üstünlüğü (9+ ATT)');winner=teamLabel(home)}
- else if(aAtk-hAtk>=9){addGoal(away,a,'5. Hücum üçlüsü üstünlüğü (9+ ATT)');winner=teamLabel(away)}
- addAudit('5. Hücum üçlüsü üstünlüğü',hAtk,aAtk,9,hAtkEffects.join(', ')||'Ek etki yok',aAtkEffects.join(', ')||'Ek etki yok',winner);
+ if(hAtk-aAtk>=12){addGoal(home,h,'5. Hücum üçlüsü üstünlüğü (12+ ATT)');winner=teamLabel(home)}
+ else if(aAtk-hAtk>=12){addGoal(away,a,'5. Hücum üçlüsü üstünlüğü (12+ ATT)');winner=teamLabel(away)}
+ addAudit('5. Hücum üçlüsü üstünlüğü',hAtk,aAtk,12,hAtkEffects.join(', ')||'Ek etki yok',aAtkEffects.join(', ')||'Ek etki yok',winner);
 
- // 6. Toplam hücum gücü: ev sahibi düşükse +17 ATT; bonus sonrası fark en az 12 ATT olmalı.
- let adjustedHomeAttack=h.totalAttack,rule6HomeEffects='Ek etki yok';
- if(h.totalAttack<a.totalAttack){adjustedHomeAttack+=17;rule6HomeEffects='+17 ev sahibi telafi bonusu';}
+ // 6. Toplam hücum gücü: tüm ev sahiplerine +15 ATT; bonus sonrası fark en az 9 ATT olmalı.
+ let adjustedHomeAttack=h.totalAttack+15,rule6HomeEffects='+15 ev sahibi bonusu';
  winner=null;
- if(adjustedHomeAttack-a.totalAttack>=12){addGoal(home,h,'6. Toplam hücum gücü (12+ ATT)');winner=teamLabel(home)}
- else if(a.totalAttack-adjustedHomeAttack>=12){addGoal(away,a,'6. Toplam hücum gücü (12+ ATT)');winner=teamLabel(away)}
- addAudit('6. Toplam hücum gücü',adjustedHomeAttack,a.totalAttack,12,rule6HomeEffects,'Ek etki yok',winner);
+ if(adjustedHomeAttack-a.totalAttack>=9){addGoal(home,h,'6. Toplam hücum gücü (9+ ATT)');winner=teamLabel(home)}
+ else if(a.totalAttack-adjustedHomeAttack>=9){addGoal(away,a,'6. Toplam hücum gücü (9+ ATT)');winner=teamLabel(away)}
+ addAudit('6. Toplam hücum gücü',adjustedHomeAttack,a.totalAttack,9,rule6HomeEffects,'Ek etki yok',winner);
  return {homeGoals,awayGoals,events,ruleAudit,tacticsApplied:{home:{tactic:home.tactic,passFocus:home.passFocus,pressType:home.pressType},away:{tactic:away.tactic,passFocus:away.passFocus,pressType:away.pressType}}};
 }
 function scoreTeam(team){

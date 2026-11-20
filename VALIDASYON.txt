@@ -28,3 +28,17 @@ Sınırlar:
 
 Yayın öncesi öneri:
 Önce test odasında 15/20/60 saniyelik süreleri, takas/koruma haklarının yanmasını, rastgele taktik atamasını, yeni üç kadroyu ve maç özeti açılımını birden fazla hesapla doğrulayın.
+
+## Son gol motoru güncellemesi
+- Omurga üstünlüğü: 9 Overall.
+- Takım Overall üstünlüğü: tüm ev sahiplerine +18 Overall; bonus sonrası 12 Overall eşik.
+- Savunma üstünlüğü: 15 DEF.
+- Orta saha üstünlüğü: 9 Overall.
+- Hücum üçlüsü üstünlüğü: 12 ATT.
+- Toplam hücum gücü: tüm ev sahiplerine +15 ATT; bonus sonrası 9 ATT eşik.
+- Taktik bonuslarının tamamı +15 (Defansif DEF, Dengeli Overall, Hücum ATT).
+- Pas bonuslarının tamamı +12 (Uzun Top DEF, Kısa Pas Overall, Kanat Oyunu ATT).
+- Pres cezalarının tamamı rakibe -10 (Geride Karşıla ATT, Orta Alanda Karşıla Overall, Önde Pres DEF).
+- Taktik/pas/pres bonusları yalnızca 3, 4 ve 5. gol kurallarına uygulanır.
+- Statik doğrulama: `node --check app.js` başarılı; ZIP bütünlük testi başarılı.
+- Bu kontrol canlı Firebase ortamında çok kullanıcılı uçtan uca test anlamına gelmez.
