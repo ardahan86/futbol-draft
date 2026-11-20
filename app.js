@@ -297,6 +297,39 @@ function renderRoom(){
  $('draftTeams').innerHTML=(room.memberOrder||[]).map(id=>{const sq=rosterFor(id);return `<div class="team-mini"><div><b>${esc(userName(id))}</b><small>${starterCount(room.picks||[],id)}/11 ilk 11</small></div><div class="progress"><i style="width:${starterCount(room.picks||[],id)/11*100}%"></i></div></div>`}).join('');
  renderSquad();renderLeague();syncPostDraftModal();
 }
+async function renderProtectionSwapReport(){
+ const box=$('persistentSwapReport');
+ if(!box)return;
+ if(!room||room.status!=='finished'){
+  box.innerHTML='<div class="empty-state">Koruma ve takas raporu, draft tamamlandıktan sonra oluşturulur.</div>';
+  return;
+ }
+ box.innerHTML='<div class="empty-state">Koruma ve takas kayıtları yükleniyor...</div>';
+ try{
+  const members=room.memberOrder||[],picks=room.picks||[],byId=new Map(picks.map(p=>[p.id,p]));
+  const secretsSnap=await getDocs(query(collection(db,'roomSecrets'),where('roomId','==',roomId)));
+  const protectedByUid=new Map();
+  secretsSnap.forEach(d=>{const data=d.data();protectedByUid.set(data.uid,[...new Set(data.protectedIds||[])]);});
+  const protectedRows=members.map(uid=>{
+   const ids=protectedByUid.get(uid)||[];
+   const names=ids.map(id=>byId.get(id)).filter(Boolean).map(p=>`${esc(p.name)} <small>(${esc(p.position)})</small>`);
+   return `<div class="rights-player-row"><b>${esc(userName(uid))}</b><span>${names.length?names.join(', '):'<span class="muted">Korunan futbolcu yok</span>'}</span></div>`;
+  }).join('');
+  const requests=room.swapRequests||[],completed=new Set(room.swapResults?.completedIds||[]);
+  const swaps=requests.map((r,i)=>{
+   const own=byId.get(r.ownId),target=byId.get(r.targetId),ok=completed.has(r.id);
+   const state=ok?'<span class="pill" style="color:#22c55e">Gerçekleşti</span>':'<span class="pill">İptal edildi</span>';
+   const reason=!ok?(protectedByUid.size&&[...(protectedByUid.values())].some(ids=>ids.includes(r.targetId))?'Hedef futbolcu korumalıydı veya talep çakıştı.':'Takas talebi sonuçlandırılamadı.'):'Başarılı takas';
+   return `<div class="fixture"><div class="fixture-meta">TAKAS TALEBİ ${i+1} · ${esc(userName(r.fromUid))}</div><div class="fixture-main"><span>${esc(own?.name||'Futbolcu')}</span><b>↔</b><span>${esc(target?.name||'Futbolcu')}</span></div><div class="rights-player-row"><span>${esc(r.position||own?.position||'')}</span>${state}</div><small class="muted">${reason}</small></div>`;
+  }).join('');
+  const result=room.swapResults||{};
+  box.innerHTML=`<section class="panel" style="margin:12px 0"><h3>♜ Koruma kayıtları</h3><div class="rights-player-list">${protectedRows||'<div class="empty-state">Koruma kaydı bulunamadı.</div>'}</div></section><section class="panel" style="margin:12px 0"><div class="panel-head"><h3>↔ Takas sonuçları</h3><span class="pill">${Number(result.completed||0)} başarılı · ${Number(result.cancelled||0)} iptal</span></div>${swaps||'<div class="empty-state">Bu odada takas talebi oluşturulmadı.</div>'}</section>`;
+ }catch(e){
+  console.error('Koruma/takas raporu yüklenemedi:',e);
+  box.innerHTML=`<div class="empty-state">Rapor yüklenemedi. Firebase okuma iznini kontrol et. <small>${esc(e.message||'')}</small></div>`;
+ }
+}
+
 function renderPlayerOptions(country){const panel=$('pickPanel');if(panel)panel.classList.remove('hidden');const avail=validPickCandidates(country,room?.picks||[],user?.uid,room?.memberOrder||[]).map(normalizePlayer);$('playerSelect').innerHTML=avail.map(p=>`<option value="${p.id}">${esc(p.name)} · ${esc(p.position)}</option>`).join('');$('pickBtn').disabled=!avail.length;$('pickBtn').textContent='Oyuncuyu seç';$('pickBtn').classList.remove('hidden');$('playerPreview').innerHTML=avail.length?playerCard(avail[0]):'<p>Bu takımda boş mevkiye uygun futbolcu yok. Bu el PAS sayılacak.</p>';if(!avail.length){setTimeout(()=>advanceEmptyCountry(country),350)}$('playerSelect').onchange=()=>{$('playerPreview').innerHTML=playerCard(players.find(p=>p.id===$('playerSelect').value))}}
 function playerCard(p){p=normalizePlayer(p||{});return `<div class="player-card"><div class="player-top"><div><b>${esc(p.name)}</b><small>${esc(p.club||p.country)} · ${esc(p.position)}</small></div></div></div>`}
 async function advanceEmptyCountry(club){if(!room||!roomRef)return;try{await runTransaction(db,async tx=>{const s=await tx.get(roomRef);if(!s.exists())return;const d=s.data(),pending=d.pendingPick;if(d.status!=='drafting'||!pending||pending.club!==club||d.memberOrder?.[d.turnIndex%d.memberOrder.length]!==pending.uid)return;const candidates=validPickCandidates(club,d.picks||[],pending.uid,d.memberOrder||[]);if(candidates.length)return;const at=Date.now(),next=nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex);tx.update(roomRef,{pendingPick:null,turnIndex:next,turnStartedAt:at,lastSpin:{...(d.lastSpin||{}),slice:club,at},updatedAt:serverTimestamp()})});}catch(e){console.error('Boş kulüp sonucu ilerletilemedi:',e)}}
@@ -922,6 +955,7 @@ function bindUI(){
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x===b));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('hidden',x!==target));
   if(b.dataset.pane==='draftPane')syncPostDraftModal();
+  if(b.dataset.pane==='swapReportPane')renderProtectionSwapReport();
  });
 }
 let resumeAttemptAt=0;
