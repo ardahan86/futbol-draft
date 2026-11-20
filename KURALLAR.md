@@ -2,7 +2,7 @@
 
 ## 1. Çark ve draft
 
-- Çarkta 18 kulüp/kadro dilimi, 2 PAS, 2 KORUMA ve 1 FUTBOLCU KAYBET dilimi bulunur (23 dilim).
+- Çarkta 18 kulüp/kadro dilimi, 2 PAS, 2 KORUMA, 1 TAKAS ve 1 FUTBOLCU KAYBET dilimi bulunur (24 dilim).
 - Karma Takım, Chelsea ve Napoli kadroları 20'şer oyuncudan oluşur.
 - Çarkı çevirme süresi 25 saniyedir. Süre dolarsa sistem otomatik çevirir.
 - Kulüp geldiğinde futbolcu seçme süresi 30 saniyedir. Süre dolarsa sistem uygun boş mevkiye rastgele futbolcu seçer.
@@ -21,6 +21,14 @@ Futbolcu seçilmez ve sıra sonraki uygun oyuncuya geçer.
 - Süre içinde onay vermeyen oyuncunun kullanılmamış koruma hakları yanar.
 - Koruma sistemi ve mevcut işleyişi korunmuştur.
 
+### TAKAS
+- TAKAS dilimine gelen oyuncu bir takas hakkı kazanır; her oyuncu en fazla 3 hak kazanabilir. Üst sınıra ulaşan oyuncu yeni TAKAS hakkı kazanmaz.
+- Draft bittikten ve koruma aşaması tamamlandıktan sonra tüm oyuncular için aynı anda 60 saniyelik takas penceresi açılır.
+- Oyuncu, rakip kadrodan bir futbolcu seçer ve karşılığında aynı mevkideki kendi futbolcusunu teklif eder.
+- Her takas hakkı için bir talep oluşturulabilir. Oyuncular taleplerini onaylar; tüm oyuncular onaylayınca veya 60 saniye dolunca talepler sonuçlandırılır.
+- Aynı futbolcu birden fazla talepte yer alırsa çakışan takaslar iptal edilir. Korunan futbolcuya yönelik takas da gerçekleşmez. Bu taleplerin hakları harcanır.
+- Başarılı takasta futbolcuların takımları ve ilk 11 mevki slotları karşılıklı değiştirilir.
+
 ### FUTBOLCU KAYBET
 - Bu dilime gelindiğinde sistem, çeviren oyuncunun mevcut kadrosundan rastgele bir futbolcu seçer.
 - Seçilen futbolcu kadrodan çıkarılır ve kendi orijinal takımının oyuncu havuzuna geri döner; yeniden seçilebilir.
@@ -30,10 +38,11 @@ Futbolcu seçilmez ve sıra sonraki uygun oyuncuya geçer.
 ## 3. Draft sonrası aşamalar
 
 1. Draft tamamlanınca bütün oyuncular için aynı anda 60 saniyelik koruma aşaması açılır.
-2. Koruma aşaması tamamlanınca doğrudan bütün oyuncular için aynı anda 60 saniyelik taktik seçim aşaması açılır.
-3. Her oyuncu bir taktik, bir pas tercihi ve bir pres tarzı seçer.
-4. Süre içinde seçim yapmayan oyuncu için sistem her kategoriden rastgele seçim yapar.
-5. Takas sistemi ve takas raporu kaldırılmıştır.
+2. Koruma aşaması tamamlanınca bütün oyuncular için aynı anda 60 saniyelik takas aşaması açılır.
+3. Takas aşaması tamamlanınca bütün oyuncular için aynı anda 60 saniyelik taktik seçim aşaması açılır.
+4. Her oyuncu bir taktik, bir pas tercihi ve bir pres tarzı seçer.
+5. Süre içinde seçim yapmayan oyuncu için sistem her kategoriden rastgele seçim yapar.
+
 
 ## 4. Gol kuralları
 

@@ -1,7 +1,7 @@
 # Futbol Draft – kurulum ve yayınlama
 
 ## İçerik
-- Mevcut `app.js`, `index.html`, `styles.css` ve `players.json` korunarak hesap akışı yenilendi.
+- `app.js`, `index.html`, `styles.css` ve `firestore.rules` güncel draft, koruma, takas ve taktik aşamalarını içerir.
 - E-posta veya kullanıcı adıyla giriş Cloud Function üzerinden yapılır.
 - E-posta doğrulanmamış hesaplar giriş yapamaz.
 - Kullanıcı adı çözümlemesi sunucuda yapılır; istemciye e-posta adresi ifşa edilmez.

@@ -596,3 +596,5 @@ body{background:radial-gradient(ellipse at 18% 5%,#193452 0,transparent 34%),rad
   .rights-player-row { min-height: 29px; font-size: .75rem; }
 }
 
+
+.rights-card.swap-card{border-color:rgba(99,166,255,.38);background:linear-gradient(145deg,rgba(20,43,65,.96),rgba(7,18,31,.98))}.swap-card .rights-icon{background:linear-gradient(145deg,#b9dcff,#4389c9);color:#071827;box-shadow:0 3px 12px rgba(75,151,220,.2)}.swap-card .rights-label{color:#a9d4ff}.swap-card strong{color:#9bcfff}.swap-card strong small{color:#809ab4}.rights-player-swap{color:#9bcfff}
