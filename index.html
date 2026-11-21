@@ -105,4 +105,13 @@
 <p><b>6. Toplam hücum gücü: +1 gol</b> İlk 11 toplam ATT puanına ev sahibi için +15 ATT eklenir. Bonus sonrası fark en az 9 ATT ise üstün takım +1 gol kazanır. Taktik, pas ve pres bonusları uygulanmaz.</p>
 <p><b>Maç özeti:</b> Fikstürde ilgili maçın altındaki Maç Özeti seçeneğiyle, açılır pencere olmadan maçın altında görüntülenir. Gol atan oyuncu kaleci hariç oyuncular arasından rastgele seçilir.</p>
 <p><b>Lig:</b> Çift devreli fikstür hazırlanır. Maçları oda sahibi veya admin simüle edebilir. Her sonuç puan tablosuna işlenir.</p>
-</div></div></div></div></section></main><div id="pickAnnouncement" class="pick-announcement hidden" role="status" aria-live="polite"></div><div id="toast" class="toast" role="status"></div><footer><span data-cms-key="footerText">FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA</span></footer><script type="module" src="app.js"></script></body></html>
+</div></div></div></div></section></main><div id="pickAnnouncement" class="pick-announcement hidden" role="status" aria-live="polite"></div><div id="toast" class="toast" role="status"></div><footer><span data-cms-key="footerText">FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA</span></footer><script>
+// Son güvenlik ağı: Uygulama modülü başlamazsa veya başlangıç akışı beklenmedik
+// biçimde durursa ziyaretçiyi sonsuz yükleme ekranında bırakma.
+window.setTimeout(function () {
+  document.documentElement.classList.remove('cms-loading');
+  var screen = document.getElementById('cmsBootScreen');
+  if (screen) screen.remove();
+}, 10000);
+</script>
+<script type="module" src="app.js"></script></body></html>
