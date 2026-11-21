@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, setPersistence, browserLocalPersistence, reload } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, getDocs, runTransaction, serverTimestamp, arrayUnion } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
-import { firebaseConfig, ADMIN_UID } from './firebase-config.js';
+import { firebaseConfig, ADMIN_UID, GITHUB_SYNC_WORKER_URL } from './firebase-config.js';
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 // Cloudflare Worker handles username/email login without Firebase Cloud Functions.
@@ -85,7 +85,8 @@ let user=null,profile=null,players=[],rooms=[],roomsUnsub=null,roomUnsub=null,ro
 const isAdmin=()=>!!user&&user.uid===ADMIN_UID;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// Admin-only site content manager. Published content is public-read; drafts are admin-only.
+// Unified admin design/content manager. Firestore stores draft/published config;
+// a separately deployed Cloudflare Worker mirrors published config to GitHub safely.
 const CMS_TEXT_SCHEMA=[
  {key:'heroHeadlineTop',label:'Ana sayfa büyük başlık · 1. satır',fallback:'SAHAYA ÇIK.'},
  {key:'heroHeadlineMiddle',label:'Ana sayfa büyük başlık · 2. satır',fallback:'TAKIMINI KUR.'},
@@ -114,36 +115,83 @@ const CMS_TEXT_SCHEMA=[
  {key:'footerText',label:'Alt bilgi metni',fallback:'FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA'}
 ];
 const CMS_COLOR_SCHEMA=[
- {key:'--bg',label:'Ana arka plan',fallback:'#080d18'},
- {key:'--panel',label:'Panel arka planı',fallback:'#111a2b'},
- {key:'--panel2',label:'İkincil panel',fallback:'#18253a'},
- {key:'--line',label:'Kenarlıklar',fallback:'#28384e'},
- {key:'--text',label:'Ana metin',fallback:'#f5f7fb'},
- {key:'--muted',label:'İkincil metin',fallback:'#9aa9bc'},
- {key:'--lime',label:'Ana vurgu rengi',fallback:'#b7f34b'},
- {key:'--blue',label:'İkincil vurgu',fallback:'#52a7ff'},
+ {key:'--bg',label:'Ana arka plan',fallback:'#080d18'}, {key:'--panel',label:'Panel arka planı',fallback:'#111a2b'},
+ {key:'--panel2',label:'İkincil panel',fallback:'#18253a'}, {key:'--line',label:'Kenarlıklar',fallback:'#28384e'},
+ {key:'--text',label:'Ana metin',fallback:'#f5f7fb'}, {key:'--muted',label:'İkincil metin',fallback:'#9aa9bc'},
+ {key:'--lime',label:'Ana vurgu rengi',fallback:'#b7f34b'}, {key:'--blue',label:'İkincil vurgu',fallback:'#52a7ff'},
  {key:'--danger',label:'Uyarı rengi',fallback:'#ff8178'}
 ];
-let cmsDraftConfig={text:{},colors:{}},cmsAutosaveTimer=null,cmsOriginalText={};
+const CMS_FONT_OPTIONS=['system-ui','Arial','Roboto','Inter','Trebuchet MS','Georgia','Verdana'];
+const CMS_TYPO_SCHEMA=[
+ {key:'bodyFont',label:'Genel yazı tipi',type:'font',fallback:'system-ui'},
+ {key:'headingFont',label:'Başlık yazı tipi',type:'font',fallback:'system-ui'},
+ {key:'baseSize',label:'Genel metin boyutu (px)',type:'number',min:12,max:20,fallback:16},
+ {key:'headingSize',label:'Başlık boyutu (px)',type:'number',min:22,max:48,fallback:32},
+ {key:'buttonSize',label:'Buton yazı boyutu (px)',type:'number',min:11,max:20,fallback:14},
+ {key:'menuSize',label:'Menü yazı boyutu (px)',type:'number',min:11,max:20,fallback:13}
+];
+const CMS_WHEEL_DEFAULTS=Object.fromEntries(WHEEL_SLICES.map((slice,index)=>[String(index),{
+ fill:SPECIAL_COLORS[slice]||CLUB_COLORS[slice]||'#64748B',
+ text:SPECIAL_TEXT_COLORS[slice]||CLUB_TEXT_COLORS[slice]||'#FFFFFF',
+ fontSize:slice.length>10?9:11,fontFamily:'system-ui',fontWeight:'700',border:'#FFFFFF',borderWidth:1.5
+}]));
+let cmsDraftConfig={text:{},colors:{},typography:{},wheel:{}},activeCmsConfig={},cmsAutosaveTimer=null,cmsOriginalText={},cmsSelectedWheelIndex=0;
 function cmsTextElement(key){return document.querySelector(`[data-cms-key="${key}"]`)}
+function wheelStyleFor(index,config=activeCmsConfig){return {...(CMS_WHEEL_DEFAULTS[String(index)]||{}),...(config?.wheel?.[String(index)]||{})}}
 function applyCmsConfig(config={}){
- const text=config.text||{},colors=config.colors||{};
+ activeCmsConfig=config||{};
+ const text=activeCmsConfig.text||{},colors=activeCmsConfig.colors||{},typo=activeCmsConfig.typography||{};
  for(const item of CMS_TEXT_SCHEMA){const el=cmsTextElement(item.key);if(el&&typeof text[item.key]==='string')el.textContent=text[item.key]}
  for(const item of CMS_COLOR_SCHEMA){const value=colors[item.key];if(typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value))document.documentElement.style.setProperty(item.key,value)}
+ const rootStyle=document.documentElement.style;
+ rootStyle.setProperty('--cms-body-font',JSON.stringify(CMS_FONT_OPTIONS.includes(typo.bodyFont)?typo.bodyFont:'system-ui'));
+ rootStyle.setProperty('--cms-heading-font',JSON.stringify(CMS_FONT_OPTIONS.includes(typo.headingFont)?typo.headingFont:'system-ui'));
+ rootStyle.setProperty('--cms-base-size',`${Math.max(12,Math.min(20,Number(typo.baseSize)||16))}px`);
+ rootStyle.setProperty('--cms-heading-size',`${Math.max(22,Math.min(48,Number(typo.headingSize)||32))}px`);
+ rootStyle.setProperty('--cms-button-size',`${Math.max(11,Math.min(20,Number(typo.buttonSize)||14))}px`);
+ rootStyle.setProperty('--cms-menu-size',`${Math.max(11,Math.min(20,Number(typo.menuSize)||13))}px`);
+ drawWheel();drawWheel('cmsWheelPreview');
 }
 function readCmsForm(){
- const text={},colors={};
+ const text={},colors={},typography={};
  for(const item of CMS_TEXT_SCHEMA){const input=document.getElementById(`cms-text-${item.key}`);if(input)text[item.key]=input.value}
  for(const item of CMS_COLOR_SCHEMA){const input=document.getElementById(`cms-color-${item.key.replace(/[^a-z0-9]/gi,'')}`);if(input)colors[item.key]=input.value}
- return {text,colors};
+ for(const item of CMS_TYPO_SCHEMA){const input=document.getElementById(`cms-typo-${item.key}`);if(input)typography[item.key]=item.type==='number'?Number(input.value):input.value}
+ return {text,colors,typography,wheel:structuredClone(cmsDraftConfig.wheel||{})};
 }
 function buildCmsEditor(config={}){
- const text=config.text||{},colors=config.colors||{};
- const textHost=$('cmsTextFields'),colorHost=$('cmsColorFields');if(!textHost||!colorHost)return;
+ const text=config.text||{},colors=config.colors||{},typography=config.typography||{};
+ const textHost=$('cmsTextFields'),colorHost=$('cmsColorFields'),typoHost=$('cmsTypographyFields');if(!textHost||!colorHost||!typoHost)return;
  textHost.innerHTML=CMS_TEXT_SCHEMA.map(item=>`<label class="cms-field">${esc(item.label)}<input id="cms-text-${item.key}" type="text" maxlength="220" value="${esc(text[item.key]??cmsOriginalText[item.key]??item.fallback)}"></label>`).join('');
  colorHost.innerHTML=CMS_COLOR_SCHEMA.map(item=>`<label class="cms-color-field"><span>${esc(item.label)}</span><input id="cms-color-${item.key.replace(/[^a-z0-9]/gi,'')}" type="color" value="${/^#[0-9a-f]{6}$/i.test(colors[item.key]||'')?colors[item.key]:item.fallback}"></label>`).join('');
- textHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}));
- colorHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}));
+ typoHost.innerHTML=CMS_TYPO_SCHEMA.map(item=>`<label class="cms-field">${esc(item.label)}${item.type==='font'?`<select id="cms-typo-${item.key}">${CMS_FONT_OPTIONS.map(font=>`<option value="${esc(font)}" ${(typography[item.key]||item.fallback)===font?'selected':''}>${esc(font)}</option>`).join('')}</select>`:`<input id="cms-typo-${item.key}" type="number" min="${item.min}" max="${item.max}" value="${Number(typography[item.key]??item.fallback)}">`}</label>`).join('');
+ const changed=()=>{cmsDraftConfig=readCmsForm();applyCmsConfig(cmsDraftConfig);scheduleCmsDraftSave()};
+ textHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',changed));
+ colorHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',changed));
+ typoHost.querySelectorAll('input,select').forEach(input=>input.addEventListener('input',changed));
+ typoHost.querySelectorAll('select').forEach(input=>input.addEventListener('change',changed));
+ buildCmsWheelEditor(config.wheel||{});
+}
+function buildCmsWheelEditor(wheelConfig={}){
+ const select=$('cmsWheelSliceSelect');if(!select)return;
+ cmsDraftConfig.wheel={...Object.fromEntries(Object.entries(CMS_WHEEL_DEFAULTS).map(([k,v])=>[k,{...v}])),...(wheelConfig||{})};
+ select.innerHTML=WHEEL_SLICES.map((slice,index)=>`<option value="${index}">${String(index+1).padStart(2,'0')} · ${esc(slice)}</option>`).join('');
+ select.value=String(cmsSelectedWheelIndex);
+ select.onchange=()=>{saveCmsWheelSelection();cmsSelectedWheelIndex=Number(select.value);renderCmsWheelSelection()};
+ ['fill','text','border','fontSize','borderWidth'].forEach(prop=>{$(`cms-wheel-${prop}`).oninput=()=>{saveCmsWheelSelection();applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}});
+ ['fontFamily','fontWeight'].forEach(prop=>{$(`cms-wheel-${prop}`).onchange=()=>{saveCmsWheelSelection();applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}});
+ renderCmsWheelSelection();drawWheel('cmsWheelPreview');
+}
+function saveCmsWheelSelection(){
+ const key=String(cmsSelectedWheelIndex),current={...wheelStyleFor(cmsSelectedWheelIndex,{wheel:cmsDraftConfig.wheel})};
+ for(const prop of ['fill','text','border','fontFamily','fontWeight']){const el=$(`cms-wheel-${prop}`);if(el)current[prop]=el.value}
+ for(const prop of ['fontSize','borderWidth']){const el=$(`cms-wheel-${prop}`);if(el)current[prop]=Number(el.value)}
+ cmsDraftConfig.wheel={...(cmsDraftConfig.wheel||{}),[key]:current};
+}
+function renderCmsWheelSelection(){
+ const style=wheelStyleFor(cmsSelectedWheelIndex,{wheel:cmsDraftConfig.wheel});
+ for(const prop of ['fill','text','border','fontFamily','fontWeight','fontSize','borderWidth']){const el=$(`cms-wheel-${prop}`);if(el)el.value=style[prop]}
+ drawWheel('cmsWheelPreview');
 }
 function scheduleCmsDraftSave(){
  if(!isAdmin())return;clearTimeout(cmsAutosaveTimer);
@@ -152,32 +200,58 @@ function scheduleCmsDraftSave(){
 }
 async function saveCmsDraft(silent=false){
  if(!isAdmin())throw new Error('Taslak kaydetme yetkin yok.');
- const config=readCmsForm();
+ saveCmsWheelSelection();const config=readCmsForm();
  await setDoc(doc(db,'siteConfig','draft'),{config,updatedAt:serverTimestamp(),updatedBy:user.uid},{merge:true});
- cmsDraftConfig=config;const status=$('cmsSaveStatus');if(status)status.textContent='Taslak kaydedildi. Canlı site henüz değiştirilmedi.';
- if(!silent)msg('Taslak güvenli şekilde kaydedildi.');
+ cmsDraftConfig=config;const status=$('cmsSaveStatus');if(status)status.textContent='Taslak Firebase’e kaydedildi. Canlı site henüz değiştirilmedi.';
+ if(!silent)msg('Taslak Firebase’e kaydedildi.');
+}
+async function syncCmsToGithub(config){
+ if(!GITHUB_SYNC_WORKER_URL)throw new Error('GitHub eşitleme adresi henüz ayarlanmamış. Cloudflare Worker kurulumunu tamamlayıp firebase-config.js dosyasına Worker adresini eklemelisin.');
+ const token=await auth.currentUser.getIdToken();
+ const response=await fetch(GITHUB_SYNC_WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({config})});
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok||!result.ok)throw new Error(result.error||`GitHub eşitlemesi başarısız (${response.status}).`);
+ return result;
 }
 async function publishCmsConfig(){
  if(!isAdmin())throw new Error('Yayınlama yetkin yok.');
- if(!confirm('Bu metin ve renk değişikliklerini canlı sitede yayınlamak istiyor musun?'))return;
- const config=readCmsForm();
+ if(!confirm('Bu tasarım ve içerik değişikliklerini Firebase’e ve yapılandırılmışsa GitHub’a göndermek istiyor musun?'))return;
+ saveCmsWheelSelection();const config=readCmsForm();
  await setDoc(doc(db,'siteConfig','published'),{config,publishedAt:serverTimestamp(),publishedBy:user.uid},{merge:true});
  await setDoc(doc(db,'siteConfig','draft'),{config,updatedAt:serverTimestamp(),updatedBy:user.uid},{merge:true});
  cmsDraftConfig=config;applyCmsConfig(config);
- const status=$('cmsSaveStatus');if(status)status.textContent='Canlı içerik yayınlandı. Siteyi yenileyen ziyaretçiler yeni metin ve renkleri görecek.';
- msg('Site içerikleri yayınlandı.');
+ const status=$('cmsSaveStatus');
+ if(status)status.textContent='Firebase yayını başarılı. GitHub eşitlemesi başlatılıyor…';
+ try{
+  const result=await syncCmsToGithub(config);
+  if(status)status.textContent=`Firebase + GitHub eşitlemesi başarılı. Commit: ${result.commit||'oluşturuldu'}. GitHub Pages dağıtımı başlatıldı.`;
+  msg('Değişiklikler Firebase ve GitHub’a gönderildi.');
+ }catch(error){
+  if(status)status.textContent=`Firebase’e yayınlandı; GitHub eşitlemesi tamamlanamadı: ${error.message} Yönetici panelinden GitHub eşitlemesini yeniden deneyebilirsin.`;
+  msg('Firebase yayını başarılı ancak GitHub eşitlemesi başarısız: '+error.message,true);
+ }
+}
+async function retryCmsGithubSync(){
+ if(!isAdmin())throw new Error('Bu işlem yalnızca yöneticiye açık.');
+ const status=$('cmsSaveStatus');if(status)status.textContent='Son yayınlanmış ayarlar GitHub’a eşitleniyor…';
+ const published=await getDoc(doc(db,'siteConfig','published'));
+ if(!published.exists())throw new Error('GitHub’a gönderilecek yayınlanmış ayar bulunamadı. Önce Firebase + GitHub’a Yayınla işlemini yap.');
+ const result=await syncCmsToGithub(published.data().config||{});
+ if(status)status.textContent=`GitHub eşitlemesi başarılı. Commit: ${result.commit||'oluşturuldu'}.`;
+ msg('Yayınlanmış ayarlar GitHub’a gönderildi.');
 }
 async function loadPublishedCmsConfig(){
- try{const snap=await getDoc(doc(db,'siteConfig','published'));if(snap.exists())applyCmsConfig(snap.data().config||{})}
- catch(error){console.warn('Yayınlanmış site ayarları okunamadı; varsayılan tasarım kullanılacak.',error)}
+ try{const snap=await getDoc(doc(db,'siteConfig','published'));if(snap.exists()){applyCmsConfig(snap.data().config||{});return}}
+ catch(error){console.warn('Firestore yayın ayarları okunamadı; GitHub yedeği denenecek.',error)}
+ try{const response=await fetch('./site-config.json',{cache:'no-store'});if(response.ok){const data=await response.json();applyCmsConfig(data.config||data)}}catch(error){console.warn('Statik tasarım ayarları okunamadı.',error)}
 }
 async function loadAdminCmsDraft(){
  if(!isAdmin())return;
  for(const item of CMS_TEXT_SCHEMA){const el=cmsTextElement(item.key);if(el)cmsOriginalText[item.key]=el.textContent}
- let config={text:{},colors:{}};
+ let config={text:{},colors:{},typography:{},wheel:{}};
  try{const snap=await getDoc(doc(db,'siteConfig','draft'));if(snap.exists())config=snap.data().config||config;else{const pub=await getDoc(doc(db,'siteConfig','published'));if(pub.exists())config=pub.data().config||config}}
  catch(error){console.error('Admin taslağı okunamadı:',error);msg('Yönetici taslağı okunamadı: '+error.message,true)}
- buildCmsEditor(config);cmsDraftConfig=config;
+ cmsDraftConfig=config;buildCmsEditor(config);applyCmsConfig(config);
 }
 function bindAdminCms(){
  $('adminPanelToggle')?.addEventListener('click',()=>{$('adminPanel').classList.toggle('hidden');$('adminPanel').scrollIntoView({behavior:'smooth',block:'start'})});
@@ -189,6 +263,7 @@ function bindAdminCms(){
  $('cmsSaveDraft')?.addEventListener('click',()=>saveCmsDraft().catch(e=>msg(e.message,true)));
  $('cmsPreview')?.addEventListener('click',()=>{applyCmsConfig(readCmsForm());msg('Önizleme uygulandı. Henüz canlıya yayınlanmadı.')});
  $('cmsPublish')?.addEventListener('click',()=>publishCmsConfig().catch(e=>msg('Yayınlama başarısız: '+e.message,true)));
+ $('cmsGithubSync')?.addEventListener('click',()=>retryCmsGithubSync().catch(e=>{const status=$('cmsSaveStatus');if(status)status.textContent='GitHub eşitlemesi başarısız: '+e.message;msg(e.message,true)}));
  document.querySelectorAll('[data-test-screen]').forEach(button=>button.addEventListener('click',()=>renderCmsTestPreview(button.dataset.testScreen)));
 }
 function renderCmsTestPreview(screen){
@@ -359,7 +434,15 @@ function awardByDifference(home,homeScore,away,awayScore,key,threshold,reason,ad
 }
 function buildFixtures(teamIds){let a=[...teamIds];if(a.length%2)a.push(null);let n=a.length,rot=[...a],rounds=[];for(let r=0;r<n-1;r++){let m=[];for(let i=0;i<n/2;i++){let x=rot[i],y=rot[n-1-i];if(x&&y){let home=(r+i)%2===0?x:y;m.push({homeUid:home,awayUid:home===x?y:x,round:r+1,leg:1})}}rounds.push(m);rot=[rot[0],rot[n-1],...rot.slice(1,n-1)]}const first=rounds.flat();const second=rounds.map((ms,i)=>ms.map(m=>({homeUid:m.awayUid,awayUid:m.homeUid,round:rounds.length+i+1,leg:2}))).flat();return [...first,...second].map((m,i)=>({...m,id:'match-'+(i+1),played:false}))}
 function standings(){const teams=(room?.memberOrder||[]).map(id=>({id,name:userName(id),squad:rosterFor(id),formation:'4-2-3-1',tactic:room?.tactics?.[id]?.tactic||'balanced',played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}));for(const m of room?.league?.fixtures||[]){const r=room?.league?.results?.[m.id];if(!r)continue;const h=teams.find(t=>t.id===m.homeUid),a=teams.find(t=>t.id===m.awayUid);if(!h||!a)continue;h.played++;a.played++;h.gf+=r.homeGoals;h.ga+=r.awayGoals;a.gf+=r.awayGoals;a.ga+=r.homeGoals;if(r.homeGoals>r.awayGoals){h.w++;h.pts+=3;a.l++}else if(r.homeGoals<r.awayGoals){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}return teams.sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
-function drawWheel(){const c=$('wheelCanvas');if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=196,n=WHEEL_SLICES.length;ctx.clearRect(0,0,c.width,c.height);for(let i=0;i<n;i++){const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=getWheelSliceColor(WHEEL_SLICES[i]);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(start+a/2);ctx.textAlign='right';ctx.fillStyle=getWheelTextColor(WHEEL_SLICES[i]);ctx.font=`bold ${WHEEL_SLICES[i].length>10?9:11}px system-ui`;ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(WHEEL_SLICES[i],r-10,4);ctx.restore()}ctx.save();const rim=ctx.createRadialGradient(cx,cy,r+1,cx,cy,r+9);rim.addColorStop(0,'#6f4d18');rim.addColorStop(.28,'#f8e5a6');rim.addColorStop(.55,'#b88b3d');rim.addColorStop(.82,'#fff0bd');rim.addColorStop(1,'#674511');ctx.beginPath();ctx.arc(cx,cy,r+4,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r+9,0,Math.PI*2);ctx.strokeStyle='rgba(255,226,157,.55)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();ctx.beginPath();ctx.arc(cx,cy,43,0,Math.PI*2);ctx.fillStyle='#101827';ctx.fill();ctx.strokeStyle='#d8b56a';ctx.lineWidth=3;ctx.stroke()}
+function drawWheel(canvasId='wheelCanvas'){
+ const c=$(canvasId);if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=Math.min(cx,cy)-14,n=WHEEL_SLICES.length;ctx.clearRect(0,0,c.width,c.height);
+ for(let i=0;i<n;i++){
+  const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,slice=WHEEL_SLICES[i],style=wheelStyleFor(i);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=style.fill;ctx.fill();ctx.strokeStyle=style.border;ctx.lineWidth=Number.isFinite(Number(style.borderWidth))?Number(style.borderWidth):1;ctx.stroke();
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(start+a/2);ctx.textAlign='right';ctx.fillStyle=style.text;ctx.font=`${style.fontWeight||'700'} ${Number(style.fontSize)||11}px ${JSON.stringify(style.fontFamily||'system-ui')}`;ctx.shadowColor='#000';ctx.shadowBlur=3;ctx.fillText(slice,r-10,4);ctx.restore();
+ }
+ ctx.save();const rim=ctx.createRadialGradient(cx,cy,r+1,cx,cy,r+9);rim.addColorStop(0,'#6f4d18');rim.addColorStop(.28,'#f8e5a6');rim.addColorStop(.55,'#b88b3d');rim.addColorStop(.82,'#fff0bd');rim.addColorStop(1,'#674511');ctx.beginPath();ctx.arc(cx,cy,r+4,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r+9,0,Math.PI*2);ctx.strokeStyle='rgba(255,226,157,.55)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();ctx.beginPath();ctx.arc(cx,cy,Math.min(43,r*.22),0,Math.PI*2);ctx.fillStyle='#101827';ctx.fill();ctx.strokeStyle='#d8b56a';ctx.lineWidth=3;ctx.stroke();
+}
 function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const angle=-(center+Math.PI/2);c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
 function renderRooms(){
  const list=$('roomList');if(!list)return;

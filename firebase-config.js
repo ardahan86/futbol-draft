@@ -9,3 +9,5 @@ export const firebaseConfig = {
 };
 
 export const ADMIN_UID = "8Rq9OpXpSPf7JPgo5OyUVPVbrQu2";
+// Public endpoint URL only (not a secret). Set this after deploying github-sync-worker.
+export const GITHUB_SYNC_WORKER_URL = '';
