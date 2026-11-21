@@ -318,6 +318,18 @@ const CLUB_CRESTS={
  'Karma Takım':'./assets/crests/Karma Takım.png',
 };
 const SPECIAL_SPIN_RESULTS={PAS:{label:'PAS',src:'./assets/crests/PAS.png'},KORUMA:{label:'KORUMA',src:'./assets/crests/KORUMA.png'},TAKAS:{label:'TAKAS',src:'./assets/crests/TAKAS.png'},'FUTBOLCU KAYBET':{label:'FUTBOLCU KAYBET'}};
+// Wheel-only crest assets. These images decorate the wheel; slice order and spin logic remain data-driven.
+const WHEEL_CREST_PATHS={...CLUB_CRESTS,
+ PAS:'./assets/crests/PAS.png',KORUMA:'./assets/crests/KORUMA.png',TAKAS:'./assets/crests/TAKAS.png',
+ 'FUTBOLCU KAYBET':'./assets/crests/FUTBOLCU KAYBET.svg'
+};
+const wheelCrestImages={};
+function getWheelCrest(slice){
+ const src=WHEEL_CREST_PATHS[slice];if(!src)return null;
+ if(!wheelCrestImages[src]){const img=new Image();wheelCrestImages[src]=img;img.onload=()=>{drawWheel();drawWheel('cmsWheelPreview')};img.onerror=()=>{wheelCrestImages[src]=null};img.src=src;}
+ const image=wheelCrestImages[src];return image?.complete&&image.naturalWidth?image:null;
+}
+
 function crestFallback(result){const initials=({'Galatasaray':'GS','Arsenal':'ARS','Beşiktaş':'BJK','Atlético Madrid':'ATM','Real Madrid':'RMA','Juventus':'JUV','PSG':'PSG','Fenerbahçe':'FB','Manchester City':'MCI','Bayern Münih':'FCB','Inter':'INT','Trabzonspor':'TS','Liverpool':'LIV','Barcelona':'BAR','Manchester United':'MUN','Chelsea':'CHE','Napoli':'NAP','Karma Takım':'KAR'})[result]||'FC';return `<div class="spin-crest-fallback" aria-label="${esc(result)} arması"><span>${esc(initials)}</span></div>`}
 function presentAnnouncement(html,duration){const box=$('pickAnnouncement');if(!box)return;box.innerHTML=html;box.style.animationDuration=`${duration/1000}s`;box.classList.remove('hidden','pick-announcement-show');void box.offsetWidth;box.classList.add('pick-announcement-show');clearTimeout(pickAnnouncementTimer);pickAnnouncementTimer=setTimeout(()=>{box.classList.remove('pick-announcement-show');box.classList.add('hidden')},duration)}
 function showSpinAnnouncement(announcement){if(!announcement?.id||announcement.id===lastSpinAnnouncementId)return;lastSpinAnnouncementId=announcement.id;const result=String(announcement.result||'');if(result==='FUTBOLCU KAYBET'){if(announcement.lostPlayer?.name)presentAnnouncement(`<div class="pick-announcement-player">${esc(announcement.lostPlayer.name)}</div>`,4000);return;}const special=SPECIAL_SPIN_RESULTS[result];const crestSrc=special?.src||CLUB_CRESTS[result];let middle='';if(crestSrc){middle=`<img class="${special?'spin-special-crest':'spin-club-crest'}" src="${crestSrc}" alt="${esc(special?.label||result)} logosu" onerror="this.outerHTML=window.__spinCrestFallback('${result.replace(/'/g, '&#39;')}')">`}else{middle=`<div class="spin-special-icon">🎡</div>`}presentAnnouncement(`<div class="pick-announcement-main"><div class="pick-announcement-user">${esc(announcement.managerName||'Menajer')}</div><div class="pick-announcement-crest">${middle}</div><div class="pick-announcement-result">${esc(special?.label||result)}</div></div>`,4000)}
@@ -451,26 +463,43 @@ function awardByDifference(home,homeScore,away,awayScore,key,threshold,reason,ad
 }
 function buildFixtures(teamIds){let a=[...teamIds];if(a.length%2)a.push(null);let n=a.length,rot=[...a],rounds=[];for(let r=0;r<n-1;r++){let m=[];for(let i=0;i<n/2;i++){let x=rot[i],y=rot[n-1-i];if(x&&y){let home=(r+i)%2===0?x:y;m.push({homeUid:home,awayUid:home===x?y:x,round:r+1,leg:1})}}rounds.push(m);rot=[rot[0],rot[n-1],...rot.slice(1,n-1)]}const first=rounds.flat();const second=rounds.map((ms,i)=>ms.map(m=>({homeUid:m.awayUid,awayUid:m.homeUid,round:rounds.length+i+1,leg:2}))).flat();return [...first,...second].map((m,i)=>({...m,id:'match-'+(i+1),played:false}))}
 function standings(){const teams=(room?.memberOrder||[]).map(id=>({id,name:userName(id),squad:rosterFor(id),formation:'4-2-3-1',tactic:room?.tactics?.[id]?.tactic||'balanced',played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}));for(const m of room?.league?.fixtures||[]){const r=room?.league?.results?.[m.id];if(!r)continue;const h=teams.find(t=>t.id===m.homeUid),a=teams.find(t=>t.id===m.awayUid);if(!h||!a)continue;h.played++;a.played++;h.gf+=r.homeGoals;h.ga+=r.awayGoals;a.gf+=r.awayGoals;a.ga+=r.homeGoals;if(r.homeGoals>r.awayGoals){h.w++;h.pts+=3;a.l++}else if(r.homeGoals<r.awayGoals){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}return teams.sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
+function wheelHex(hex,amount=0.24){
+ const value=String(hex||'#64748B').replace('#','');if(!/^[0-9a-f]{6}$/i.test(value))return '#64748B';
+ const n=parseInt(value,16),r=n>>16,g=(n>>8)&255,b=n&255;
+ const lift=v=>Math.round(v+(255-v)*amount).toString(16).padStart(2,'0');return `#${lift(r)}${lift(g)}${lift(b)}`;
+}
 function drawWheel(canvasId='wheelCanvas'){
- const c=$(canvasId);if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=Math.min(cx,cy)-18,n=WHEEL_SLICES.length;
+ const c=$(canvasId);if(!c)return;const ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2,r=Math.min(cx,cy)-17,n=WHEEL_SLICES.length;
  ctx.clearRect(0,0,c.width,c.height);
- const shade=(hex,amount)=>{const raw=String(hex||'#64748B').replace('#','');if(!/^[0-9a-f]{6}$/i.test(raw))return hex;const num=parseInt(raw,16),clamp=v=>Math.max(0,Math.min(255,v));return '#'+[num>>16,(num>>8)&255,num&255].map(v=>clamp(v+amount).toString(16).padStart(2,'0')).join('')};
+ // Deep shadow under the wheel and a bright esports outer halo.
+ ctx.save();ctx.shadowColor='rgba(0,255,116,.72)';ctx.shadowBlur=17;ctx.beginPath();ctx.arc(cx,cy,r+10,0,Math.PI*2);ctx.strokeStyle='rgba(32,255,122,.72)';ctx.lineWidth=5;ctx.stroke();ctx.restore();
  for(let i=0;i<n;i++){
-  const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,mid=start+a/2,slice=WHEEL_SLICES[i],style=wheelStyleFor(i);
-  ctx.save();ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
-  const grad=ctx.createLinearGradient(cx,cy,cx+Math.cos(mid)*r,cy+Math.sin(mid)*r);
-  grad.addColorStop(0,shade(style.fill,24));grad.addColorStop(.48,style.fill);grad.addColorStop(1,shade(style.fill,-30));
-  ctx.fillStyle=grad;ctx.fill();ctx.strokeStyle='rgba(255,255,255,.86)';ctx.lineWidth=Number.isFinite(Number(style.borderWidth))?Math.max(1.3,Number(style.borderWidth)):1.5;ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=4;ctx.stroke();ctx.restore();
-  // A subtle inset highlight gives every club-coloured slice a polished esports finish.
-  ctx.save();ctx.beginPath();ctx.arc(cx,cy,r-3,start+.012,end-.012);ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;ctx.stroke();
-  ctx.translate(cx,cy);ctx.rotate(mid);ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text;ctx.font=`${style.fontWeight||'700'} ${Number(style.fontSize)||11}px ${JSON.stringify(style.fontFamily||'system-ui')}`;ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=5;ctx.fillText(slice,r-13,0);ctx.restore();
+  const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,slice=WHEEL_SLICES[i],style=wheelStyleFor(i),base=style.fill||getWheelSliceColor(slice),bright=wheelHex(base,.34),deep=wheelHex(base,-.28);
+  const grad=ctx.createLinearGradient(cx-r,cy-r,cx+r,cy+r);grad.addColorStop(0,bright);grad.addColorStop(.48,base);grad.addColorStop(1,deep);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  ctx.save();ctx.strokeStyle=style.border||'rgba(255,255,255,.9)';ctx.lineWidth=Math.max(1.5,Number(style.borderWidth)||1.5);ctx.shadowColor='rgba(255,255,255,.38)';ctx.shadowBlur=4;ctx.stroke();ctx.restore();
+  // Subtle glossy wedge highlight and fine texture.
+  ctx.save();ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.clip();
+  const gloss=ctx.createLinearGradient(cx,cy-r,cx,cy+r);gloss.addColorStop(0,'rgba(255,255,255,.22)');gloss.addColorStop(.38,'rgba(255,255,255,.035)');gloss.addColorStop(1,'rgba(0,0,0,.16)');ctx.fillStyle=gloss;ctx.fillRect(cx-r,cy-r,2*r,2*r);
+  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;for(let k=-2;k<=2;k++){ctx.beginPath();ctx.moveTo(cx+k*18,cy-r);ctx.lineTo(cx+k*18+70,cy+r);ctx.stroke();}ctx.restore();
+  // Crest near the hub, label toward the outer edge. The canvas itself rotates as before.
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(start+a/2);
+  const crest=getWheelCrest(slice),crestSize=slice==='FUTBOLCU KAYBET'?27:29,crestX=r*.49-crestSize/2,crestY=-crestSize/2;
+  if(crest){
+   ctx.save();ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=5;ctx.fillStyle='rgba(5,12,25,.58)';ctx.beginPath();ctx.arc(r*.49,0,crestSize*.59,0,Math.PI*2);ctx.fill();ctx.restore();
+   const ratio=Math.min((crestSize-3)/crest.naturalWidth,(crestSize-3)/crest.naturalHeight),w=crest.naturalWidth*ratio,h=crest.naturalHeight*ratio;
+   ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=4;ctx.drawImage(crest,r*.49-w/2,-h/2,w,h);ctx.restore();
+  }
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text||getWheelTextColor(slice);ctx.font=`900 ${Math.max(8,Math.min(10.5,Number(style.fontSize)||10)}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
+  ctx.shadowColor='rgba(0,0,0,.92)';ctx.shadowBlur=5;ctx.lineWidth=2.2;ctx.strokeStyle='rgba(0,0,0,.48)';
+  const label=slice==='FUTBOLCU KAYBET'?'FUTBOLCU KAYBET':slice;
+  ctx.strokeText(label,r-10,0);ctx.fillText(label,r-10,0);ctx.restore();
  }
- // Brushed-metal outer rim with a neon-green edge; this is purely decorative.
- ctx.save();const rim=ctx.createLinearGradient(cx-r-18,cy-r-18,cx+r+18,cy+r+18);rim.addColorStop(0,'#f5fbff');rim.addColorStop(.16,'#526477');rim.addColorStop(.34,'#e8f1f8');rim.addColorStop(.52,'#697b8e');rim.addColorStop(.72,'#f7fbff');rim.addColorStop(1,'#405166');
- ctx.beginPath();ctx.arc(cx,cy,r+7,0,Math.PI*2);ctx.strokeStyle='rgba(44,255,142,.5)';ctx.lineWidth=15;ctx.shadowColor='#27f58a';ctx.shadowBlur=17;ctx.stroke();
- ctx.beginPath();ctx.arc(cx,cy,r+7,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.shadowBlur=0;ctx.stroke();
- ctx.beginPath();ctx.arc(cx,cy,r+12,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=1.5;ctx.stroke();
- ctx.beginPath();ctx.arc(cx,cy,Math.min(43,r*.22),0,Math.PI*2);ctx.fillStyle='#071624';ctx.fill();ctx.strokeStyle='#3cf58d';ctx.lineWidth=3;ctx.shadowColor='#24e987';ctx.shadowBlur=12;ctx.stroke();ctx.restore();
+ // Brushed-metal rim with a vivid green double neon edge.
+ ctx.save();const rim=ctx.createLinearGradient(cx-r-12,cy-r-12,cx+r+12,cy+r+12);rim.addColorStop(0,'#f7ffff');rim.addColorStop(.18,'#607789');rim.addColorStop(.36,'#f4ffff');rim.addColorStop(.58,'#536b7d');rim.addColorStop(.8,'#e9ffff');rim.addColorStop(1,'#263b4b');
+ ctx.shadowColor='#00ff73';ctx.shadowBlur=15;ctx.beginPath();ctx.arc(cx,cy,r+7,0,Math.PI*2);ctx.strokeStyle='#24ff85';ctx.lineWidth=5;ctx.stroke();ctx.shadowBlur=0;ctx.beginPath();ctx.arc(cx,cy,r+4,0,Math.PI*2);ctx.strokeStyle=rim;ctx.lineWidth=8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r-1,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.88)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
+ // Central metallic hub; HTML brand lettering remains layered above it.
+ ctx.save();const hub=ctx.createRadialGradient(cx-9,cy-13,4,cx,cy,53);hub.addColorStop(0,'#1b3b51');hub.addColorStop(.55,'#071a2b');hub.addColorStop(1,'#020b15');ctx.beginPath();ctx.arc(cx,cy,49,0,Math.PI*2);ctx.fillStyle=hub;ctx.fill();ctx.shadowColor='#00ff75';ctx.shadowBlur=13;ctx.strokeStyle='#40ff9b';ctx.lineWidth=4;ctx.stroke();ctx.shadowBlur=0;ctx.beginPath();ctx.arc(cx,cy,43,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.3;ctx.stroke();ctx.restore();
 }
 function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const angle=-(center+Math.PI/2);c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
 function renderRooms(){
