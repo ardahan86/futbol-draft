@@ -245,15 +245,8 @@ function withCmsTimeout(promise,ms,label){
  return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+' zaman aşımına uğradı.')),ms)})]).finally(()=>clearTimeout(timer));
 }
 async function loadPublishedCmsConfig(){
- // Eski HTML metinlerini göstermemek için yayımlanmış tasarım önce yüklenir.
- try{
-  const snap=await withCmsTimeout(getDoc(doc(db,'siteConfig','published')),5000,'Firebase tasarım ayarları');
-  if(snap.exists()){applyCmsConfig(snap.data().config||{});return true}
- }catch(error){console.warn('Firestore yayın ayarları okunamadı; GitHub yedeği denenecek.',error)}
- try{
-  const response=await withCmsTimeout(fetch('./site-config.json',{cache:'no-store'}),3000,'Statik tasarım yedeği');
-  if(response.ok){const data=await response.json();applyCmsConfig(data.config||data);return true}
- }catch(error){console.warn('Statik tasarım ayarları okunamadı.',error)}
+ // Metinlerin tek kaynağı index.html'dir.
+ // Firebase siteConfig ve site-config.json artık HTML metinlerini ezemez.
  return false;
 }
 function revealCmsSite(){
