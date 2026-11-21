@@ -45,13 +45,31 @@ export default {
       if (payload.sub !== env.ADMIN_UID || payload.user_id !== env.ADMIN_UID) return json({ ok: false, error: 'Yönetici yetkisi doğrulanamadı.' }, 403, cors);
 
       const body = await request.json();
-      if (!body || typeof body.config !== 'object' || body.config === null || Array.isArray(body.config)) return json({ ok: false, error: 'Geçerli bir config nesnesi gönderilmedi.' }, 400, cors);
-      const document = JSON.stringify({ config: body.config }, null, 2) + '\n';
-      if (new TextEncoder().encode(document).length > 250_000) return json({ ok: false, error: 'Ayar dosyası izin verilen boyutu aşıyor.' }, 413, cors);
+      if (!body || typeof body !== 'object' || Array.isArray(body)) return json({ ok: false, error: 'Geçerli bir istek gövdesi gönderilmedi.' }, 400, cors);
+      const isPlayers = body.type === 'players';
+      let document, targetPath, commitMessage;
+      if (isPlayers) {
+        const playersDoc = body.players;
+        if (!playersDoc || typeof playersDoc !== 'object' || Array.isArray(playersDoc) || !Array.isArray(playersDoc.players)) return json({ ok: false, error: 'Geçerli bir players.json nesnesi gönderilmedi.' }, 400, cors);
+        if (playersDoc.players.length < 1 || playersDoc.players.length > 2000) return json({ ok: false, error: 'Oyuncu sayısı izin verilen aralığın dışında.' }, 400, cors);
+        const valid = playersDoc.players.every(p => p && typeof p === 'object' && typeof p.id === 'string' && typeof p.name === 'string' && typeof p.club === 'string' && typeof p.position === 'string' && Number.isFinite(Number(p.overall)) && Number.isFinite(Number(p.attack)) && Number.isFinite(Number(p.defense)));
+        if (!valid) return json({ ok: false, error: 'Oyuncu kayıtlarında id, name, club, position, overall, attack ve defense alanları bulunmalı.' }, 400, cors);
+        playersDoc.playersCount = playersDoc.players.length;
+        document = JSON.stringify(playersDoc, null, 2) + '\n';
+        targetPath = env.PLAYERS_PATH || 'players.json';
+        commitMessage = 'Yönetici paneli: oyuncu kadrolarını güncelle';
+        if (new TextEncoder().encode(document).length > 1_500_000) return json({ ok: false, error: 'Oyuncu dosyası izin verilen boyutu aşıyor.' }, 413, cors);
+      } else {
+        if (typeof body.config !== 'object' || body.config === null || Array.isArray(body.config)) return json({ ok: false, error: 'Geçerli bir config nesnesi gönderilmedi.' }, 400, cors);
+        document = JSON.stringify({ config: body.config }, null, 2) + '\n';
+        targetPath = env.CONFIG_PATH || 'site-config.json';
+        commitMessage = 'Yönetici paneli: site tasarım ayarlarını senkronize et';
+        if (new TextEncoder().encode(document).length > 250_000) return json({ ok: false, error: 'Ayar dosyası izin verilen boyutu aşıyor.' }, 413, cors);
+      }
 
-      const { GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH = 'main', CONFIG_PATH = 'site-config.json' } = env;
+      const { GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH = 'main' } = env;
       if (!GITHUB_OWNER || !GITHUB_REPO) return json({ ok: false, error: 'GitHub depo ayarları eksik.' }, 500, cors);
-      const apiBase = `https://api.github.com/repos/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/contents/${CONFIG_PATH.split('/').map(encodeURIComponent).join('/')}`;
+      const apiBase = `https://api.github.com/repos/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/contents/${targetPath.split('/').map(encodeURIComponent).join('/')}`;
       const headers = {
         'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github+json',
@@ -70,7 +88,7 @@ export default {
         method: 'PUT',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: 'Yönetici paneli: site tasarım ayarlarını senkronize et',
+          message: commitMessage,
           content: base64Utf8(document),
           branch: GITHUB_BRANCH,
           ...(sha ? { sha } : {})
@@ -78,7 +96,7 @@ export default {
       });
       const result = await update.json().catch(() => ({}));
       if (!update.ok) return json({ ok: false, error: `GitHub dosyası güncellenemedi (${update.status}): ${result.message || 'Bilinmeyen hata'}` }, 502, cors);
-      return json({ ok: true, commit: result.commit?.sha || null, commitUrl: result.commit?.html_url || null, path: CONFIG_PATH }, 200, cors);
+      return json({ ok: true, commit: result.commit?.sha || null, commitUrl: result.commit?.html_url || null, path: targetPath }, 200, cors);
     } catch (error) {
       return json({ ok: false, error: error?.message || 'İstek işlenemedi.' }, 401, cors);
     }
