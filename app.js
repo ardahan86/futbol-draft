@@ -496,29 +496,37 @@ function drawWheel(canvasId='wheelCanvas'){
   ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=Number.isFinite(Number(style.borderWidth))?Math.max(1.6,Number(style.borderWidth)):1.8;
   ctx.shadowColor='rgba(0,0,0,.42)';ctx.shadowBlur=5;ctx.stroke();ctx.restore();
 
-  // Bright inset edge and subtle gloss preserve the original club hues while making them more vivid.
+  // Thin luminous separators keep adjacent wedges visually distinct.
   ctx.save();ctx.beginPath();ctx.arc(cx,cy,r-3,start+.012,end-.012);ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=1.25;ctx.stroke();
   ctx.beginPath();ctx.moveTo(cx+Math.cos(mid)*r*.30,cy+Math.sin(mid)*r*.30);ctx.lineTo(cx+Math.cos(mid)*r*.96,cy+Math.sin(mid)*r*.96);
   ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
 
-  // Club/special asset logo inside each wedge, with a small bright badge for legibility.
+  // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
+  const logoSize=Math.max(20,Math.min(36,r*.105)),logoRadius=r*.825;
+  const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
   if(crest&&crest.complete&&crest.naturalWidth>0){
-   const logoSize=Math.max(22,Math.min(38,r*.135)),logoRadius=r*.685;
-   const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
-   ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.94)';ctx.shadowColor='rgba(0,0,0,.48)';ctx.shadowBlur=5;ctx.fill();
+   ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.96)';ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;ctx.fill();
    ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.clip();
    ctx.drawImage(crest,lx-logoSize/2,ly-logoSize/2,logoSize,logoSize);
    ctx.restore();
-   ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
+   ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=1.25;ctx.stroke();ctx.restore();
   }
 
-  // Text stays close to the rim; the image sits deeper in the wedge.
-  ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);ctx.textAlign='right';ctx.textBaseline='middle';
+  // Keep the name in its own inner band. Fit long names to the available radial width.
+  const textRadius=r*.535;
+  const tangentialSpace=Math.max(8,2*textRadius*Math.sin(a/2)-7);
+  const radialTextSpace=r*.34;
+  const configuredSize=Math.max(7,Number(style.fontSize)||10);
+  const fontSize=Math.max(7,Math.min(configuredSize,tangentialSpace*.27));
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);
+  ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle=style.text||'#FFFFFF';
-  ctx.font=`${style.fontWeight||'800'} ${Math.max(8,Number(style.fontSize)||10)}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
-  ctx.shadowColor='rgba(0,0,0,.98)';ctx.shadowBlur=6;ctx.lineWidth=2.2;ctx.strokeStyle='rgba(0,0,0,.45)';
-  ctx.strokeText(slice,r-10,0);ctx.fillText(slice,r-10,0);ctx.restore();
+  ctx.font=`${style.fontWeight||'800'} ${fontSize}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
+  ctx.shadowColor='rgba(0,0,0,.98)';ctx.shadowBlur=6;ctx.lineWidth=2.4;ctx.strokeStyle='rgba(0,0,0,.58)';
+  ctx.strokeText(slice,textRadius,0,radialTextSpace);
+  ctx.fillText(slice,textRadius,0,radialTextSpace);
+  ctx.restore();
  }
  // Brushed-metal outer rim with a neon-green edge; this is purely decorative.
  ctx.save();const rim=ctx.createLinearGradient(cx-r-18,cy-r-18,cx+r+18,cy+r+18);rim.addColorStop(0,'#f5fbff');rim.addColorStop(.16,'#526477');rim.addColorStop(.34,'#e8f1f8');rim.addColorStop(.52,'#697b8e');rim.addColorStop(.72,'#f7fbff');rim.addColorStop(1,'#405166');
