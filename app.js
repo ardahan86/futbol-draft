@@ -84,6 +84,126 @@ let actionLockTimer=null,draftTimeoutTimer=null,draftCountdownTimer=null,postDra
 let user=null,profile=null,players=[],rooms=[],roomsUnsub=null,roomUnsub=null,room=null,roomId=null,roomRef=null,toastTimer=null,selectedCountry=null,pendingSpinCountry=null,lastWheelCountry=null,lastWheelSpinAt=0,lastPickAnnouncementId=null,lastSpinAnnouncementId=null,pendingSpinAnnouncementId=null,pickAnnouncementTimer=null,spinCooldownTimer=null,spinCooldownUntil=0,scheduledTurnKey=null,roomSnapshotInitialized=false,resumeInProgress=false,roomInspectionMode=false;
 const isAdmin=()=>!!user&&user.uid===ADMIN_UID;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// Admin-only site content manager. Published content is public-read; drafts are admin-only.
+const CMS_TEXT_SCHEMA=[
+ {key:'heroHeadlineTop',label:'Ana sayfa büyük başlık · 1. satır',fallback:'SAHAYA ÇIK.'},
+ {key:'heroHeadlineMiddle',label:'Ana sayfa büyük başlık · 2. satır',fallback:'TAKIMINI KUR.'},
+ {key:'heroHeadlineBottom',label:'Ana sayfa büyük başlık · 3. satır',fallback:'EFSANENİ YAZ.'},
+ {key:'statPlayersValue',label:'Futbolcu istatistik sayısı',fallback:'300'},
+ {key:'statPlayersLabel',label:'Futbolcu istatistik etiketi',fallback:'FUTBOLCU'},
+ {key:'statClubsValue',label:'Kulüp istatistik sayısı',fallback:'15'},
+ {key:'statClubsLabel',label:'Kulüp istatistik etiketi',fallback:'DEV KULÜP'},
+ {key:'statSquadValue',label:'İlk 11 istatistik sayısı',fallback:'11'},
+ {key:'statSquadLabel',label:'İlk 11 istatistik etiketi',fallback:'İLK 11'},
+ {key:'loginButton',label:'Giriş butonu',fallback:'GİRİŞ YAP'},
+ {key:'registerButton',label:'Hesap oluştur butonu',fallback:'HESAP OLUŞTUR'},
+ {key:'newRoomButton',label:'Oda oluştur butonu',fallback:'+ Oda oluştur'},
+ {key:'createRoomTitle',label:'Oda oluşturma başlığı',fallback:'Yeni oda oluştur'},
+ {key:'joinRoomButton',label:'Odaya katıl butonu',fallback:'Odaya katıl'},
+ {key:'heroLead',label:'Ana sayfa açıklaması',fallback:'Çarkı çevir, futbol yıldızlarını kadrona kat, rakiplerinle mücadele et. Futbolun kaderini sen belirle.'},
+ {key:'loginTitle',label:'Giriş başlığı',fallback:'Arenaya Dön'},
+ {key:'loginLead',label:'Giriş açıklaması',fallback:'E-posta adresin veya kullanıcı adınla giriş yap.'},
+ {key:'registerTitle',label:'Kayıt başlığı',fallback:'Menajer Hesabını Oluştur'},
+ {key:'dashboardEyebrow',label:'Menajer merkezi üst etiketi',fallback:'MENAJER MERKEZİ'},
+ {key:'dashboardLead',label:'Menajer merkezi açıklaması',fallback:'Odaya katıl, çarkı çevir ve kadronu oluştur.'},
+ {key:'joinRoomTitle',label:'Odaya katıl başlığı',fallback:'Oda koduyla katıl'},
+ {key:'draftTab',label:'Draft sekmesi',fallback:'🎡 DRAFT MERKEZİ'},
+ {key:'leagueTab',label:'Lig sekmesi',fallback:'🏆 LİG'},
+ {key:'rulesTab',label:'Kurallar sekmesi',fallback:'📘 KURALLAR'},
+ {key:'footerText',label:'Alt bilgi metni',fallback:'FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA'}
+];
+const CMS_COLOR_SCHEMA=[
+ {key:'--bg',label:'Ana arka plan',fallback:'#080d18'},
+ {key:'--panel',label:'Panel arka planı',fallback:'#111a2b'},
+ {key:'--panel2',label:'İkincil panel',fallback:'#18253a'},
+ {key:'--line',label:'Kenarlıklar',fallback:'#28384e'},
+ {key:'--text',label:'Ana metin',fallback:'#f5f7fb'},
+ {key:'--muted',label:'İkincil metin',fallback:'#9aa9bc'},
+ {key:'--lime',label:'Ana vurgu rengi',fallback:'#b7f34b'},
+ {key:'--blue',label:'İkincil vurgu',fallback:'#52a7ff'},
+ {key:'--danger',label:'Uyarı rengi',fallback:'#ff8178'}
+];
+let cmsDraftConfig={text:{},colors:{}},cmsAutosaveTimer=null,cmsOriginalText={};
+function cmsTextElement(key){return document.querySelector(`[data-cms-key="${key}"]`)}
+function applyCmsConfig(config={}){
+ const text=config.text||{},colors=config.colors||{};
+ for(const item of CMS_TEXT_SCHEMA){const el=cmsTextElement(item.key);if(el&&typeof text[item.key]==='string')el.textContent=text[item.key]}
+ for(const item of CMS_COLOR_SCHEMA){const value=colors[item.key];if(typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value))document.documentElement.style.setProperty(item.key,value)}
+}
+function readCmsForm(){
+ const text={},colors={};
+ for(const item of CMS_TEXT_SCHEMA){const input=document.getElementById(`cms-text-${item.key}`);if(input)text[item.key]=input.value}
+ for(const item of CMS_COLOR_SCHEMA){const input=document.getElementById(`cms-color-${item.key.replace(/[^a-z0-9]/gi,'')}`);if(input)colors[item.key]=input.value}
+ return {text,colors};
+}
+function buildCmsEditor(config={}){
+ const text=config.text||{},colors=config.colors||{};
+ const textHost=$('cmsTextFields'),colorHost=$('cmsColorFields');if(!textHost||!colorHost)return;
+ textHost.innerHTML=CMS_TEXT_SCHEMA.map(item=>`<label class="cms-field">${esc(item.label)}<input id="cms-text-${item.key}" type="text" maxlength="220" value="${esc(text[item.key]??cmsOriginalText[item.key]??item.fallback)}"></label>`).join('');
+ colorHost.innerHTML=CMS_COLOR_SCHEMA.map(item=>`<label class="cms-color-field"><span>${esc(item.label)}</span><input id="cms-color-${item.key.replace(/[^a-z0-9]/gi,'')}" type="color" value="${/^#[0-9a-f]{6}$/i.test(colors[item.key]||'')?colors[item.key]:item.fallback}"></label>`).join('');
+ textHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}));
+ colorHost.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{applyCmsConfig(readCmsForm());scheduleCmsDraftSave()}));
+}
+function scheduleCmsDraftSave(){
+ if(!isAdmin())return;clearTimeout(cmsAutosaveTimer);
+ const status=$('cmsSaveStatus');if(status)status.textContent='Değişiklik var · Taslak otomatik kaydediliyor…';
+ cmsAutosaveTimer=setTimeout(()=>saveCmsDraft(true).catch(error=>{console.error('CMS otomatik taslak kaydı başarısız:',error);const el=$('cmsSaveStatus');if(el)el.textContent='Otomatik kayıt başarısız: '+error.message}),900);
+}
+async function saveCmsDraft(silent=false){
+ if(!isAdmin())throw new Error('Taslak kaydetme yetkin yok.');
+ const config=readCmsForm();
+ await setDoc(doc(db,'siteConfig','draft'),{config,updatedAt:serverTimestamp(),updatedBy:user.uid},{merge:true});
+ cmsDraftConfig=config;const status=$('cmsSaveStatus');if(status)status.textContent='Taslak kaydedildi. Canlı site henüz değiştirilmedi.';
+ if(!silent)msg('Taslak güvenli şekilde kaydedildi.');
+}
+async function publishCmsConfig(){
+ if(!isAdmin())throw new Error('Yayınlama yetkin yok.');
+ if(!confirm('Bu metin ve renk değişikliklerini canlı sitede yayınlamak istiyor musun?'))return;
+ const config=readCmsForm();
+ await setDoc(doc(db,'siteConfig','published'),{config,publishedAt:serverTimestamp(),publishedBy:user.uid},{merge:true});
+ await setDoc(doc(db,'siteConfig','draft'),{config,updatedAt:serverTimestamp(),updatedBy:user.uid},{merge:true});
+ cmsDraftConfig=config;applyCmsConfig(config);
+ const status=$('cmsSaveStatus');if(status)status.textContent='Canlı içerik yayınlandı. Siteyi yenileyen ziyaretçiler yeni metin ve renkleri görecek.';
+ msg('Site içerikleri yayınlandı.');
+}
+async function loadPublishedCmsConfig(){
+ try{const snap=await getDoc(doc(db,'siteConfig','published'));if(snap.exists())applyCmsConfig(snap.data().config||{})}
+ catch(error){console.warn('Yayınlanmış site ayarları okunamadı; varsayılan tasarım kullanılacak.',error)}
+}
+async function loadAdminCmsDraft(){
+ if(!isAdmin())return;
+ for(const item of CMS_TEXT_SCHEMA){const el=cmsTextElement(item.key);if(el)cmsOriginalText[item.key]=el.textContent}
+ let config={text:{},colors:{}};
+ try{const snap=await getDoc(doc(db,'siteConfig','draft'));if(snap.exists())config=snap.data().config||config;else{const pub=await getDoc(doc(db,'siteConfig','published'));if(pub.exists())config=pub.data().config||config}}
+ catch(error){console.error('Admin taslağı okunamadı:',error);msg('Yönetici taslağı okunamadı: '+error.message,true)}
+ buildCmsEditor(config);cmsDraftConfig=config;
+}
+function bindAdminCms(){
+ $('adminPanelToggle')?.addEventListener('click',()=>{$('adminPanel').classList.toggle('hidden');$('adminPanel').scrollIntoView({behavior:'smooth',block:'start'})});
+ $('adminPanelClose')?.addEventListener('click',()=>$('adminPanel').classList.add('hidden'));
+ document.querySelectorAll('.admin-cms-tab').forEach(button=>button.addEventListener('click',()=>{
+  document.querySelectorAll('.admin-cms-tab').forEach(x=>x.classList.toggle('active',x===button));
+  document.querySelectorAll('.admin-cms-pane').forEach(x=>x.classList.toggle('hidden',x.id!==button.dataset.adminPane));
+ }));
+ $('cmsSaveDraft')?.addEventListener('click',()=>saveCmsDraft().catch(e=>msg(e.message,true)));
+ $('cmsPreview')?.addEventListener('click',()=>{applyCmsConfig(readCmsForm());msg('Önizleme uygulandı. Henüz canlıya yayınlanmadı.')});
+ $('cmsPublish')?.addEventListener('click',()=>publishCmsConfig().catch(e=>msg('Yayınlama başarısız: '+e.message,true)));
+ document.querySelectorAll('[data-test-screen]').forEach(button=>button.addEventListener('click',()=>renderCmsTestPreview(button.dataset.testScreen)));
+}
+function renderCmsTestPreview(screen){
+ const samples={
+  draft:['Draft Merkezi','Sıradaki oyuncu çarkı çeviriyor.','ÇEVİR'],
+  pick:['Oyuncu Seçimi','Kulüp futbolcuları arasından uygun mevkiye bir oyuncu seç.','Futbolcuyu Al'],
+  tactic:['Taktik Seçimi','Taktik, pas tercihi ve pres tarzını belirle.','Seçimi Onayla'],
+  lost:['Futbolcu Kaybet','Kadronuzdan rastgele bir futbolcu çıkarıldı.','Tamam'],
+  league:['Lig Merkezi','Puan tablosu, fikstür ve maç sonuçları.','Maçları Gör'],
+  match:['Maç Detayı','Gol dakikaları ve gol atan futbolcular.','Kapat']
+ };
+ const sample=samples[screen];if(!sample)return;const host=$('cmsTestPreview');
+ host.innerHTML=`<div class="preview-modal"><div class="eyebrow">TEST ÖNİZLEMESİ</div><h3>${esc(sample[0])}</h3><p>${esc(sample[1])}</p><button type="button" class="btn primary" disabled>${esc(sample[2])}</button></div><p class="hint">Bu örnek ekran yalnızca görsel test içindir; gerçek oyun odasına veya Firebase oyun verilerine yazma yapmaz.</p>`;
+}
+
 function msg(text,error=false){const t=$('toast');if(!t)return;clearTimeout(toastTimer);if(!error){t.className='toast';return}t.textContent=text;t.className='toast show error';toastTimer=setTimeout(()=>t.className='toast',4500)}
 const CLUB_CRESTS={
  'Galatasaray':'./assets/crests/Galatasaray.png',
@@ -741,6 +861,8 @@ async function initDashboard(u){
  $('logoutBtn').classList.remove('hidden');$('helloName').textContent=profile.nickname||profile.name||'Menajer';
  // Oda oluşturma tüm doğrulanmış kullanıcılar için açık.
  $('adminBox').classList.remove('hidden');$('newRoomBtn').classList.remove('hidden');
+ $('adminPanelToggle').classList.toggle('hidden',!isAdmin());
+ if(isAdmin()){try{await loadAdminCmsDraft()}catch(error){console.error(error)}}else{$('adminPanel').classList.add('hidden')}
  if(roomsUnsub)roomsUnsub();
  roomsUnsub=onSnapshot(query(collection(db,'rooms'),where('status','in',['waiting','drafting','finished'])),snap=>{rooms=snap.docs.map(d=>({id:d.id,...d.data()}));renderRooms()},e=>{console.error(e);msg('Odalar okunamadı: '+e.message,true)});
 }
@@ -829,6 +951,7 @@ function showAuthMode(mode){
  $('authMsg').textContent='';
 }
 function bindUI(){
+ bindAdminCms();
  $('loginForm').onsubmit=loginAccount;
  $('registerForm').onsubmit=registerAccount;
  $('showLoginBtn').onclick=()=>showAuthMode('login');
@@ -904,6 +1027,7 @@ window.addEventListener('online',()=>{if(roomId||readStored(RESUME_ROOM_KEY))res
 
 async function boot(){
  drawWheel();
+ await loadPublishedCmsConfig();
  try{
   const res=await fetch('./players.json');const data=await res.json();players=Array.isArray(data)?data:(data.players||[]);
   if(!players.length)throw new Error('Oyuncu veritabanı boş; en az bir futbolcu kaydı bulunmalı.');
@@ -921,7 +1045,7 @@ async function boot(){
    }
   }else{
    user=null;profile=null;$('authView').classList.remove('hidden');$('appView').classList.add('hidden');
-   $('logoutBtn').classList.add('hidden');
+   $('logoutBtn').classList.add('hidden');$('adminPanelToggle')?.classList.add('hidden');$('adminPanel')?.classList.add('hidden');
    if(roomsUnsub){roomsUnsub();roomsUnsub=null}
    closeRoomUI();
   }

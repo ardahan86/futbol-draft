@@ -601,3 +601,23 @@ body{background:radial-gradient(ellipse at 18% 5%,#193452 0,transparent 34%),rad
   .rights-player-list { padding: 4px 9px; }
   .rights-player-row { min-height: 29px; font-size: .75rem; }
 }
+
+/* Admin CMS and safe preview workspace */
+.admin-top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.admin-cms-panel{margin:0 0 22px;border-color:#52724b;background:linear-gradient(145deg,#172a27,#101b26)}
+.admin-cms-tabs,.cms-test-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.admin-cms-tab{border:1px solid var(--line);background:#0c1725;color:var(--muted);padding:10px 14px;border-radius:9px;font-weight:800;cursor:pointer}
+.admin-cms-tab.active{background:var(--lime);color:#142012;border-color:var(--lime)}
+.admin-cms-intro{display:grid;gap:4px;margin:16px 0;color:var(--text)}
+.admin-cms-intro span{font-size:.8rem;color:var(--muted)}
+.cms-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cms-field{margin:0}.cms-field input{margin-top:5px}.cms-color-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cms-color-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#0c1725;color:var(--text)}
+.cms-color-field input{width:52px;height:38px;padding:3px;cursor:pointer}
+.cms-test-preview{min-height:150px;padding:18px;border:1px dashed #536b8f;border-radius:13px;background:#0b1524}
+.cms-test-preview .preview-modal{max-width:480px;margin:8px auto;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.cms-test-preview .preview-modal h3{color:var(--lime)}
+.cms-publish-status{padding:12px;border-radius:10px;background:#0b1524;color:var(--muted);margin:12px 0}
+.cms-publish-actions{display:flex;gap:9px;flex-wrap:wrap}
+@media(max-width:650px){.cms-fields,.cms-color-fields{grid-template-columns:1fr}.admin-cms-panel{padding:16px}.cms-publish-actions .btn{width:100%}}
+.hero-headline-top,.hero-headline-bottom{color:var(--text)!important}

@@ -103,6 +103,15 @@ service cloud.firestore {
         && request.resource.data.protectedIds.size() <= 3;
       allow delete: if isAdmin() || (verifiedUser() && resource.data.uid == request.auth.uid);
     }
+    // Site content CMS: the published document is readable by visitors; drafts are admin-only.
+    match /siteConfig/{configId} {
+      allow get: if configId == 'published' || isAdmin();
+      allow list: if false;
+      allow create, update: if isAdmin()
+        && request.resource.data.config is map;
+      allow delete: if isAdmin();
+    }
+
     match /{document=**} { allow read, write: if false; }
   }
 }
