@@ -645,3 +645,44 @@ h1,.hero h1{font-size:var(--cms-heading-size)}h2{font-size:clamp(1.2rem,calc(var
 /* Full visual component editor */
 .cms-visual-toolbar{display:grid;grid-template-columns:auto minmax(220px,1fr) auto;gap:10px;align-items:end;margin:14px 0}.cms-visual-toolbar .cms-field{margin:0}.cms-visual-selected{padding:12px;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:#0b1524;color:var(--lime);font-size:.84rem;overflow-wrap:anywhere}.cms-visual-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cms-visual-grid .cms-field{margin:0}.cms-visual-grid input,.cms-visual-grid select{margin-top:5px}.cms-visual-pick-mode body{cursor:crosshair!important}.cms-visual-pick-mode body *{cursor:crosshair!important}.cms-visual-pick-mode body *:hover{outline:2px solid #b7f34b!important;outline-offset:2px!important}.cms-visual-edited{transition:background-color .15s,color .15s,border-color .15s}
 @media(max-width:760px){.cms-visual-toolbar{grid-template-columns:1fr}.cms-visual-grid{grid-template-columns:1fr}.cms-visual-toolbar .btn{width:100%}}
+
+/* FUTBOL DRAFT — esports wheel skin (visual-only; wheel data and spin logic unchanged) */
+.wheel-panel{
+  background:radial-gradient(ellipse at 50% 42%,rgba(17,91,139,.22),transparent 58%),
+    linear-gradient(145deg,#101c35 0%,#081323 58%,#07101e 100%);
+  border:1px solid rgba(73,167,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 58px rgba(0,0,0,.42);
+}
+.wheel-panel:before{background:linear-gradient(115deg,transparent 15%,rgba(91,174,255,.055) 48%,transparent 78%)}
+.wheel-wrap{position:relative;isolation:isolate;filter:drop-shadow(0 18px 26px rgba(0,0,0,.58))}
+.wheel-wrap:before{
+  content:"";position:absolute;inset:-8px;border-radius:50%;pointer-events:none;z-index:1;
+  border:6px solid transparent;
+  background:linear-gradient(135deg,#f4fbff 0%,#61788e 17%,#f8fcff 34%,#52677e 54%,#eaf4fa 73%,#42566c 100%) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  box-shadow:0 0 0 2px rgba(47,255,143,.7),0 0 16px rgba(28,255,132,.5),0 0 34px rgba(24,144,255,.18);
+}
+.wheel-wrap:after{
+  content:"";position:absolute;inset:3px;border-radius:50%;pointer-events:none;z-index:1;
+  border:1px solid rgba(255,255,255,.32);box-shadow:inset 0 0 0 1px rgba(38,255,139,.2);
+}
+.wheel-wrap canvas{position:relative;z-index:0;border-radius:50%;filter:drop-shadow(0 0 13px rgba(36,242,133,.12))}
+.wheel-pointer{
+  z-index:4;top:-15px;width:40px;height:48px;font-size:0;color:transparent;
+  filter:drop-shadow(0 0 7px rgba(33,255,130,.9)) drop-shadow(0 4px 4px rgba(0,0,0,.75));
+}
+.wheel-pointer:after{
+  content:"";position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);
+  background:linear-gradient(90deg,#0a8d4b 0%,#75ff9e 48%,#07974e 100%);
+  border:1px solid rgba(226,255,235,.85);
+}
+.wheel-center{
+  z-index:3;border:3px solid #69ff9e;
+  background:radial-gradient(circle at 32% 24%,#174f65 0%,#0b2638 55%,#071523 100%);
+  box-shadow:0 0 0 5px rgba(25,255,132,.12),0 0 0 8px rgba(3,13,25,.88),
+    0 0 26px rgba(37,255,137,.35),inset 0 2px 9px rgba(255,255,255,.16);
+  color:#f5fbff;text-shadow:0 2px 8px #000;letter-spacing:.04em;
+}
+.wheel-center small{color:#7dffad}
+@media(max-width:560px){.wheel-wrap:before{inset:-6px;border-width:5px}.wheel-pointer{top:-12px;width:34px;height:41px}}
