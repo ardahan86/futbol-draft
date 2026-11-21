@@ -260,7 +260,8 @@ function buildCmsVisualEditor(config={}){
  $('cmsVisualPickMode')?.addEventListener('click',()=>{cmsVisualPickActive=!cmsVisualPickActive;$('cmsVisualPickMode').textContent=cmsVisualPickActive?'Seçim modunu kapat':'Sayfadan bileşen seç';document.body.classList.toggle('cms-visual-pick-mode',cmsVisualPickActive);});
  $('cmsVisualReset')?.addEventListener('click',()=>{if(!cmsVisualSelected)return;const components={...(cmsDraftConfig.visual?.components||{})};delete components[cmsVisualSelected];cmsDraftConfig.visual={components};activeCmsConfig={...activeCmsConfig,visual:cmsDraftConfig.visual};applyCmsVisualStyles();loadCmsVisualFields();scheduleCmsDraftSave();});
  if(!window.__cmsVisualPickBound){window.__cmsVisualPickBound=true;document.addEventListener('click',event=>{if(!cmsVisualPickActive||event.target.closest('#adminPanel'))return;const el=event.target.closest('body *');if(!el||el===document.body)return;event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();cmsVisualSelected=cmsVisualSelector(el);refreshCmsVisualTargets();const sel=$('cmsVisualTarget');if(sel)sel.value=cmsVisualSelected;cmsVisualPickActive=false;document.body.classList.remove('cms-visual-pick-mode');$('cmsVisualPickMode').textContent='Sayfadan bileşen seç';loadCmsVisualFields();$('adminPanel').scrollIntoView({behavior:'smooth',block:'start'});},true);}
- if(!cmsVisualObserver){cmsVisualObserver=new MutationObserver(records=>{if(records.some(r=>r.addedNodes?.length)){refreshCmsVisualTargets();applyCmsVisualStyles();}});cmsVisualObserver.observe(document.body,{childList:true,subtree:true});}
+ // MutationObserver intentionally disabled: rebuilding the editor's own select options
+ // triggered this observer recursively and could freeze the page, disabling all buttons.
  loadCmsVisualFields();
 }
 
