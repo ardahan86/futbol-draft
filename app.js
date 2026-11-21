@@ -508,7 +508,9 @@ function drawWheel(canvasId='wheelCanvas'){
   if(crest&&crest.complete&&crest.naturalWidth>0){
    ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.96)';ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;ctx.fill();
    ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.clip();
-   ctx.drawImage(crest,lx-logoSize/2,ly-logoSize/2,logoSize,logoSize);
+   // Logo bottom points radially outward toward the wide edge of its wedge.
+   ctx.translate(lx,ly);ctx.rotate(mid-Math.PI/2);
+   ctx.drawImage(crest,-logoSize/2,-logoSize/2,logoSize,logoSize);
    ctx.restore();
    ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=1.25;ctx.stroke();ctx.restore();
   }
@@ -535,7 +537,7 @@ function drawWheel(canvasId='wheelCanvas'){
  ctx.beginPath();ctx.arc(cx,cy,r+12,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=1.5;ctx.stroke();
  ctx.beginPath();ctx.arc(cx,cy,Math.min(43,r*.22),0,Math.PI*2);ctx.fillStyle='#071624';ctx.fill();ctx.strokeStyle='#3cf58d';ctx.lineWidth=3;ctx.shadowColor='#24e987';ctx.shadowBlur=12;ctx.stroke();ctx.restore();
 }
-function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const angle=-(center+Math.PI/2);c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
+function drawWheelSpin(slice){const c=$('wheelCanvas');const idx=WHEEL_SLICES.indexOf(slice);if(idx<0)return;const a=2*Math.PI/WHEEL_SLICES.length;const center=-Math.PI/2+(idx+.5)*a;const bottomPointer=Math.PI/2;const angle=bottomPointer-center;c.style.transition='transform 3.2s cubic-bezier(.12,.78,.12,1)';c.style.transform=`rotate(${360*5+angle*180/Math.PI}deg)`;setTimeout(()=>{c.style.transition='none';c.style.transform=`rotate(${angle*180/Math.PI}deg)`},3300)}
 function renderRooms(){
  const list=$('roomList');if(!list)return;
  if(!isAdmin()){list.innerHTML='<p class="muted">Odaya yalnızca geçerli oda koduyla katılabilirsin.</p>';return}
@@ -571,9 +573,14 @@ function renderRoom(){
  const closeBtn=$('closeRoomBtn');if(closeBtn){const canCloseOwn=room.ownerUid===user?.uid;const canAdminClose=isAdmin();closeBtn.classList.toggle('hidden',!(canCloseOwn||canAdminClose));closeBtn.textContent=canCloseOwn?'Odamı kapat':'Odayı kapat';closeBtn.onclick=closeRoom;}
  $('roomStatus').textContent=({waiting:'Oyuncuların katılması bekleniyor',drafting:locked?'Hamle penceresi açık · Bekleniyor':'Draft devam ediyor',finished:'Kadrolar tamamlandı · Lig aşaması',cancelled:'Oda iptal edildi'})[room.status]||room.status;
  $('startDraftBtn').classList.toggle('hidden',!(canAdminRoomAction()||room.ownerUid===user.uid)||room.status!=='waiting'||room.memberOrder.length<2);
- $('startDraftBtn').textContent='Draftı başlat';$('turnHeading').textContent=room.status==='drafting'?`${userName(currentTurnUid())} seçiyor · ${stageMessage(room.picks||[],room.memberOrder||[])}`:'Draft başlamadı';
+ $('startDraftBtn').textContent='Draftı başlat';
+ const spinReady=room.status==='drafting'&&isMyTurn()&&!locked&&Date.now()>=spinCooldownUntil&&!room.pendingPick;
+ const activeActionUid=locked
+  ? (room.actionLock?.kind==='pick'?(room.lastPickAnnouncement?.uid||currentTurnUid()):(room.lastSpin?.uid||currentTurnUid()))
+  : (spinReady?currentTurnUid():(room.pendingPick?.uid||currentTurnUid()));
+ $('turnHeading').textContent=room.status==='drafting'?`${userName(activeActionUid)}-Draft Aşaması`:'Draft başlamadı';
  $('turnPill').textContent='';
- $('spinBtn').disabled=!isMyTurn();$('spinBtn').textContent='ÇEVİR';$('pickPanel').classList.add('hidden');
+ $('spinBtn').disabled=!spinReady;$('spinBtn').textContent='ÇEVİR';$('pickPanel').classList.add('hidden');
  if(!roomInspectionMode&&room.pendingPick&&room.pendingPick.uid===user.uid&&room.pendingPick.club){selectedCountry=room.pendingPick.club;if(!locked)renderPlayerOptions(selectedCountry);else $('spinResult').textContent='Çark sonucu penceresi kapanınca futbolcunu seçebilirsin.'}
  else if(room.pendingPick){$('spinResult').textContent=`${userName(room.pendingPick.uid)} çark sonucunu uyguluyor: ${room.pendingPick.slice}.`}
  else if(locked){$('spinResult').textContent='Sonuç penceresi kapanana kadar yeni hamle yapılamaz.'}
@@ -946,7 +953,7 @@ function renderMatchReport(live,league,target){
  const r=live.stats||(live.fixtureId?(league?.results||{})[live.fixtureId]:null);
  if(!r){box.innerHTML='<div class="empty-state">Maç özeti bulunamadı.</div>';return}
  const goals=(r.events||[]).filter(e=>e.type==='goal').sort((a,b)=>a.minute-b.minute);
- box.innerHTML=goals.map(e=>`<div class="arena-event"><b>${e.minute}'</b><span>${esc(e.playerName||'Bilinmeyen oyuncu')}</span></div>`).join('');
+ box.innerHTML=goals.map(e=>`<div class="arena-event"><b>${e.minute}'</b><span>${esc(e.playerName||'Bilinmeyen oyuncu')} <small class="goal-scorer-owner">(${esc(userName(e.team)||'Takım sahibi')})</small></span></div>`).join('');
  box.classList.remove('hidden');box.classList.add('match-report-inline');
 }
 function renderLeague(){if(!room)return;const league=room.league||{},fixtures=league.fixtures||[],results=league.results||{};const played=fixtures.filter(m=>results[m.id]).length;$('createFixturesBtn').disabled=!(canAdminRoomAction()||room.ownerUid===user.uid)||room.status!=='finished'||room.postDraftPhase!=='complete'||fixtures.length>0;$('leagueStats').innerHTML=[['TAKIM',room.memberOrder.length],['TOPLAM MAÇ',fixtures.length||'—'],['OYNANAN',`${played}/${fixtures.length||0}`],['AŞAMA',played===fixtures.length&&fixtures.length?'Tamamlandı':played?'Devam ediyor':'Hazır değil']].map(([a,b])=>`<div class="stat"><small>${a}</small><b>${b}</b></div>`).join('');const rows=standings();$('standings').innerHTML=rows.length?`<table><thead><tr><th>#</th><th>Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AG</th><th>YG</th><th>AV</th><th>P</th></tr></thead><tbody>${rows.map((t,i)=>`<tr class="${i===0&&played===fixtures.length&&fixtures.length?'champion':''}"><td>${i===0&&played===fixtures.length&&fixtures.length?'🏆':i+1}</td><td>${esc(t.name)}</td><td>${t.played}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join('')}</tbody></table>`:'<div class="empty-state">Lig puan tablosu için kadrolar tamamlanmalı.</div>';$('fixtureProgress').textContent=fixtures.length?`${played}/${fixtures.length} maç`:'Fikstür yok';if(!fixtures.length){$('fixtures').innerHTML='<div class="empty-state">İlk 11 tamamlandıktan sonra admin fikstürü oluşturabilir.</div>';return}const names=Object.fromEntries(rows.map(t=>[t.id,t.name]));$('fixtures').innerHTML=fixtures.map(m=>{const r=results[m.id];const adminCan=(canAdminRoomAction()||room.ownerUid===user.uid)&&!r;return `<div class="fixture"><div class="fixture-meta">${m.leg===1?'1. AŞAMA':'2. AŞAMA'} · ${m.round}. hafta</div><div class="fixture-main"><span>${esc(names[m.homeUid]||userName(m.homeUid))}</span><b>${r?`${r.homeGoals} – ${r.awayGoals}`:'vs'}</b><span>${esc(names[m.awayUid]||userName(m.awayUid))}</span></div>${r?`<button class="btn small secondary" data-open-report="${m.id}" aria-expanded="false">Maç Özeti</button><div class="match-details hidden" id="match-details-${m.id}"></div>`:''}${adminCan?`<button class="btn small primary" data-sim="${m.id}">Maçı simüle et</button>`:''}</div>`}).join('');document.querySelectorAll('[data-sim]').forEach(b=>b.onclick=()=>simulateOne(b.dataset.sim));document.querySelectorAll('[data-open-report]').forEach(b=>b.onclick=()=>{const id=b.dataset.openReport,match=(room?.league?.fixtures||[]).find(x=>x.id===id),r=(room?.league?.results||{})[id],details=$(`match-details-${id}`);if(!match||!r||!details){msg('Bu maçın raporu bulunamadı.',true);return}const opening=details.classList.contains('hidden');details.classList.toggle('hidden',!opening);b.setAttribute('aria-expanded',String(opening));if(opening){const live={fixtureId:id,status:'finished',homeUid:match.homeUid,awayUid:match.awayUid,homeName:userName(match.homeUid),awayName:userName(match.awayUid),homeGoals:r.homeGoals,awayGoals:r.awayGoals,minute:90,stats:r};renderMatchReport(live,room.league,details);}});}

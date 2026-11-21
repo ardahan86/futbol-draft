@@ -688,3 +688,8 @@ h1,.hero h1{font-size:var(--cms-heading-size)}h2{font-size:clamp(1.2rem,calc(var
 }
 .wheel-center small{color:#7dffad}
 @media(max-width:560px){.wheel-wrap:before{inset:-6px;border-width:5px}.wheel-pointer{top:-12px;width:34px;height:41px}}
+
+/* Draft wheel pointer: bottom position, tip points upward into the wheel. */
+.wheel-pointer{top:auto!important;bottom:-15px!important;left:50%!important;transform:translateX(-50%)!important}
+.wheel-pointer:after{clip-path:polygon(50% 0,100% 100%,0 100%)!important;background:linear-gradient(90deg,#0a8d4b 0%,#75ff9e 48%,#07974e 100%)!important}
+.goal-scorer-owner{display:inline-block;margin-left:3px;color:var(--muted,#aebdca);font-size:.88em;font-weight:700}
