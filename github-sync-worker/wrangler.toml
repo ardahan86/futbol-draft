@@ -9,3 +9,5 @@ GITHUB_OWNER = "ardahan86"
 GITHUB_REPO = "futbol-draft"
 GITHUB_BRANCH = "main"
 CONFIG_PATH = "site-config.json"
+
+PLAYERS_PATH = "players.json"
