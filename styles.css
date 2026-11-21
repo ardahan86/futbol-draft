@@ -166,6 +166,8 @@ button, .btn { min-height: 44px; }
 .pick-player-announcement{gap:10px}
 .pick-announcement-club{font-size:1.2rem;font-weight:900;color:#ffd84d;line-height:1.2;overflow-wrap:anywhere}
 .pick-announcement-player{font-size:clamp(2.24rem,8vw,3rem);font-weight:1000;color:#ff4141;line-height:1.1;overflow-wrap:anywhere;text-shadow:0 0 18px #ff414155}
+.pick-announcement-lost-logo{display:block;width:clamp(104px,22vw,156px);height:clamp(104px,22vw,156px);object-fit:contain;margin:10px auto 0;filter:drop-shadow(0 0 18px rgba(55,255,110,.42)) drop-shadow(0 8px 14px #0009)}
+
 
 
 /* ==========================================================
