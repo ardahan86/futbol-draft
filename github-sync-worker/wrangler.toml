@@ -1,1 +1,11 @@
+name = "futbol-draft-github-sync"
+main = "src/index.js"
+compatibility_date = "2026-11-21"
 
+[vars]
+FIREBASE_PROJECT_ID = "futbol-draft-82904"
+ADMIN_UID = "8Rq9OpXpSPf7JPgo5OyUVPVbrQu2"
+GITHUB_OWNER = "ardahan86"
+GITHUB_REPO = "futbol-draft"
+GITHUB_BRANCH = "main"
+CONFIG_PATH = "site-config.json"
