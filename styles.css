@@ -641,3 +641,7 @@ button,.btn{font-size:var(--cms-button-size)}
 h1,.hero h1{font-size:var(--cms-heading-size)}h2{font-size:clamp(1.2rem,calc(var(--cms-heading-size) * .7),2rem)}h3{font-size:clamp(1rem,calc(var(--cms-heading-size) * .52),1.5rem)}
 
 .panel-head h2,.room-title h2,.league-head h2{font-family:var(--cms-heading-font),sans-serif;font-size:clamp(1.1rem,calc(var(--cms-heading-size) * .68),2rem)}
+
+/* Full visual component editor */
+.cms-visual-toolbar{display:grid;grid-template-columns:auto minmax(220px,1fr) auto;gap:10px;align-items:end;margin:14px 0}.cms-visual-toolbar .cms-field{margin:0}.cms-visual-selected{padding:12px;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:#0b1524;color:var(--lime);font-size:.84rem;overflow-wrap:anywhere}.cms-visual-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cms-visual-grid .cms-field{margin:0}.cms-visual-grid input,.cms-visual-grid select{margin-top:5px}.cms-visual-pick-mode body{cursor:crosshair!important}.cms-visual-pick-mode body *{cursor:crosshair!important}.cms-visual-pick-mode body *:hover{outline:2px solid #b7f34b!important;outline-offset:2px!important}.cms-visual-edited{transition:background-color .15s,color .15s,border-color .15s}
+@media(max-width:760px){.cms-visual-toolbar{grid-template-columns:1fr}.cms-visual-grid{grid-template-columns:1fr}.cms-visual-toolbar .btn{width:100%}}

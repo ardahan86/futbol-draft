@@ -135,7 +135,7 @@ const CMS_WHEEL_DEFAULTS=Object.fromEntries(WHEEL_SLICES.map((slice,index)=>[Str
  text:SPECIAL_TEXT_COLORS[slice]||CLUB_TEXT_COLORS[slice]||'#FFFFFF',
  fontSize:slice.length>10?9:11,fontFamily:'system-ui',fontWeight:'700',border:'#FFFFFF',borderWidth:1.5
 }]));
-let cmsDraftConfig={text:{},colors:{},typography:{},wheel:{}},activeCmsConfig={},cmsAutosaveTimer=null,cmsOriginalText={},cmsSelectedWheelIndex=0;
+let cmsDraftConfig={text:{},colors:{},typography:{},wheel:{},visual:{components:{}}},activeCmsConfig={},cmsAutosaveTimer=null,cmsOriginalText={},cmsSelectedWheelIndex=0,cmsVisualSelected='',cmsVisualPickActive=false,cmsVisualObserver=null;
 function cmsTextElement(key){return document.querySelector(`[data-cms-key="${key}"]`)}
 function wheelStyleFor(index,config=activeCmsConfig){return {...(CMS_WHEEL_DEFAULTS[String(index)]||{}),...(config?.wheel?.[String(index)]||{})}}
 function applyCmsConfig(config={}){
@@ -150,14 +150,14 @@ function applyCmsConfig(config={}){
  rootStyle.setProperty('--cms-heading-size',`${Math.max(22,Math.min(48,Number(typo.headingSize)||32))}px`);
  rootStyle.setProperty('--cms-button-size',`${Math.max(11,Math.min(20,Number(typo.buttonSize)||14))}px`);
  rootStyle.setProperty('--cms-menu-size',`${Math.max(11,Math.min(20,Number(typo.menuSize)||13))}px`);
- drawWheel();drawWheel('cmsWheelPreview');
+ applyCmsVisualStyles();drawWheel();drawWheel('cmsWheelPreview');
 }
 function readCmsForm(){
  const text={},colors={},typography={};
  for(const item of CMS_TEXT_SCHEMA){const input=document.getElementById(`cms-text-${item.key}`);if(input)text[item.key]=input.value}
  for(const item of CMS_COLOR_SCHEMA){const input=document.getElementById(`cms-color-${item.key.replace(/[^a-z0-9]/gi,'')}`);if(input)colors[item.key]=input.value}
  for(const item of CMS_TYPO_SCHEMA){const input=document.getElementById(`cms-typo-${item.key}`);if(input)typography[item.key]=item.type==='number'?Number(input.value):input.value}
- return {text,colors,typography,wheel:structuredClone(cmsDraftConfig.wheel||{})};
+ return {text,colors,typography,wheel:structuredClone(cmsDraftConfig.wheel||{}),visual:structuredClone(cmsDraftConfig.visual||{components:{}})};
 }
 function buildCmsEditor(config={}){
  const text=config.text||{},colors=config.colors||{},typography=config.typography||{};
@@ -171,6 +171,7 @@ function buildCmsEditor(config={}){
  typoHost.querySelectorAll('input,select').forEach(input=>input.addEventListener('input',changed));
  typoHost.querySelectorAll('select').forEach(input=>input.addEventListener('change',changed));
  buildCmsWheelEditor(config.wheel||{});
+ buildCmsVisualEditor(config.visual||{});
 }
 function buildCmsWheelEditor(wheelConfig={}){
  const select=$('cmsWheelSliceSelect');if(!select)return;
@@ -193,6 +194,76 @@ function renderCmsWheelSelection(){
  for(const prop of ['fill','text','border','fontFamily','fontWeight','fontSize','borderWidth']){const el=$(`cms-wheel-${prop}`);if(el)el.value=style[prop]}
  drawWheel('cmsWheelPreview');
 }
+const CMS_VISUAL_FIELDS=['text','imageUrl','background','color','fontSize','fontFamily','fontWeight','border','radius','padding','margin','width','height','shadow','textAlign'];
+function cmsVisualSelector(el){
+ if(!el||el===document.documentElement||el===document.body)return 'body';
+ if(el.id)return '#'+CSS.escape(el.id);
+ if(el.dataset?.cmsKey)return `[data-cms-key="${CSS.escape(el.dataset.cmsKey)}"]`;
+ const parts=[];let node=el;
+ while(node&&node.nodeType===1&&node!==document.body){
+  let part=node.tagName.toLowerCase();
+  if(node.id){part+='#'+CSS.escape(node.id);parts.unshift(part);break;}
+  const parent=node.parentElement;
+  if(parent){const same=[...parent.children].filter(x=>x.tagName===node.tagName);if(same.length>1)part+=`:nth-of-type(${same.indexOf(node)+1})`;}
+  parts.unshift(part);node=node.parentElement;
+ }
+ return 'body>'+parts.join('>');
+}
+function cmsVisualLabel(el){
+ const id=el.id?`#${el.id}`:'';const cls=typeof el.className==='string'&&el.className.trim()?'.'+el.className.trim().split(/\s+/).slice(0,2).join('.') :'';
+ const txt=(el.innerText||el.getAttribute('aria-label')||el.getAttribute('title')||'').replace(/\s+/g,' ').trim().slice(0,54);
+ return `${el.tagName.toLowerCase()}${id}${cls}${txt?' · '+txt:''}`.slice(0,115);
+}
+function cmsVisualCandidates(){
+ return [...document.querySelectorAll('body *')].filter(el=>!el.closest('#adminPanel')&&!['SCRIPT','STYLE','LINK','META','OPTION','PATH','CANVAS'].includes(el.tagName));
+}
+function refreshCmsVisualTargets(){
+ const select=$('cmsVisualTarget');if(!select)return;
+ const els=cmsVisualCandidates(),seen=new Set(),items=[];
+ for(const el of els){const selector=cmsVisualSelector(el);if(seen.has(selector))continue;seen.add(selector);items.push({selector,label:cmsVisualLabel(el)});}
+ select.innerHTML=items.map(x=>`<option value="${esc(x.selector)}">${esc(x.label)}</option>`).join('');
+ if(cmsVisualSelected&&items.some(x=>x.selector===cmsVisualSelected))select.value=cmsVisualSelected;
+}
+function cmsVisualElement(){try{return cmsVisualSelected?document.querySelector(cmsVisualSelected):null}catch{return null}}
+function cmsVisualColor(value,fallback='#111a2b'){
+ if(/^#[0-9a-f]{6}$/i.test(value||''))return value;
+ const m=String(value||'').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);return m?'#'+m.slice(1,4).map(x=>Number(x).toString(16).padStart(2,'0')).join(''):fallback;
+}
+function loadCmsVisualFields(){
+ const el=cmsVisualElement(),saved=(cmsDraftConfig.visual?.components||{})[cmsVisualSelected]||{};
+ $('cmsVisualSelected').textContent=el?`Seçili: ${cmsVisualLabel(el)} · ${cmsVisualSelected}`:`Hedef: ${cmsVisualSelected||'seçilmedi'} (şu anda sayfada bulunmuyor olabilir)`;
+ const computed=el?getComputedStyle(el):null;
+ const values={text:el&&['INPUT','TEXTAREA'].includes(el.tagName)?'':(saved.text??''),imageUrl:saved.imageUrl??(el?.tagName==='IMG'?el.getAttribute('src')||'':''),background:saved.background||cmsVisualColor(computed?.backgroundColor,'#111a2b'),color:saved.color||cmsVisualColor(computed?.color,'#f5f7fb'),fontSize:saved.fontSize??'',fontFamily:saved.fontFamily??'',fontWeight:saved.fontWeight??'',border:saved.border??'',radius:saved.radius??'',padding:saved.padding??'',margin:saved.margin??'',width:saved.width??'',height:saved.height??'',shadow:saved.shadow??'',textAlign:saved.textAlign??''};
+ for(const key of CMS_VISUAL_FIELDS){const input=$(`cms-visual-${key}`);if(input)input.value=values[key]??'';}
+}
+function applyCmsVisualStyles(){
+ const components=activeCmsConfig?.visual?.components||{};
+ for(const [selector,style] of Object.entries(components)){let el;try{el=document.querySelector(selector)}catch{continue}if(!el||!style)continue;
+  if(typeof style.imageUrl==='string'&&style.imageUrl&&el.tagName==='IMG'&&el.getAttribute('src')!==style.imageUrl)el.setAttribute('src',style.imageUrl);
+  if(typeof style.text==='string'&&style.text.length&&el.children.length===0&&!['INPUT','TEXTAREA','SELECT'].includes(el.tagName)&&el.textContent!==style.text)el.textContent=style.text;
+  const map={background:'background',color:'color',fontSize:'fontSize',fontFamily:'fontFamily',fontWeight:'fontWeight',border:'border',radius:'borderRadius',padding:'padding',margin:'margin',width:'width',height:'height',shadow:'boxShadow',textAlign:'textAlign'};
+  for(const [key,css] of Object.entries(map)){const value=style[key];if(value!==undefined&&value!==null&&value!=='')el.style[css]=key==='fontSize'&&Number.isFinite(Number(value))?`${Math.max(8,Math.min(72,Number(value)))}px`:String(value);}
+ }
+}
+function saveCmsVisualFields(){
+ if(!cmsVisualSelected)return;
+ const el=cmsVisualElement();const current={...((cmsDraftConfig.visual||{}).components||{})[cmsVisualSelected]};
+ for(const key of CMS_VISUAL_FIELDS){const input=$(`cms-visual-${key}`);if(!input)continue;const value=input.value.trim();if(value==='')delete current[key];else if(key==='fontSize')current[key]=Number(value);else current[key]=value;}
+ if(!current.text)delete current.text;
+ cmsDraftConfig.visual={...(cmsDraftConfig.visual||{}),components:{...((cmsDraftConfig.visual||{}).components||{}),[cmsVisualSelected]:current}};
+ activeCmsConfig={...activeCmsConfig,visual:cmsDraftConfig.visual};applyCmsVisualStyles();if(el)el.classList.add('cms-visual-edited');scheduleCmsDraftSave();
+}
+function buildCmsVisualEditor(config={}){
+ cmsDraftConfig.visual={components:{},...(config||{})};refreshCmsVisualTargets();
+ const select=$('cmsVisualTarget');if(select){select.onchange=()=>{cmsVisualSelected=select.value;loadCmsVisualFields()};}
+ CMS_VISUAL_FIELDS.forEach(key=>{const input=$(`cms-visual-${key}`);if(!input)return;input.oninput=()=>saveCmsVisualFields();input.onchange=()=>saveCmsVisualFields();});
+ $('cmsVisualPickMode')?.addEventListener('click',()=>{cmsVisualPickActive=!cmsVisualPickActive;$('cmsVisualPickMode').textContent=cmsVisualPickActive?'Seçim modunu kapat':'Sayfadan bileşen seç';document.body.classList.toggle('cms-visual-pick-mode',cmsVisualPickActive);});
+ $('cmsVisualReset')?.addEventListener('click',()=>{if(!cmsVisualSelected)return;const components={...(cmsDraftConfig.visual?.components||{})};delete components[cmsVisualSelected];cmsDraftConfig.visual={components};activeCmsConfig={...activeCmsConfig,visual:cmsDraftConfig.visual};applyCmsVisualStyles();loadCmsVisualFields();scheduleCmsDraftSave();});
+ if(!window.__cmsVisualPickBound){window.__cmsVisualPickBound=true;document.addEventListener('click',event=>{if(!cmsVisualPickActive||event.target.closest('#adminPanel'))return;const el=event.target.closest('body *');if(!el||el===document.body)return;event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();cmsVisualSelected=cmsVisualSelector(el);refreshCmsVisualTargets();const sel=$('cmsVisualTarget');if(sel)sel.value=cmsVisualSelected;cmsVisualPickActive=false;document.body.classList.remove('cms-visual-pick-mode');$('cmsVisualPickMode').textContent='Sayfadan bileşen seç';loadCmsVisualFields();$('adminPanel').scrollIntoView({behavior:'smooth',block:'start'});},true);}
+ if(!cmsVisualObserver){cmsVisualObserver=new MutationObserver(records=>{if(records.some(r=>r.addedNodes?.length)){refreshCmsVisualTargets();applyCmsVisualStyles();}});cmsVisualObserver.observe(document.body,{childList:true,subtree:true});}
+ loadCmsVisualFields();
+}
+
 function scheduleCmsDraftSave(){
  if(!isAdmin())return;clearTimeout(cmsAutosaveTimer);
  const status=$('cmsSaveStatus');if(status)status.textContent='Değişiklik var · Taslak otomatik kaydediliyor…';
@@ -263,7 +334,7 @@ function revealCmsSite(){
 async function loadAdminCmsDraft(){
  if(!isAdmin())return;
  for(const item of CMS_TEXT_SCHEMA){const el=cmsTextElement(item.key);if(el)cmsOriginalText[item.key]=el.textContent}
- let config={text:{},colors:{},typography:{},wheel:{}};
+ let config={text:{},colors:{},typography:{},wheel:{},visual:{components:{}}};
  try{const snap=await getDoc(doc(db,'siteConfig','draft'));if(snap.exists())config=snap.data().config||config;else{const pub=await getDoc(doc(db,'siteConfig','published'));if(pub.exists())config=pub.data().config||config}}
  catch(error){console.error('Admin taslağı okunamadı:',error);msg('Yönetici taslağı okunamadı: '+error.message,true)}
  cmsDraftConfig=config;buildCmsEditor(config);applyCmsConfig(config);
@@ -273,7 +344,7 @@ function bindAdminCms(){
  $('adminPanelClose')?.addEventListener('click',()=>$('adminPanel').classList.add('hidden'));
  document.querySelectorAll('.admin-cms-tab').forEach(button=>button.addEventListener('click',()=>{
   document.querySelectorAll('.admin-cms-tab').forEach(x=>x.classList.toggle('active',x===button));
-  document.querySelectorAll('.admin-cms-pane').forEach(x=>x.classList.toggle('hidden',x.id!==button.dataset.adminPane));
+  document.querySelectorAll('.admin-cms-pane').forEach(x=>x.classList.toggle('hidden',x.id!==button.dataset.adminPane));if(button.dataset.adminPane==='cmsVisualPane')refreshCmsVisualTargets();
  }));
  $('cmsSaveDraft')?.addEventListener('click',()=>saveCmsDraft().catch(e=>msg(e.message,true)));
  $('cmsPreview')?.addEventListener('click',()=>{applyCmsConfig(readCmsForm());msg('Önizleme uygulandı. Henüz canlıya yayınlanmadı.')});
