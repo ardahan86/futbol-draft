@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çark Futbol – Oyuncu Güç Düzenleyici</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#e8edf6;background:#0d1422}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2a43,#0d1422 55%);min-height:100vh}
+main{max-width:1250px;margin:auto;padding:24px 16px 48px}.hero,.panel{background:#151f30;border:1px solid #2b3a50;border-radius:16px;padding:20px;margin-bottom:16px}
+h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}h2{font-size:18px;margin:0 0 12px}.muted{color:#a7b5ca;font-size:14px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+button,.filebtn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:#26364d;color:#f5f8ff}
+button.primary{background:#39c979;color:#092013}#publishBtn{background:#1d6bba;color:#fff}button:disabled{opacity:.45;cursor:not-allowed}
+input,select{background:#0d1625;color:#eef4ff;border:1px solid #3a4b64;border-radius:8px;padding:9px;min-width:0}
+input[type=file]{max-width:100%}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.stat{background:#0d1625;padding:10px 14px;border-radius:10px;border:1px solid #29384d}
+.stat b{display:block;font-size:20px}.tools{display:grid;grid-template-columns:minmax(180px,2fr) minmax(150px,1fr) auto;gap:10px}
+.table-wrap{overflow:auto;max-height:65vh;border-radius:10px;border:1px solid #2b3a50}table{border-collapse:collapse;width:100%;min-width:850px;background:#111b2b}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid #26364b;font-size:13px}th{position:sticky;top:0;background:#1c2a3e;z-index:1}
+td input{width:76px;padding:7px}td .wide{width:180px}.strength{width:74px}.club{color:#b7c7de}.tag{display:inline-block;background:#253850;padding:3px 7px;border-radius:6px}
+.notice{padding:10px 12px;border-radius:8px;background:#0e2d24;color:#a9f3cb;margin-top:10px}.warn{background:#382a14;color:#ffdfa1}
+.add-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin-top:12px}.add-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#a7b5ca}.add-grid input,.add-grid select{width:100%}.delete-btn{background:#5b2630;border:1px solid #8a3c4a;padding:6px 9px}
+@media(max-width:800px){.add-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}}
+.order-controls{display:flex;gap:5px;white-space:nowrap;align-items:center}.order-controls button{padding:6px 9px;border:1px solid #405674;background:#1d3048}.order-controls button:hover{background:#2b4667}.drag-handle{cursor:grab;user-select:none;font-size:20px;line-height:1;color:#9fb4cf;padding:4px 7px;border:1px solid #405674;border-radius:7px;background:#1d3048}.drag-handle:active{cursor:grabbing}tr.dragging{opacity:.4}tr.drag-over{outline:2px dashed #39c979;outline-offset:-2px}tbody tr[draggable=true]{cursor:default}
+footer{color:#8494ab;font-size:12px;padding:8px}
+@media(max-width:700px){main{padding:12px}.hero,.panel{padding:14px}.tools{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<h1>⚽ Oyuncu Güç Düzenleyici</h1>
+<p class="muted">players.json dosyanı aç, futbolcuları ekle, sil, güçlerini düzenle ve yeni JSON dosyasını indir. Bu araç seçtiğin players.json dosyasını düzenler. Yedek indirebilir veya yönetici hesabınla doğrudan GitHub'daki players.json dosyasına yayınlayabilirsin.</p>
+<div class="row">
+<label for="fileInput"><b>Oyuncu JSON dosyası:</b></label>
+<input id="fileInput" type="file" accept=".json,application/json">
+<button id="downloadBtn" class="primary" disabled>players.json yedeğini indir</button>
+ <button id="publishBtn" disabled>GitHub'a kaydet ve yayınla</button>
+<button id="resetBtn" disabled>Değişiklikleri geri al</button>
+</div>
+<div id="status" class="muted" style="margin-top:10px">Başlamak için players.json dosyanı seç.</div>
+<div class="stats">
+<div class="stat"><span class="muted">Oyuncu</span><b id="count">0</b></div>
+<div class="stat"><span class="muted">Görüntülenen</span><b id="shown">0</b></div>
+<div class="stat"><span class="muted">Değiştirilen</span><b id="changed">0</b></div>
+</div>
+</section>
+<section class="panel">
+<h2>Oyuncuları bul</h2>
+<div class="tools">
+<input id="search" placeholder="İsim, kulüp veya mevki ara…" disabled>
+<select id="clubFilter" disabled><option value="">Tüm kulüpler</option></select>
+<select id="positionFilter" disabled><option value="">Tüm mevkiler</option></select>
+</div>
+<p class="muted">Oyuncu ekleyebilir, silebilir; oyuncu adını, mevkiyi ve güç alanlarını düzenleyebilir; her takımın kadrosunda oyuncuları sürükleyip bırakarak veya ok düğmeleriyle sıralayabilirsin. Sürüklemek için satırın başındaki ⠿ simgesini tut. Sıralama yalnızca aynı takımın oyuncuları arasında değişir. Güç alanları 1–99 arasındadır. Kulüp ve diğer veriler korunur. Yayınlama işlemi players.json dosyasını GitHub deposunda günceller. GitHub Pages dağıtımı tamamlandıktan sonra siteyi yenilemen gerekir.</p>
+</section>
+<section class="panel">
+<h2>Yeni oyuncu ekle</h2>
+<p class="muted">Oyuncuyu seçtiğin takımın kadrosuna ekle. Bilgiler mevcut oyuncu kayıt yapısına uygun kaydedilir.</p>
+<div class="add-grid">
+<label>Takım / Kulüp<select id="addClub" disabled></select></label>
+<label>Oyuncu adı<input id="addName" placeholder="Oyuncu adı" disabled></label>
+<label>Mevki<select id="addPosition" disabled><option>Kaleci</option><option>Sağ bek</option><option>Stoper</option><option>Sol bek</option><option>Merkez orta saha</option><option>Ofansif orta saha</option><option>Sağ kanat</option><option>Sol kanat</option><option>Santrfor</option></select></label>
+<label>Overall<input id="addOverall" type="number" min="1" max="99" value="70" disabled></label>
+<label>Attack<input id="addAttack" type="number" min="1" max="99" value="70" disabled></label>
+<label>Defense<input id="addDefense" type="number" min="1" max="99" value="70" disabled></label>
+</div>
+<div class="row" style="margin-top:12px"><button id="addPlayerBtn" class="primary" disabled>+ Oyuncu ekle</button></div>
+<div id="addMessage" class="muted" style="margin-top:8px"></div>
+</section>
+<section class="panel">
+<div class="row" style="justify-content:space-between;margin-bottom:12px">
+<h2 style="margin:0">Oyuncu listesi</h2>
+<span class="muted">Düzenlemeler otomatik uygulanır</span>
+</div>
+<div class="table-wrap">
+<table><thead><tr><th>Kadro sırası</th><th>Oyuncu adı</th><th>Kulüp</th><th>Mevki</th><th>Overall</th><th>Attack</th><th>Defense</th><th>İşlem</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="8" class="muted">Önce bir JSON dosyası seç.</td></tr></tbody></table>
+</div>
+<div id="message" class="muted" style="margin-top:10px"></div>
+</section>
+<footer>İpucu: Yeni JSON dosyasını indirdikten sonra sitenin mevcut oyuncu veri dosyasının yedeğini alıp yeni dosyayı onun yerine yükle.</footer>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let original=null, data=null, records=[], format=null, changed=new Set();
+const keys={
+name:['name','playerName','isim','oyuncu','fullName'],
+club:['club','team','teamName','kulup','kulüp','clubName'],
+position:['position','pos','mevki','role'],
+overall:['overall','power','strength','rating','guc','güç','overallRating'],
+attack:['attack','attacking','hucum','hücum','attackRating'],
+defense:['defense','defending','savunma','defenseRating'], id:['id','playerId','player_id'], shirtNumber:['shirtNumber','number','jerseyNumber','formaNo']
+};
+const norm=s=>String(s??'').toLocaleLowerCase('tr-TR');
+function getAtPath(root,path){return path.reduce((v,k)=>v==null?undefined:v[k],root)}
+let orderChanged=false;
+function findKey(obj,list){return list.find(k=>Object.prototype.hasOwnProperty.call(obj,k))}
+function flatten(value,path=[]){
+ if(Array.isArray(value)){value.forEach((v,i)=>flatten(v,path.concat(i)));return}
+ if(!value||typeof value!=='object')return;
+ const nk=findKey(value,keys.name), pk=findKey(value,keys.position);
+ const powerKey=['overall','power','strength','rating','guc','güç','overallRating'].some(k=>Object.prototype.hasOwnProperty.call(value,k));
+ if(nk&&pk&&powerKey){
+  const last=path[path.length-1], parent=getAtPath(data,path.slice(0,-1));
+  records.push({obj:value,path,nameKey:nk,clubKey:findKey(value,keys.club),posKey:pk,overallKey:findKey(value,keys.overall),attackKey:findKey(value,keys.attack),defenseKey:findKey(value,keys.defense),parentArray:Array.isArray(parent)?parent:null,parentIndex:Array.isArray(parent)?Number(last):-1});
+  return
+}
+ Object.entries(value).forEach(([k,v])=>{if(v&&typeof v==='object')flatten(v,path.concat(k))});
+}
+function getClub(r){return r.clubKey?r.obj[r.clubKey]:''}
+function getPosition(r){return r.obj[r.posKey]??''}
+function val(r,k){const key=r[k+'Key'];return key==null?'':r.obj[key]}
+function setVal(r,k,v){const key=r[k+'Key'];if(key==null)return;const num=Math.max(1,Math.min(99,Number(v)||1));r.obj[key]=typeof r.obj[key]==='string'?String(num):num;changed.add(records.indexOf(r));renderStats()}
+const standardPositions=['Kaleci','Sağ bek','Stoper','Sol bek','Merkez orta saha','Ofansif orta saha','Sağ kanat','Sol kanat','Santrfor'];
+function positionOptions(r){
+ const current=String(getPosition(r)||'');
+ const options=[...standardPositions];
+ if(current&&!options.includes(current)) options.unshift(current);
+ return options.map(p=>`<option value="${escapeHtml(p)}" ${p===current?'selected':''}>${escapeHtml(p)}</option>`).join('');
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderFilters(){
+ const clubs=[...new Set(records.map(getClub).filter(Boolean).map(String))].sort((a,b)=>a.localeCompare(b,'tr'));
+ const positions=[...new Set(records.map(getPosition).filter(Boolean).map(String))].sort((a,b)=>a.localeCompare(b,'tr'));
+ $('clubFilter').innerHTML='<option value="">Tüm kulüpler</option>'+clubs.map(x=>`<option>${escapeHtml(x)}</option>`).join('');
+ $('positionFilter').innerHTML='<option value="">Tüm mevkiler</option>'+positions.map(x=>`<option>${escapeHtml(x)}</option>`).join('');
+}
+function renderStats(){$('count').textContent=records.length;$('changed').textContent=changed.size}
+function render(){
+ const q=norm($('search').value),club=$('clubFilter').value,pos=$('positionFilter').value;
+ const filtered=records.map((r,i)=>({r,i})).filter(({r})=>
+  (!q||[r.obj[r.nameKey],getClub(r),getPosition(r)].some(x=>norm(x).includes(q)))&&
+  (!club||String(getClub(r))===club)&&(!pos||String(getPosition(r))===pos));
+ $('shown').textContent=filtered.length;
+ $('tbody').innerHTML=filtered.map(({r,i})=>`<tr>
+ <td><div class="order-controls"><span class="drag-handle" draggable="true" data-drag="${i}" title="Tut ve sürükle" aria-label="Tut ve sürükle">⠿</span><button type="button" data-move="-1" data-i="${i}" aria-label="Yukarı taşı">↑</button><button type="button" data-move="1" data-i="${i}" aria-label="Aşağı taşı">↓</button></div></td><td><input class="wide player-name" type="text" data-i="${i}" data-k="name" value="${escapeHtml(r.obj[r.nameKey])}" aria-label="Oyuncu adı"></td><td class="club">${escapeHtml(getClub(r)||'—')}</td><td><select class="wide player-position" data-i="${i}" data-k="position" aria-label="Mevki">${positionOptions(r)}</select></td>
+ ${['overall','attack','defense'].map(k=>`<td>${r[k+'Key']?`<input class="strength" type="number" min="1" max="99" step="1" data-i="${i}" data-k="${k}" value="${escapeHtml(val(r,k))}" aria-label="${k}">`:'<span class="muted">Alan yok</span>'}</td>`).join('')}
+ <td><button type="button" class="delete-btn" data-delete="${i}">Sil</button></td>
+ </tr>`).join('')||'<tr><td colspan="8" class="muted">Bu filtrelerle oyuncu bulunamadı.</td></tr>';
+ $('message').textContent=records.length&&!records.some(r=>r.overallKey||r.attackKey||r.defenseKey)?'Güç alanları tanınamadı. JSON yapısını kontrol et.':'';
+ $('downloadBtn').disabled=!records.length;$('publishBtn').disabled=!records.length;
+}
+
+ function updateAddClubOptions(){
+  const clubs=[...new Set(records.map(getClub).filter(Boolean).map(String))].sort((a,b)=>a.localeCompare(b,'tr'));
+  $('addClub').innerHTML=clubs.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  ['addClub','addName','addPosition','addOverall','addAttack','addDefense','addPlayerBtn'].forEach(id=>$(id).disabled=!clubs.length);
+ }
+ function refreshStructure(message){
+  records=[];flatten(data);changed.add(-1);renderFilters();updateAddClubOptions();render();renderStats();
+  $('status').textContent=message;
+ }
+ $('addPlayerBtn').addEventListener('click',()=>{
+  const club=$('addClub').value,name=$('addName').value.trim();
+  if(!club||!name){$('addMessage').textContent='Takım ve oyuncu adı zorunludur.';return}
+  const rec=records.find(r=>String(getClub(r))===club&&r.parentArray);
+  if(!rec){$('addMessage').textContent='Takımın oyuncu dizisi bulunamadı.';return}
+  const obj=JSON.parse(JSON.stringify(rec.obj)),arr=rec.parentArray;
+  const put=(aliases,value)=>{const k=findKey(obj,aliases);if(k)obj[k]=typeof obj[k]==='string'?String(value):value};
+  put(keys.name,name);put(keys.club,club);put(keys.position,$('addPosition').value);
+  put(keys.overall,Math.max(1,Math.min(99,Number($('addOverall').value)||1)));
+  put(keys.attack,Math.max(1,Math.min(99,Number($('addAttack').value)||1)));
+  put(keys.defense,Math.max(1,Math.min(99,Number($('addDefense').value)||1)));
+  const idk=findKey(obj,keys.id);
+  if(idk){let id=(club+'-'+name).toLocaleLowerCase('tr-TR').replace(/[^a-z0-9ğüşöçıİ]+/gi,'-');const ids=new Set(records.map(r=>String(r.obj[idk])));let n=2,base=id;while(ids.has(id))id=base+'-'+n++;obj[idk]=typeof obj[idk]==='number'?Date.now():id}
+  const nk=findKey(obj,keys.shirtNumber);
+  if(nk){const nums=arr.map(x=>Number(x?.[nk])).filter(Number.isFinite);const v=nums.length?Math.max(...nums)+1:1;obj[nk]=typeof obj[nk]==='string'?String(v):v}
+  arr.push(obj);$('addName').value='';$('addMessage').textContent=name+' kadroya eklendi.';
+  refreshStructure('Oyuncu eklendi. Güncellenmiş players.json dosyasını indirmeyi unutma.');
+ });
+
+ let draggedIndex=null;
+$('tbody').addEventListener('dragstart',e=>{
+ const handle=e.target.closest('[data-drag]');
+ if(!handle)return;
+ draggedIndex=Number(handle.dataset.drag);
+ const row=handle.closest('tr');
+ row.classList.add('dragging');
+ e.dataTransfer.effectAllowed='move';
+ e.dataTransfer.setData('text/plain',String(draggedIndex));
+});
+$('tbody').addEventListener('dragover',e=>{
+ const row=e.target.closest('tr');
+ if(draggedIndex===null||!row||!row.querySelector('[data-drag]'))return;
+ const targetIndex=Number(row.querySelector('[data-drag]').dataset.drag);
+ const source=records[draggedIndex],target=records[targetIndex];
+ if(!source||!target||String(getClub(source))!==String(getClub(target)))return;
+ e.preventDefault();e.dataTransfer.dropEffect='move';
+ $('tbody').querySelectorAll('tr.drag-over').forEach(x=>x.classList.remove('drag-over'));
+ row.classList.add('drag-over');
+});
+$('tbody').addEventListener('drop',e=>{
+ const row=e.target.closest('tr');
+ if(draggedIndex===null||!row)return;
+ const handle=row.querySelector('[data-drag]');if(!handle)return;
+ e.preventDefault();
+ const targetIndex=Number(handle.dataset.drag),source=records[draggedIndex],target=records[targetIndex];
+ if(!source||!target||!source.parentArray||source.parentArray!==target.parentArray||String(getClub(source))!==String(getClub(target))){$('status').textContent='Sıralama yalnızca aynı takımın oyuncuları arasında yapılabilir.';return}
+ const rect=row.getBoundingClientRect();
+ const after=e.clientY>rect.top+rect.height/2;
+ const from=source.parentIndex;
+ let to=target.parentIndex+(after?1:0);
+ if(from<to)to--;
+ if(from!==to){const arr=source.parentArray;const item=arr.splice(from,1)[0];arr.splice(to,0,item);records=[];flatten(data);orderChanged=true;changed.add(-1);renderStats();render();$('status').textContent='Kadro sırası güncellendi. JSON dosyasını indirmeyi unutma.';}
+});
+$('tbody').addEventListener('dragend',()=>{
+ draggedIndex=null;
+ $('tbody').querySelectorAll('tr.dragging,tr.drag-over').forEach(x=>x.classList.remove('dragging','drag-over'));
+});
+$('tbody').addEventListener('click',e=>{
+ const del=e.target.closest('button[data-delete]');
+ if(del){const idx=Number(del.dataset.delete),r=records[idx];if(!r||!r.parentArray)return;
+ if(!confirm('"'+String(r.obj[r.nameKey])+'" oyuncusu kadrodan çıkarılsın mı?'))return;
+ r.parentArray.splice(r.parentIndex,1);refreshStructure('Oyuncu kadrodan çıkarıldı.');return;}
+ const btn=e.target.closest('button[data-move]');if(!btn)return;
+ const idx=Number(btn.dataset.i),delta=Number(btn.dataset.move),r=records[idx];
+ if(!r||!r.parentArray||!Number.isInteger(r.parentIndex))return;
+ const targetIndex=r.parentIndex+delta;
+ if(targetIndex<0||targetIndex>=r.parentArray.length)return;
+ const otherValue=r.parentArray[targetIndex],other=records.find(x=>x.obj===otherValue);
+ if(!other||String(getClub(r))!==String(getClub(other))){$('status').textContent='Sıralama yalnızca aynı takım içinde yapılabilir.';return}
+ const temp=r.parentArray[r.parentIndex];r.parentArray[r.parentIndex]=r.parentArray[targetIndex];r.parentArray[targetIndex]=temp;
+ records=[];flatten(data);orderChanged=true;changed.add(-1);renderStats();render();
+ $('status').textContent='Kadro sırası güncellendi. JSON dosyasını indirmeyi unutma.';
+});
+$('tbody').addEventListener('change',e=>{
+ const el=e.target;if(!el.matches('input[data-i], select[data-i]'))return;
+ const idx=Number(el.dataset.i),r=records[idx],kind=el.dataset.k;
+ if(kind==='name'){const v=el.value.trim();if(v){r.obj[r.nameKey]=v;changed.add(idx);renderStats();$('status').textContent='Oyuncu adı güncellendi.'}else{el.value=r.obj[r.nameKey]}return}
+ if(kind==='position'){const v=el.value;r.obj[r.posKey]=v;changed.add(idx);renderStats();renderFilters();$('status').textContent='Oyuncu mevkisi güncellendi.';return}
+ setVal(r,kind,el.value);el.value=val(r,kind);
+});
+['search','clubFilter','positionFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));
+$('fileInput').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  const text=await file.text();data=JSON.parse(text);original=JSON.parse(text);records=[];changed.clear();orderChanged=false;flatten(data);
+  if(!records.length){$('status').textContent='Dosya açıldı ama tanınan oyuncu kaydı bulunamadı. Beklenen alanlar: oyuncu adı, mevki ve en az bir güç alanı.';$('downloadBtn').disabled=true;$('publishBtn').disabled=true;return}
+  format=file.name;$('status').textContent=`${file.name} yüklendi. ${records.length} oyuncu bulundu.`;['search','clubFilter','positionFilter','resetBtn'].forEach(id=>$(id).disabled=false);renderFilters();updateAddClubOptions();render();renderStats();
+ }catch(err){$('status').textContent='JSON okunamadı: '+err.message}
+});
+$('resetBtn').addEventListener('click',()=>{if(!original)return;data=JSON.parse(JSON.stringify(original));records=[];changed.clear();orderChanged=false;flatten(data);render();renderStats();$('status').textContent='Değişiklikler geri alındı.'});
+$('downloadBtn').addEventListener('click',()=>{
+ if(!data)return;const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='players.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ $('status').textContent='Güncellenmiş players.json yedeği indirildi.';
+});
+$('publishBtn').addEventListener('click',()=>{
+ if(!data)return;
+ if(!confirm('Düzenlediğin oyuncu verileri GitHub deposundaki players.json dosyasının üzerine yazılsın ve siteye yayınlansın mı?'))return;
+ $('publishBtn').disabled=true;$('status').textContent="Oyuncu verileri yönetici yetkisiyle GitHub'a gönderiliyor…";
+ window.parent.postMessage({type:'futboldraft:publishPlayers',players:data},window.location.origin);
+});
+window.addEventListener('message',event=>{
+ if(event.origin!==window.location.origin||event.source!==window.parent)return;
+ const result=event.data;if(!result||result.type!=='futboldraft:playersPublishResult')return;
+ $('publishBtn').disabled=!records.length;
+ $('status').textContent=result.message||(result.ok?'Yayınlama başarılı.':'Yayınlama başarısız.');
+ $('status').className=result.ok?'notice':'notice warn';
+});
+// Yönetim paneli açıldığında depodaki güncel oyuncu havuzunu otomatik yükle.
+fetch('./players.json',{cache:'no-store'}).then(async response=>{
+ if(!response.ok)throw new Error('players.json yüklenemedi ('+response.status+').');
+ const text=await response.text();data=JSON.parse(text);original=JSON.parse(text);records=[];changed.clear();orderChanged=false;flatten(data);
+ if(!records.length)throw new Error('players.json içinde tanınan oyuncu kaydı bulunamadı.');
+ format='players.json';$('status').textContent='Mevcut players.json yüklendi. '+records.length+' oyuncu bulundu.';
+ ['search','clubFilter','positionFilter','resetBtn'].forEach(id=>$(id).disabled=false);renderFilters();updateAddClubOptions();render();renderStats();
+}).catch(error=>{$('status').textContent='Otomatik oyuncu listesi yüklenemedi: '+error.message+' Dosyayı yukarıdan elle seçebilirsin.'});
+})();
+</script>
+</body></html>
