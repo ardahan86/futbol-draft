@@ -490,7 +490,7 @@ function drawWheel(canvasId='wheelCanvas'){
    const ratio=Math.min((crestSize-3)/crest.naturalWidth,(crestSize-3)/crest.naturalHeight),w=crest.naturalWidth*ratio,h=crest.naturalHeight*ratio;
    ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=4;ctx.drawImage(crest,r*.49-w/2,-h/2,w,h);ctx.restore();
   }
-  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text||getWheelTextColor(slice);ctx.font=`900 ${Math.max(8,Math.min(10.5,Number(style.fontSize)||10)}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text||getWheelTextColor(slice);ctx.font=`900 ${Math.max(8,Math.min(10.5,Number(style.fontSize)||10))}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
   ctx.shadowColor='rgba(0,0,0,.92)';ctx.shadowBlur=5;ctx.lineWidth=2.2;ctx.strokeStyle='rgba(0,0,0,.48)';
   const label=slice==='FUTBOLCU KAYBET'?'FUTBOLCU KAYBET':slice;
   ctx.strokeText(label,r-10,0);ctx.fillText(label,r-10,0);ctx.restore();
