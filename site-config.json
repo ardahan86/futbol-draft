@@ -4,43 +4,43 @@
       "heroHeadlineTop": "TAKIMINI KUR",
       "heroHeadlineMiddle": "SAHAYA ÇIK",
       "heroHeadlineBottom": "ŞAMPİYON OL!",
-      "statPlayersValue": "300",
+      "statPlayersValue": "365",
       "statPlayersLabel": "FUTBOLCU",
-      "statClubsValue": "15",
+      "statClubsValue": "18",
       "statClubsLabel": "DEV KULÜP",
-      "statSquadValue": "11",
+      "statSquadValue": "YILDIZ",
       "statSquadLabel": "İLK 11",
       "loginButton": "Giriş yapılıyor…",
       "registerButton": "HESAP OLUŞTUR",
       "newRoomButton": "+ Oda oluştur",
-      "createRoomTitle": "Yeni oda oluştur",
-      "joinRoomButton": "Odaya katıl",
-      "heroLead": "Çarkı çevir, futbol yıldızlarını kadrona kat, rakiplerinle mücadele et. Futbolun kaderini sen belirle.",
+      "createRoomTitle": "Yeni Oda Oluştur",
+      "joinRoomButton": "Odaya Katıl",
+      "heroLead": "Çarkı çevir, futbol yıldızlarını kadrona kat, rakiplerinle mücadele et.",
       "loginTitle": "Arenaya Dön",
       "loginLead": "E-posta adresin veya kullanıcı adınla giriş yap.",
       "registerTitle": "Menajer Hesabını Oluştur",
       "dashboardEyebrow": "MENAJER MERKEZİ",
       "dashboardLead": "Odaya katıl, çarkı çevir ve kadronu oluştur.",
-      "joinRoomTitle": "Oda koduyla katıl",
+      "joinRoomTitle": "Oda Koduyla Katıl",
       "draftTab": "🎡 DRAFT MERKEZİ",
       "leagueTab": "🏆 LİG",
       "rulesTab": "📘 KURALLAR",
-      "footerText": "FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA"
+      "footerText": "365 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT"
     },
     "colors": {
       "--bg": "#080d18",
       "--panel": "#111a2b",
       "--panel2": "#18253a",
-      "--line": "#28384e",
+      "--line": "#2d415c",
       "--text": "#f5f7fb",
-      "--muted": "#9aa9bc",
-      "--lime": "#b7f34b",
+      "--muted": "#a5abfd",
+      "--lime": "#0adb65",
       "--blue": "#52a7ff",
-      "--danger": "#ff8178"
+      "--danger": "#d71c0f"
     },
     "typography": {
-      "bodyFont": "system-ui",
-      "headingFont": "system-ui",
+      "bodyFont": "Arial",
+      "headingFont": "Arial",
       "baseSize": 16,
       "headingSize": 32,
       "buttonSize": 14,
@@ -50,218 +50,218 @@
       "0": {
         "fill": "#a90432",
         "text": "#fdb912",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#ffffff",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "1": {
-        "fill": "#6B7280",
-        "text": "#FFFFFF",
+        "fill": "#6b7280",
+        "text": "#ffffff",
         "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "2": {
-        "fill": "#EF0107",
-        "text": "#FFFFFF",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#ef0107",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "3": {
-        "fill": "#CB3524",
-        "text": "#FFFFFF",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#cb3524",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "4": {
-        "fill": "#7C3AED",
-        "text": "#FFFFFF",
+        "fill": "#409905",
+        "text": "#ffffff",
         "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "5": {
-        "fill": "#222222",
-        "text": "#FFFFFF",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#000000",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "6": {
-        "fill": "#E8D9A9",
-        "text": "#00529F",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#fafafa",
+        "text": "#00058f",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "7": {
-        "fill": "#6B7280",
-        "text": "#FFFFFF",
+        "fill": "#6b7280",
+        "text": "#ffffff",
         "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "8": {
-        "fill": "#252525",
-        "text": "#FFFFFF",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#000000",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "9": {
         "fill": "#004170",
-        "text": "#E30613",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "text": "#e30613",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "10": {
-        "fill": "#FFED00",
-        "text": "#002D72",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#ffed00",
+        "text": "#002d72",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "11": {
-        "fill": "#6CABDD",
-        "text": "#1C2C5B",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#6cabdd",
+        "text": "#031c68",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "12": {
-        "fill": "#DC052D",
-        "text": "#FFFFFF",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#dc052d",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "13": {
-        "fill": "#00529F",
+        "fill": "#00529f",
         "text": "#000000",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "14": {
-        "fill": "#B91C1C",
-        "text": "#FFFFFF",
+        "fill": "#f55600",
+        "text": "#000000",
         "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "15": {
-        "fill": "#6B1839",
-        "text": "#75AADB",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#6b1839",
+        "text": "#75aadb",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "16": {
-        "fill": "#C8102E",
-        "text": "#00B2A9",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#c8102e",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "17": {
-        "fill": "#004D98",
-        "text": "#A50044",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#004d98",
+        "text": "#a50044",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "18": {
-        "fill": "#DA291C",
-        "text": "#FBE122",
+        "fill": "#da291c",
+        "text": "#fbe122",
         "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#050505",
+        "borderWidth": 1
       },
       "19": {
-        "fill": "#7C3AED",
-        "text": "#FFFFFF",
+        "fill": "#409905",
+        "text": "#ffffff",
         "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "20": {
-        "fill": "#F59E0B",
-        "text": "#222222",
+        "fill": "#fa9e00",
+        "text": "#000000",
         "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "21": {
-        "fill": "#64748B",
-        "text": "#FFFFFF",
-        "fontSize": 9,
-        "fontFamily": "system-ui",
+        "fill": "#bc00f0",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "22": {
         "fill": "#034694",
-        "text": "#FFFFFF",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       },
       "23": {
-        "fill": "#1B75BB",
-        "text": "#FFFFFF",
-        "fontSize": 11,
-        "fontFamily": "system-ui",
+        "fill": "#1b75bb",
+        "text": "#ffffff",
+        "fontSize": 10,
+        "fontFamily": "Arial",
         "fontWeight": "700",
-        "border": "#FFFFFF",
-        "borderWidth": 1.5
+        "border": "#000000",
+        "borderWidth": 1
       }
     }
   }
