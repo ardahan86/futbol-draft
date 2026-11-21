@@ -137,7 +137,17 @@ const CMS_WHEEL_DEFAULTS=Object.fromEntries(WHEEL_SLICES.map((slice,index)=>[Str
 }]));
 let cmsDraftConfig={text:{},colors:{},typography:{},wheel:{}},activeCmsConfig={},cmsAutosaveTimer=null,cmsOriginalText={},cmsSelectedWheelIndex=0;
 function cmsTextElement(key){return document.querySelector(`[data-cms-key="${key}"]`)}
-function wheelStyleFor(index,config=activeCmsConfig){return {...(CMS_WHEEL_DEFAULTS[String(index)]||{}),...(config?.wheel?.[String(index)]||{})}}
+function wheelStyleFor(index,config=activeCmsConfig){
+ const defaults=CMS_WHEEL_DEFAULTS[String(index)]||{};
+ const saved=config?.wheel?.[String(index)]||{};
+ const style={...defaults,...saved};
+ // Firebase'den gelen bozuk/yarım renk değerleri CanvasGradient'i durdurmasın.
+ const validHex=value=>typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value);
+ if(!validHex(style.fill))style.fill=defaults.fill||getWheelSliceColor(WHEEL_SLICES[Number(index)]);
+ if(!validHex(style.text))style.text=defaults.text||'#FFFFFF';
+ if(!validHex(style.border))style.border=defaults.border||'#FFFFFF';
+ return style;
+}
 function applyCmsConfig(config={}){
  activeCmsConfig=config||{};
  const text=activeCmsConfig.text||{},colors=activeCmsConfig.colors||{},typo=activeCmsConfig.typography||{};
@@ -474,7 +484,7 @@ function drawWheel(canvasId='wheelCanvas'){
  // Deep shadow under the wheel and a bright esports outer halo.
  ctx.save();ctx.shadowColor='rgba(0,255,116,.72)';ctx.shadowBlur=17;ctx.beginPath();ctx.arc(cx,cy,r+10,0,Math.PI*2);ctx.strokeStyle='rgba(32,255,122,.72)';ctx.lineWidth=5;ctx.stroke();ctx.restore();
  for(let i=0;i<n;i++){
-  const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,slice=WHEEL_SLICES[i],style=wheelStyleFor(i),base=style.fill||getWheelSliceColor(slice),bright=wheelHex(base,.34),deep=wheelHex(base,-.28);
+  const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,slice=WHEEL_SLICES[i],style=wheelStyleFor(i),candidate=style.fill,base=(typeof candidate==='string'&&/^#[0-9a-f]{6}$/i.test(candidate))?candidate:getWheelSliceColor(slice),bright=wheelHex(base,.34),deep=wheelHex(base,-.28);
   const grad=ctx.createLinearGradient(cx-r,cy-r,cx+r,cy+r);grad.addColorStop(0,bright);grad.addColorStop(.48,base);grad.addColorStop(1,deep);
   ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
   ctx.save();ctx.strokeStyle=style.border||'rgba(255,255,255,.9)';ctx.lineWidth=Math.max(1.5,Number(style.borderWidth)||1.5);ctx.shadowColor='rgba(255,255,255,.38)';ctx.shadowBlur=4;ctx.stroke();ctx.restore();
@@ -490,7 +500,7 @@ function drawWheel(canvasId='wheelCanvas'){
    const ratio=Math.min((crestSize-3)/crest.naturalWidth,(crestSize-3)/crest.naturalHeight),w=crest.naturalWidth*ratio,h=crest.naturalHeight*ratio;
    ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=4;ctx.drawImage(crest,r*.49-w/2,-h/2,w,h);ctx.restore();
   }
-  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text||getWheelTextColor(slice);ctx.font=`900 ${Math.max(8,Math.min(10.5,Number(style.fontSize)||10))}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=style.text||getWheelTextColor(slice);ctx.font=`900 ${Math.max(8,Math.min(10.5,Number(style.fontSize)||10)}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
   ctx.shadowColor='rgba(0,0,0,.92)';ctx.shadowBlur=5;ctx.lineWidth=2.2;ctx.strokeStyle='rgba(0,0,0,.48)';
   const label=slice==='FUTBOLCU KAYBET'?'FUTBOLCU KAYBET':slice;
   ctx.strokeText(label,r-10,0);ctx.fillText(label,r-10,0);ctx.restore();
