@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "Futbol_Arena_oyuncu_duzenleme",
-  "playersCount": 360,
+  "playersCount": 365,
   "players": [
     {
       "id": "galatasaray-ugurcan-cakr",
@@ -3649,7 +3649,7 @@
       "shirtNumber": 19,
       "name": "Lorenzo Lucca",
       "position": "Santrfor",
-      "attack": 77,
+      "attack": 99,
       "defense": 1,
       "overall": 75
     }
