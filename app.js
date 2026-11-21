@@ -240,10 +240,25 @@ async function retryCmsGithubSync(){
  if(status)status.textContent=`GitHub eşitlemesi başarılı. Commit: ${result.commit||'oluşturuldu'}.`;
  msg('Yayınlanmış ayarlar GitHub’a gönderildi.');
 }
+function withCmsTimeout(promise,ms,label){
+ let timer;
+ return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+' zaman aşımına uğradı.')),ms)})]).finally(()=>clearTimeout(timer));
+}
 async function loadPublishedCmsConfig(){
- try{const snap=await getDoc(doc(db,'siteConfig','published'));if(snap.exists()){applyCmsConfig(snap.data().config||{});return}}
- catch(error){console.warn('Firestore yayın ayarları okunamadı; GitHub yedeği denenecek.',error)}
- try{const response=await fetch('./site-config.json',{cache:'no-store'});if(response.ok){const data=await response.json();applyCmsConfig(data.config||data)}}catch(error){console.warn('Statik tasarım ayarları okunamadı.',error)}
+ // Eski HTML metinlerini göstermemek için yayımlanmış tasarım önce yüklenir.
+ try{
+  const snap=await withCmsTimeout(getDoc(doc(db,'siteConfig','published')),5000,'Firebase tasarım ayarları');
+  if(snap.exists()){applyCmsConfig(snap.data().config||{});return true}
+ }catch(error){console.warn('Firestore yayın ayarları okunamadı; GitHub yedeği denenecek.',error)}
+ try{
+  const response=await withCmsTimeout(fetch('./site-config.json',{cache:'no-store'}),3000,'Statik tasarım yedeği');
+  if(response.ok){const data=await response.json();applyCmsConfig(data.config||data);return true}
+ }catch(error){console.warn('Statik tasarım ayarları okunamadı.',error)}
+ return false;
+}
+function revealCmsSite(){
+ document.documentElement.classList.remove('cms-loading');
+ $('cmsBootScreen')?.remove();
 }
 async function loadAdminCmsDraft(){
  if(!isAdmin())return;
@@ -1110,7 +1125,7 @@ window.addEventListener('online',()=>{if(roomId||readStored(RESUME_ROOM_KEY))res
 
 async function boot(){
  drawWheel();
- await loadPublishedCmsConfig();
+ try{await loadPublishedCmsConfig()}finally{revealCmsSite()}
  try{
   const res=await fetch('./players.json');const data=await res.json();players=Array.isArray(data)?data:(data.players||[]);
   if(!players.length)throw new Error('Oyuncu veritabanı boş; en az bir futbolcu kaydı bulunmalı.');
