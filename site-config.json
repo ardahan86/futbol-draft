@@ -1,3 +1,268 @@
 {
-  "config": {}
+  "config": {
+    "text": {
+      "heroHeadlineTop": "SAHAYA ÇIK.",
+      "heroHeadlineMiddle": "TAKIMINI KUR.",
+      "heroHeadlineBottom": "EFSANENİ YAZ.",
+      "statPlayersValue": "300",
+      "statPlayersLabel": "FUTBOLCU",
+      "statClubsValue": "15",
+      "statClubsLabel": "DEV KULÜP",
+      "statSquadValue": "11",
+      "statSquadLabel": "İLK 11",
+      "loginButton": "Giriş yapılıyor…",
+      "registerButton": "HESAP OLUŞTUR",
+      "newRoomButton": "+ Oda oluştur",
+      "createRoomTitle": "Yeni oda oluştur",
+      "joinRoomButton": "Odaya katıl",
+      "heroLead": "Çarkı çevir, futbol yıldızlarını kadrona kat, rakiplerinle mücadele et. Futbolun kaderini sen belirle.",
+      "loginTitle": "Arenaya Dön",
+      "loginLead": "E-posta adresin veya kullanıcı adınla giriş yap.",
+      "registerTitle": "Menajer Hesabını Oluştur",
+      "dashboardEyebrow": "MENAJER MERKEZİ",
+      "dashboardLead": "Odaya katıl, çarkı çevir ve kadronu oluştur.",
+      "joinRoomTitle": "Oda koduyla katıl",
+      "draftTab": "🎡 DRAFT MERKEZİ",
+      "leagueTab": "🏆 LİG",
+      "rulesTab": "📘 KURALLAR",
+      "footerText": "FUTBOL DRAFT · 360 FUTBOLCU · 18 KULÜP · 11 KİŞİLİK KADRO · DRAFT ARENA"
+    },
+    "colors": {
+      "--bg": "#080d18",
+      "--panel": "#111a2b",
+      "--panel2": "#18253a",
+      "--line": "#28384e",
+      "--text": "#f5f7fb",
+      "--muted": "#9aa9bc",
+      "--lime": "#b7f34b",
+      "--blue": "#52a7ff",
+      "--danger": "#ff8178"
+    },
+    "typography": {
+      "bodyFont": "system-ui",
+      "headingFont": "system-ui",
+      "baseSize": 16,
+      "headingSize": 32,
+      "buttonSize": 14,
+      "menuSize": 13
+    },
+    "wheel": {
+      "0": {
+        "fill": "#a90432",
+        "text": "#fdb912",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#ffffff",
+        "borderWidth": 1.5
+      },
+      "1": {
+        "fill": "#6B7280",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "2": {
+        "fill": "#EF0107",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "3": {
+        "fill": "#CB3524",
+        "text": "#FFFFFF",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "4": {
+        "fill": "#7C3AED",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "5": {
+        "fill": "#222222",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "6": {
+        "fill": "#E8D9A9",
+        "text": "#00529F",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "7": {
+        "fill": "#6B7280",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "8": {
+        "fill": "#252525",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "9": {
+        "fill": "#004170",
+        "text": "#E30613",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "10": {
+        "fill": "#FFED00",
+        "text": "#002D72",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "11": {
+        "fill": "#6CABDD",
+        "text": "#1C2C5B",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "12": {
+        "fill": "#DC052D",
+        "text": "#FFFFFF",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "13": {
+        "fill": "#00529F",
+        "text": "#000000",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "14": {
+        "fill": "#B91C1C",
+        "text": "#FFFFFF",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "15": {
+        "fill": "#6B1839",
+        "text": "#75AADB",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "16": {
+        "fill": "#C8102E",
+        "text": "#00B2A9",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "17": {
+        "fill": "#004D98",
+        "text": "#A50044",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "18": {
+        "fill": "#DA291C",
+        "text": "#FBE122",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "19": {
+        "fill": "#7C3AED",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "20": {
+        "fill": "#F59E0B",
+        "text": "#222222",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "21": {
+        "fill": "#64748B",
+        "text": "#FFFFFF",
+        "fontSize": 9,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "22": {
+        "fill": "#034694",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      },
+      "23": {
+        "fill": "#1B75BB",
+        "text": "#FFFFFF",
+        "fontSize": 11,
+        "fontFamily": "system-ui",
+        "fontWeight": "700",
+        "border": "#FFFFFF",
+        "borderWidth": 1.5
+      }
+    }
+  }
 }
