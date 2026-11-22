@@ -505,7 +505,7 @@ function drawWheel(canvasId='wheelCanvas'){
 
   // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
-  const logoSize=Math.max(26,Math.min(50,r*.140)),logoRadius=r*.825;
+  const logoSize=Math.max(30,Math.min(60,r*.160)),logoRadius=r*.825;
   const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
   if(crest&&crest.complete&&crest.naturalWidth>0){
    ctx.save();
