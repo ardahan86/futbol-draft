@@ -68,9 +68,19 @@ service cloud.firestore {
           || (resource.data.status == 'drafting' && request.resource.data.status == 'finished'
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['picks','pendingPick','memberOrder','turnIndex','status','draftStage','lastSpin','lastSpinAnnouncement','lastPickAnnouncement','actionLock','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt','protectionDone','postDraftPhase','swapRequests','swapConfirmed','swapResolved','swapResults']))
           || (resource.data.status == 'waiting' && request.resource.data.status == 'drafting'
-            && request.auth.uid == resource.data.ownerUid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','updatedAt'])))
+            && (request.auth.uid == resource.data.ownerUid || isAdmin())
+            && resource.data.readyPlayers.keys().hasAll(resource.data.memberOrder)
+            && resource.data.readyPlayers.keys().hasOnly(resource.data.memberOrder)
+            && resource.data.readyPlayers.values().hasOnly([true])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','readyPlayers','updatedAt']))
+          || (resource.data.status == 'finished' && resource.data.roomType == 'series7' && request.resource.data.status == 'drafting'
+            && (request.auth.uid == resource.data.ownerUid || isAdmin())
+            && resource.data.readyPlayers.keys().hasAll(resource.data.memberOrder)
+            && resource.data.readyPlayers.keys().hasOnly(resource.data.memberOrder)
+            && resource.data.readyPlayers.values().hasOnly([true])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','readyPlayers','seriesHistory','seriesRound','league','tactics','postDraftPhase','protectionDone','swapRequests','swapConfirmed','swapResolved','tacticsConfirmed','updatedAt'])))
         && request.resource.data.ownerUid == resource.data.ownerUid
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['readyPlayers']) || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readyPlayers','updatedAt']) && resource.data.get('readyPlayers', {}).diff(request.resource.data.readyPlayers).affectedKeys().hasOnly([request.auth.uid])))
         // League creation/results are controlled by the room owner, not ordinary members.
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['league'])
           || request.auth.uid == resource.data.ownerUid || isAdmin())
@@ -79,7 +89,7 @@ service cloud.firestore {
           'protectionRightsEarned','swapRightsEarned','lastPickAnnouncement','tactics','league','turnStartedAt','finishedAt','postDraftPhaseStartedAt','updatedAt',
           // Post-draft protection and swap workflow fields used by the app.
           'protectionDone','postDraftPhase','swapConfirmed','swapRequests','swapResolved','swapResults',
-          'tacticsConfirmed'
+          'tacticsConfirmed','readyPlayers','roomType','seriesRound','seriesHistory'
         ])
       );
       allow delete: if isAdmin();
