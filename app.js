@@ -505,7 +505,7 @@ function drawWheel(canvasId='wheelCanvas'){
 
   // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
-  const logoSize=Math.max(20,Math.min(36,r*.105)),logoRadius=r*.825;
+  const logoSize=Math.max(22,Math.min(40,r*.115)),logoRadius=r*.825;
   const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
   if(crest&&crest.complete&&crest.naturalWidth>0){
    ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.96)';ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;ctx.fill();
@@ -521,8 +521,8 @@ function drawWheel(canvasId='wheelCanvas'){
   const textRadius=r*.535;
   const tangentialSpace=Math.max(8,2*textRadius*Math.sin(a/2)-7);
   const radialTextSpace=r*.34;
-  const configuredSize=Math.max(7,Number(style.fontSize)||14);
-  const fontSize=Math.max(7,Math.min(configuredSize,tangentialSpace*.34));
+  const configuredSize=Math.max(10,Number(style.fontSize)||20);
+  const fontSize=Math.max(10,Math.min(configuredSize,tangentialSpace*.46));
   ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle=style.text||'#FFFFFF';
