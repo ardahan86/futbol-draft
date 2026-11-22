@@ -25,7 +25,7 @@ const CLUB_COLORS = {
   "Bayern Münih": "#DC052D",
   "Manchester City": "#6CABDD",
   "Arsenal": "#EF0107",
-  "Liverpool": "#C8102E",
+  "Liverpool": "#af0622",
   "Atlético Madrid": "#CB3524",
   "Juventus": "#ffffff",
   "Manchester United": "#DA291C",
@@ -55,7 +55,7 @@ const CLUB_TEXT_COLORS = {
   "Bayern Münih": "#FFFFFF",      // Beyaz
   "Manchester City": "#1C2C5B",   // Lacivert
   "Arsenal": "#FFFFFF",           // Beyaz
-  "Liverpool": "#00B2A9",         // Turkuaz
+  "Liverpool": "#ffffff",         // Turkuaz
   "Atlético Madrid": "#FFFFFF",   // Beyaz
   "Juventus": "#000000",          // Beyaz
   "Manchester United": "#FBE122",  // Sarı
@@ -505,7 +505,7 @@ function drawWheel(canvasId='wheelCanvas'){
 
   // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
-  const logoSize=Math.max(23,Math.min(42,r*.12)),logoRadius=r*.825;
+  const logoSize=Math.max(24,Math.min(45,r*.128)),logoRadius=r*.825;
   const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
   if(crest&&crest.complete&&crest.naturalWidth>0){
    ctx.save();
@@ -514,7 +514,6 @@ function drawWheel(canvasId='wheelCanvas'){
    ctx.translate(lx,ly);ctx.rotate(mid-Math.PI/2);
    ctx.drawImage(crest,-logoSize/2,-logoSize/2,logoSize,logoSize);
    ctx.restore();
-   ctx.save();ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=1.25;ctx.stroke();ctx.restore();
   }
 
   // Keep the name in its own inner band. Fit long names to the available radial width.
