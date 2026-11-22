@@ -488,7 +488,9 @@ function drawWheel(canvasId='wheelCanvas'){
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
  for(let i=0;i<n;i++){
   const a=2*Math.PI/n,start=-Math.PI/2+i*a,end=start+a,mid=start+a/2,slice=WHEEL_SLICES[i],style=wheelStyleFor(i);
-  const baseFill=Object.prototype.hasOwnProperty.call(specialBright,slice)?specialBright[slice]:vivid(style.fill);
+  const baseFill=Object.prototype.hasOwnProperty.call(specialBright,slice)
+  ? specialBright[slice]
+  : style.fill;
   ctx.save();ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
   const grad=ctx.createLinearGradient(cx+Math.cos(mid)*r*.12,cy+Math.sin(mid)*r*.12,cx+Math.cos(mid)*r,cy+Math.sin(mid)*r);
   grad.addColorStop(0,shade(baseFill,34));grad.addColorStop(.46,baseFill);grad.addColorStop(1,shade(baseFill,-34));
@@ -519,8 +521,8 @@ function drawWheel(canvasId='wheelCanvas'){
   const textRadius=r*.535;
   const tangentialSpace=Math.max(8,2*textRadius*Math.sin(a/2)-7);
   const radialTextSpace=r*.34;
-  const configuredSize=Math.max(7,Number(style.fontSize)||10);
-  const fontSize=Math.max(7,Math.min(configuredSize,tangentialSpace*.27));
+  const configuredSize=Math.max(7,Number(style.fontSize)||14);
+  const fontSize=Math.max(7,Math.min(configuredSize,tangentialSpace*.34));
   ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle=style.text||'#FFFFFF';
