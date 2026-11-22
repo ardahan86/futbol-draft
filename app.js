@@ -527,10 +527,7 @@ function drawWheel(canvasId='wheelCanvas'){
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle=style.text||'#FFFFFF';
   ctx.font=`${style.fontWeight||'800'} ${fontSize}px "Times New Roman"`;
-  ctx.shadowColor='transparent';
-ctx.shadowBlur=0;
-ctx.lineWidth=0;
-ctx.strokeStyle='transparent';
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.lineWidth=0; ctx.strokeStyle='transparent';
   ctx.fillText(slice,textRadius,0,radialTextSpace);
   ctx.restore();
  }
