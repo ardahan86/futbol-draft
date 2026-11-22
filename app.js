@@ -12,7 +12,7 @@ const EMAIL_ACTION_URL='https://futboldraft.com.tr';
 const authPersistenceReady=setPersistence(auth,browserLocalPersistence);
 const $=id=>document.getElementById(id);
 const CLUBS=["Galatasaray","Fenerbahçe","Beşiktaş","Trabzonspor","Barcelona","Real Madrid","Inter","PSG","Bayern Münih","Manchester City","Arsenal","Liverpool","Atlético Madrid","Juventus","Manchester United","Karma Takım","Chelsea","Napoli"];
-const WHEEL_SLICES=["Galatasaray","PAS","Arsenal","Atlético Madrid","KORUMA","Beşiktaş","Real Madrid","PAS","Juventus","PSG","Fenerbahçe","Manchester City","Bayern Münih","Inter","FUTBOLCU KAYBET","Trabzonspor","Liverpool","Barcelona","Manchester United","KORUMA","TAKAS","Karma Takım","Chelsea","Napoli"];
+const WHEEL_SLICES=["Galatasaray","PAS","Arsenal","Atlético Madrid","KORUMA","Beşiktaş","Real Madrid","Inter","FUTBOLCU KAYBET","PSG","Fenerbahçe","Manchester City","Bayern Münih","PAS","Juventus","KORUMA","Liverpool","Barcelona","Manchester United","Trabzonspor","TAKAS","Karma Takım","Chelsea","Napoli"];
 const CLUB_COLORS = {
   "Galatasaray": "#A90432",
   "Fenerbahçe": "#FFED00",
@@ -25,7 +25,7 @@ const CLUB_COLORS = {
   "Bayern Münih": "#DC052D",
   "Manchester City": "#6CABDD",
   "Arsenal": "#EF0107",
-  "Liverpool": "#af0622",
+  "Liverpool": "#99011b",
   "Atlético Madrid": "#CB3524",
   "Juventus": "#ffffff",
   "Manchester United": "#DA291C",
@@ -36,7 +36,7 @@ const SPECIAL_COLORS = {
   "PAS": "#6B7280",
   "KORUMA": "#28e028",
   "TAKAS": "#F59E0B",
-  "FUTBOLCU KAYBET": "#f50000"
+  "FUTBOLCU KAYBET": "#f50909e1"
 };
 
 function getWheelSliceColor(slice) {
@@ -66,7 +66,7 @@ const SPECIAL_TEXT_COLORS = {
   "PAS": "#FFFFFF",
   "KORUMA": "#000000",
   "TAKAS": "#000000",
-  "FUTBOLCU KAYBET": "#FFFFFF"
+  "FUTBOLCU KAYBET": "#000000"
 };
 
 function getWheelTextColor(slice) {
