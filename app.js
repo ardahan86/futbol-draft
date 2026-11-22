@@ -16,10 +16,10 @@ const WHEEL_SLICES=["Galatasaray","PAS","Arsenal","Atlético Madrid","KORUMA","B
 const CLUB_COLORS = {
   "Galatasaray": "#A90432",
   "Fenerbahçe": "#FFED00",
-  "Beşiktaş": "#222222",
+  "Beşiktaş": "#ffffff",
   "Trabzonspor": "#6B1839",
   "Barcelona": "#004D98",
-  "Real Madrid": "#E8D9A9",
+  "Real Madrid": "#ffffff",
   "Inter": "#00529F",
   "PSG": "#004170",
   "Bayern Münih": "#DC052D",
@@ -27,16 +27,16 @@ const CLUB_COLORS = {
   "Arsenal": "#EF0107",
   "Liverpool": "#C8102E",
   "Atlético Madrid": "#CB3524",
-  "Juventus": "#252525",
+  "Juventus": "#ffffff",
   "Manchester United": "#DA291C",
-  "Chelsea": "#034694", "Napoli": "#1B75BB", "Karma Takım": "#64748B"
+  "Chelsea": "#034694", "Napoli": "#1B75BB", "Karma Takım": "#02fcfc"
 };
 
 const SPECIAL_COLORS = {
   "PAS": "#6B7280",
-  "KORUMA": "#7C3AED",
+  "KORUMA": "#28e028",
   "TAKAS": "#F59E0B",
-  "FUTBOLCU KAYBET": "#B91C1C"
+  "FUTBOLCU KAYBET": "#f50000"
 };
 
 function getWheelSliceColor(slice) {
@@ -46,10 +46,10 @@ function getWheelSliceColor(slice) {
 const CLUB_TEXT_COLORS = {
   "Galatasaray": "#FDB912",       // Sarı
   "Fenerbahçe": "#002D72",        // Lacivert
-  "Beşiktaş": "#FFFFFF",          // Beyaz
+  "Beşiktaş": "#000000",          // Beyaz
   "Trabzonspor": "#75AADB",       // Açık mavi
   "Barcelona": "#A50044",         // Bordo
-  "Real Madrid": "#00529F",       // Mavi
+  "Real Madrid": "#015eb6",       // Mavi
   "Inter": "#000000",             // Siyah
   "PSG": "#E30613",               // Kırmızı
   "Bayern Münih": "#FFFFFF",      // Beyaz
@@ -57,15 +57,15 @@ const CLUB_TEXT_COLORS = {
   "Arsenal": "#FFFFFF",           // Beyaz
   "Liverpool": "#00B2A9",         // Turkuaz
   "Atlético Madrid": "#FFFFFF",   // Beyaz
-  "Juventus": "#FFFFFF",          // Beyaz
+  "Juventus": "#000000",          // Beyaz
   "Manchester United": "#FBE122",  // Sarı
-  "Chelsea": "#FFFFFF", "Napoli": "#FFFFFF", "Karma Takım": "#FFFFFF"
+  "Chelsea": "#FFFFFF", "Napoli": "#FFFFFF", "Karma Takım": "#000000"
 };
 
 const SPECIAL_TEXT_COLORS = {
   "PAS": "#FFFFFF",
-  "KORUMA": "#FFFFFF",
-  "TAKAS": "#222222",
+  "KORUMA": "#000000",
+  "TAKAS": "#000000",
   "FUTBOLCU KAYBET": "#FFFFFF"
 };
 
@@ -493,13 +493,13 @@ function drawWheel(canvasId='wheelCanvas'){
   const grad=ctx.createLinearGradient(cx+Math.cos(mid)*r*.12,cy+Math.sin(mid)*r*.12,cx+Math.cos(mid)*r,cy+Math.sin(mid)*r);
   grad.addColorStop(0,shade(baseFill,34));grad.addColorStop(.46,baseFill);grad.addColorStop(1,shade(baseFill,-34));
   ctx.fillStyle=grad;ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=Number.isFinite(Number(style.borderWidth))?Math.max(1.6,Number(style.borderWidth)):1.8;
+  ctx.strokeStyle='rgba(0, 0, 0, 0.96)';ctx.lineWidth=Number.isFinite(Number(style.borderWidth))?Math.max(1.6,Number(style.borderWidth)):1.8;
   ctx.shadowColor='rgba(0,0,0,.42)';ctx.shadowBlur=5;ctx.stroke();ctx.restore();
 
   // Thin luminous separators keep adjacent wedges visually distinct.
-  ctx.save();ctx.beginPath();ctx.arc(cx,cy,r-3,start+.012,end-.012);ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=1.25;ctx.stroke();
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,r-3,start+.012,end-.012);ctx.strokeStyle='rgba(0, 0, 0, 0.28)';ctx.lineWidth=1.25;ctx.stroke();
   ctx.beginPath();ctx.moveTo(cx+Math.cos(mid)*r*.30,cy+Math.sin(mid)*r*.30);ctx.lineTo(cx+Math.cos(mid)*r*.96,cy+Math.sin(mid)*r*.96);
-  ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='rgba(0, 0, 0, 0.1)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
 
   // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
@@ -524,9 +524,11 @@ function drawWheel(canvasId='wheelCanvas'){
   ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle=style.text||'#FFFFFF';
-  ctx.font=`${style.fontWeight||'800'} ${fontSize}px ${JSON.stringify(style.fontFamily||'system-ui')}`;
-  ctx.shadowColor='rgba(0,0,0,.98)';ctx.shadowBlur=6;ctx.lineWidth=2.4;ctx.strokeStyle='rgba(0,0,0,.58)';
-  ctx.strokeText(slice,textRadius,0,radialTextSpace);
+  ctx.font=`${style.fontWeight||'800'} ${fontSize}px "Times New Roman"`;
+  ctx.shadowColor='transparent';
+ctx.shadowBlur=0;
+ctx.lineWidth=0;
+ctx.strokeStyle='transparent';
   ctx.fillText(slice,textRadius,0,radialTextSpace);
   ctx.restore();
  }
