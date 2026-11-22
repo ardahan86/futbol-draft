@@ -804,7 +804,9 @@ async function protectPlayer(){
  try{
   const mine=myPicks().slice().sort((a,b)=>Number(a.starterIndex)-Number(b.starterIndex));
   const requestedRoomId=roomId,requestedUid=user.uid;
-  const secretRef=doc(db,'roomSecrets',`${requestedRoomId}_${requestedUid}`),snap=await getDoc(secretRef);
+  const protectionRound=Number(room.seriesRound||1);
+   const secretId=room.roomType==='series7'?`${requestedRoomId}_${requestedUid}_${protectionRound}`:`${requestedRoomId}_${requestedUid}`;
+   const secretRef=doc(db,'roomSecrets',secretId),snap=await getDoc(secretRef);
   // Firestore yanıtı beklenirken kullanıcı başka sekmeye geçmiş olabilir.
   // Eski async istek, modalı sonradan yeniden ekranın üzerine koymamalı.
   if(!room||roomId!==requestedRoomId||user?.uid!==requestedUid||room.status!=='finished'||(room.postDraftPhase||'protection')!=='protection'||room.protectionDone?.[requestedUid]||document.querySelector('.nav-tab.active')?.dataset.pane!=='draftPane')return;
@@ -823,12 +825,14 @@ async function protectPlayer(){
 async function finishProtectionSelection(selectedOverride=null){
  try{
   const modal=$('postDraftModal');const selected=selectedOverride||[];
-  const secretRef=doc(db,'roomSecrets',`${roomId}_${user.uid}`),latest=await getDoc(secretRef);
+  const protectionRound=Number(room.seriesRound||1);
+   const secretId=room.roomType==='series7'?`${roomId}_${user.uid}_${protectionRound}`:`${roomId}_${user.uid}`;
+   const secretRef=doc(db,'roomSecrets',secretId),latest=await getDoc(secretRef);
   const mine=myPicks(),myIds=new Set(mine.map(p=>p.id));const prior=[...new Set(latest.exists()?latest.data().protectedIds||[]:[])].filter(id=>myIds.has(id));
   const chosen=[...new Set(selected)].filter(id=>myIds.has(id)&&!prior.includes(id));
   const available=Math.max(0,Math.min(3,rightsFor('protectionRights'))-prior.length);
   if(chosen.length>available)throw new Error('Koruma hakkından fazla futbolcu seçildi.');
-  if(chosen.length||prior.length)await setDoc(secretRef,{roomId,uid:user.uid,protectedIds:[...prior,...chosen],updatedAt:Date.now()},{merge:true});
+  if(chosen.length||prior.length)await setDoc(secretRef,{roomId,uid:user.uid,...(room.roomType==='series7'?{seriesRound:protectionRound}:{}),protectedIds:[...prior,...chosen],updatedAt:Date.now()},{merge:true});
   let all=false;
   await runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())throw new Error('Oda bulunamadı.');const d=snap.data();if(d.status!=='finished'||(d.postDraftPhase||'protection')!=='protection')throw new Error('Koruma aşaması açık değil.');if(d.protectionDone?.[user.uid])throw new Error('Koruma seçimini zaten tamamladın.');const done={...(d.protectionDone||{}),[user.uid]:true},rights={...(d.protectionRights||{})};if(prior.length+chosen.length===0)rights[user.uid]=0;all=(d.memberOrder||[]).every(id=>done[id]);tx.update(roomRef,{protectionDone:done,protectionRights:rights,postDraftPhase:all?'swaps':'protection',postDraftPhaseStartedAt:all?Date.now():Number(d.postDraftPhaseStartedAt||Date.now()),updatedAt:serverTimestamp()})});
   closePostDraftModal();msg(`Koruma onaylandı. ${prior.length+chosen.length} futbolcu korumalı.`+(all?' Takas aşaması açılıyor.':' Diğer oyuncular bekleniyor.'));

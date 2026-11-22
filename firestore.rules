@@ -98,19 +98,24 @@ service cloud.firestore {
     // Protection selections are made after all rosters are complete.
     // A player can only write their own protection record.
     match /roomSecrets/{secretId} {
-      allow read: if isAdmin() || (verifiedUser() && secretId.matches('.*_' + request.auth.uid))
+      allow read: if isAdmin()
         || (verifiedUser() && resource.data.uid == request.auth.uid)
         || (verifiedUser() && roomFinished(resource.data.roomId)
           && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
       allow create, update: if signedIn()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.roomId is string
-        && secretId == request.resource.data.roomId + '_' + request.auth.uid
         && roomExists(request.resource.data.roomId)
         && request.auth.uid in get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.memberOrder
         && get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.status == 'finished'
         && request.resource.data.protectedIds is list
-        && request.resource.data.protectedIds.size() <= 3;
+        && request.resource.data.protectedIds.size() <= 3
+        && ((get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType == 'series7'
+          && request.resource.data.seriesRound is int
+          && request.resource.data.seriesRound == get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.seriesRound
+          && secretId == request.resource.data.roomId + '_' + request.auth.uid + '_' + string(request.resource.data.seriesRound))
+          || (get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType != 'series7'
+          && secretId == request.resource.data.roomId + '_' + request.auth.uid));
       allow delete: if isAdmin() || (verifiedUser() && resource.data.uid == request.auth.uid);
     }
     // Site content CMS: the published document is readable by visitors; drafts are admin-only.
