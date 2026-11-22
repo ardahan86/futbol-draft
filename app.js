@@ -505,11 +505,10 @@ function drawWheel(canvasId='wheelCanvas'){
 
   // Put the crest at the wide, outer end of each wedge.
   const crest=getWheelLogo(slice);
-  const logoSize=Math.max(24,Math.min(45,r*.128)),logoRadius=r*.825;
+  const logoSize=Math.max(26,Math.min(50,r*.140)),logoRadius=r*.825;
   const lx=cx+Math.cos(mid)*logoRadius,ly=cy+Math.sin(mid)*logoRadius;
   if(crest&&crest.complete&&crest.naturalWidth>0){
    ctx.save();
-   ctx.beginPath();ctx.arc(lx,ly,logoSize*.57,0,Math.PI*2);ctx.clip();
    // Logo bottom points radially outward toward the wide edge of its wedge.
    ctx.translate(lx,ly);ctx.rotate(mid-Math.PI/2);
    ctx.drawImage(crest,-logoSize/2,-logoSize/2,logoSize,logoSize);
