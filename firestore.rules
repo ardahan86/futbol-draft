@@ -98,8 +98,16 @@ service cloud.firestore {
     // Protection selections are made after all rosters are complete.
     // A player can only write their own protection record.
     match /roomSecrets/{secretId} {
-      allow read: if isAdmin()
+      // getDoc() koruma belgesi ilk seçimden önce mevcut olmayabilir.
+      // Olmayan belge için resource.data alanlarına erişmek permission-denied üretir.
+      // Bu nedenle kullanıcı yalnızca kendi UID'siyle biten koruma belgesini get edebilir.
+      allow get: if isAdmin()
+        || (verifiedUser() && secretId.matches('.*_' + request.auth.uid + '(_[0-9]+)?'))
         || (verifiedUser() && resource.data.uid == request.auth.uid)
+        || (verifiedUser() && roomFinished(resource.data.roomId)
+          && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
+      // Listeleme (takas çözümünde) yalnızca tamamlanmış odanın üyelerine açıktır.
+      allow list: if isAdmin()
         || (verifiedUser() && roomFinished(resource.data.roomId)
           && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
       allow create, update: if signedIn()
