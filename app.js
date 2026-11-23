@@ -872,9 +872,14 @@ async function confirmMySwaps(requestsOverride=[]){
  }catch(e){msg(e.message||'Takaslar onaylanamadı.',true)}
 }
 async function resolveSwaps(){
- const q=query(collection(db,'roomSecrets'),where('roomId','==',roomId)),secrets=await getDocs(q);
- const protectedIds=new Set(secrets.docs.flatMap(d=>d.data().protectedIds||[]));
- const protectedByUid={};for(const d of secrets.docs){const uid=d.data().uid||d.id.slice(String(roomId).length+1);protectedByUid[uid]=d.data().protectedIds||[]}
+ const q=query(collection(db,'roomSecrets'),where('roomId','==',roomId)),allSecrets=await getDocs(q);
+ // 7 serilik odalarda yalnızca o anki draftın koruma kayıtları takasları etkiler.
+ // Önceki draftların roomSecrets belgeleri odada kalabilir; bunlar bu draftta kullanılmamalıdır.
+ const isSeriesRoom=room?.roomType==='series7';
+ const currentProtectionRound=Number(room?.seriesRound||1);
+ const activeSecrets=allSecrets.docs.filter(d=>!isSeriesRoom||Number(d.data().seriesRound||0)===currentProtectionRound);
+ const protectedIds=new Set(activeSecrets.flatMap(d=>d.data().protectedIds||[]));
+ const protectedByUid={};for(const d of activeSecrets){const uid=d.data().uid||d.id.slice(String(roomId).length+1);protectedByUid[uid]=d.data().protectedIds||[]}
  await runTransaction(db,async tx=>{
   const snap=await tx.get(roomRef),d=snap.data();if(d.postDraftPhase!=='swaps'||d.swapResolved)return;if(!(d.memberOrder||[]).every(id=>d.swapConfirmed?.[id]))throw new Error('Tüm oyuncular henüz onaylamadı.');
   const requests=d.swapRequests||[],uses={};for(const r of requests){uses[r.ownId]=(uses[r.ownId]||0)+1;uses[r.targetId]=(uses[r.targetId]||0)+1}
