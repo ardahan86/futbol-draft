@@ -73,7 +73,7 @@ service cloud.firestore {
             && resource.data.readyPlayers.keys().hasOnly(resource.data.memberOrder)
             && resource.data.readyPlayers.values().hasOnly([true])
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','readyPlayers','updatedAt']))
-          || (resource.data.status == 'finished' && resource.data.roomType == 'series7' && request.resource.data.status == 'drafting'
+          || (resource.data.status == 'finished' && resource.data.roomType in ['series3', 'series5', 'series7'] && request.resource.data.status == 'drafting'
             && (request.auth.uid == resource.data.ownerUid || isAdmin())
             && resource.data.readyPlayers.keys().hasAll(resource.data.memberOrder)
             && resource.data.readyPlayers.keys().hasOnly(resource.data.memberOrder)
@@ -102,13 +102,13 @@ service cloud.firestore {
       // Olmayan belge için resource.data alanlarına erişmek permission-denied üretir.
       // Bu nedenle kullanıcı yalnızca kendi UID'siyle biten koruma belgesini get edebilir.
       allow get: if isAdmin()
-        || (verifiedUser() && secretId.matches('.*_' + request.auth.uid + '(_[0-9]+)?'))
-        || (verifiedUser() && resource.data.uid == request.auth.uid)
-        || (verifiedUser() && roomFinished(resource.data.roomId)
+        || (signedIn() && secretId.matches('.*_' + request.auth.uid + '(_[0-9]+)?'))
+        || (signedIn() && resource.data.uid == request.auth.uid)
+        || (signedIn() && roomFinished(resource.data.roomId)
           && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
       // Listeleme (takas çözümünde) yalnızca tamamlanmış odanın üyelerine açıktır.
       allow list: if isAdmin()
-        || (verifiedUser() && roomFinished(resource.data.roomId)
+        || (signedIn() && roomFinished(resource.data.roomId)
           && request.auth.uid in get(/databases/$(database)/documents/rooms/$(resource.data.roomId)).data.memberOrder);
       allow create, update: if signedIn()
         && request.resource.data.uid == request.auth.uid
@@ -118,11 +118,11 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.status == 'finished'
         && request.resource.data.protectedIds is list
         && request.resource.data.protectedIds.size() <= 3
-        && ((get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType == 'series7'
+        && ((get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType in ['series3', 'series5', 'series7']
           && request.resource.data.seriesRound is int
           && request.resource.data.seriesRound == get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.seriesRound
           && secretId == request.resource.data.roomId + '_' + request.auth.uid + '_' + string(request.resource.data.seriesRound))
-          || (get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType != 'series7'
+          || (!(get(/databases/$(database)/documents/rooms/$(request.resource.data.roomId)).data.roomType in ['series3', 'series5', 'series7'])
           && secretId == request.resource.data.roomId + '_' + request.auth.uid));
       allow delete: if isAdmin() || (verifiedUser() && resource.data.uid == request.auth.uid);
     }
