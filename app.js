@@ -724,7 +724,7 @@ async function spinFor(requestedUid,automatic=false){
    const spinAnnouncement={id:`spin_${at}_${uid}`,uid,managerName,result:slice,at,automatic:!!automatic};
    const picks=[...(d.picks||[])];
    const updates={lastSpin:{uid,slice,at,automatic:!!automatic},lastSpinAnnouncement:spinAnnouncement,actionLock:{id:spinAnnouncement.id,kind:'spin',startedAt:at,until:at+6300},turnStartedAt:at,updatedAt:serverTimestamp()};
-   if(slice==='RAKİBE SALDIR'){
+   if(slice==='RAKİBE SALDIR'&&!((d.memberOrder||[]).some(id=>starterCount(picks,id)>=11))){
     updates.pendingAttack={uid,at,startedAt:at};
     tx.update(roomRef,updates);
     return;
