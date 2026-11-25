@@ -320,12 +320,13 @@ const CLUB_CRESTS={
  'Napoli':'./assets/crests/Napoli.png',
  'Karma Takım':'./assets/crests/Karma Takım.png',
 };
-const SPECIAL_SPIN_RESULTS={PAS:{label:'PAS',src:'./assets/crests/PAS.png'},'RAKİBE SALDIR':{label:'RAKİBE SALDIR'},KORUMA:{label:'KORUMA',src:'./assets/crests/KORUMA.png'},TAKAS:{label:'TAKAS',src:'./assets/crests/TAKAS.png'},'FUTBOLCU KAYBET':{label:'FUTBOLCU KAYBET'}};
+const SPECIAL_SPIN_RESULTS={PAS:{label:'PAS',src:'./assets/crests/PAS.png'},'RAKİBE SALDIR':{label:'RAKİBE SALDIR',src:'./assets/crests/RAKİBE SALDIR.png'},KORUMA:{label:'KORUMA',src:'./assets/crests/KORUMA.png'},TAKAS:{label:'TAKAS',src:'./assets/crests/TAKAS.png'},'FUTBOLCU KAYBET':{label:'FUTBOLCU KAYBET'}};
 const WHEEL_LOGO_PATHS={...CLUB_CRESTS,
  PAS:'./assets/crests/PAS.png',
  KORUMA:'./assets/crests/KORUMA.png',
  TAKAS:'./assets/crests/TAKAS.png',
- 'FUTBOLCU KAYBET':'./assets/crests/FUTBOLCU KAYBET.png'
+ 'FUTBOLCU KAYBET':'./assets/crests/FUTBOLCU KAYBET.png',
+ 'RAKİBE SALDIR':'./assets/crests/RAKİBE SALDIR.png'
 };
 const WHEEL_LOGO_CACHE=new Map();
 function getWheelLogo(slice){
