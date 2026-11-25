@@ -34,7 +34,7 @@ const CLUB_COLORS = {
 
 const SPECIAL_COLORS = {
   "PAS": "#6B7280",
-  "RAKİBE SALDIR": "#B91C1C",
+  "RAKİBE SALDIR": "#b9ae1c",
   "KORUMA": "#28e028",
   "TAKAS": "#F59E0B",
   "FUTBOLCU KAYBET": "#f50909e1"
@@ -65,7 +65,7 @@ const CLUB_TEXT_COLORS = {
 
 const SPECIAL_TEXT_COLORS = {
   "PAS": "#FFFFFF",
-  "RAKİBE SALDIR": "#FFFFFF",
+  "RAKİBE SALDIR": "#8a0000",
   "KORUMA": "#000000",
   "TAKAS": "#000000",
   "FUTBOLCU KAYBET": "#000000"
