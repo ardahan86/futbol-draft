@@ -581,13 +581,13 @@ function renderAttackModal(){
  const sections=rivals.map(uid=>{const squad=rosterFor(uid);return `<section style="border:1px solid #475569;border-radius:12px;padding:12px;margin:10px 0;background:#0f172a"><h3 style="margin:0 0 8px;color:#fff">${esc(userName(uid))} <small style="color:#94a3b8;font-weight:400">(${squad.length} futbolcu)</small></h3>${squad.length?squad.map(p=>`<button type="button" data-attack-player="${esc(String(p.id))}" style="display:flex;width:100%;justify-content:space-between;gap:10px;text-align:left;margin:5px 0;padding:10px;border-radius:8px;border:1px solid ${String(selectedAttackPlayerId)===String(p.id)?'#ef4444':'#475569'};background:${String(selectedAttackPlayerId)===String(p.id)?'#7f1d1d':'#1e293b'};color:white" ${locked?'disabled':''}><span><b>${esc(p.name)}</b><small style="display:block;color:#cbd5e1">${esc(p.position||'')} · ${esc(p.club||p.country||'')}</small></span><span>${String(selectedAttackPlayerId)===String(p.id)?'SEÇİLDİ':'SEÇ'}</span></button>`).join(''):'<p style="color:#94a3b8">Henüz kadrosunda futbolcu yok.</p>'}</section>`}).join('');
  const anyTarget=rivals.some(uid=>rosterFor(uid).length);
  modal.classList.remove('hidden');modal.innerHTML=`<div style="width:min(760px,100%);max-height:92vh;overflow:auto;background:#111827;border:1px solid #475569;border-radius:18px;padding:20px;color:#fff;box-shadow:0 20px 70px #0009"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div style="font-size:12px;letter-spacing:2px;color:#f87171;font-weight:800">ÖZEL ÇARK HAKKI</div><h2 style="margin:5px 0">RAKİBE SALDIR</h2></div><div style="font-size:28px">⚔️</div></div><p style="color:#cbd5e1">Bir rakibinin mevcut kadrosundan çıkarmak istediğin futbolcuyu seç. Futbolcu kendi orijinal takımının havuzuna geri dönecek.</p>${sections||'<p>Rakip bulunamadı.</p>'}${!anyTarget?'<p style="color:#fbbf24">Rakip kadrolarında henüz çıkarılabilecek futbolcu yok.</p><button type="button" id="attackSkipBtn" style="padding:10px 14px;border:0;border-radius:9px;background:#475569;color:#fff">SALDIRI HAKKINI GEÇ</button>':''}<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button type="button" id="attackConfirmBtn" ${locked||!selectedAttackPlayerId||!anyTarget?'disabled':''} style="padding:12px 18px;border:0;border-radius:9px;background:#dc2626;color:#fff;font-weight:800;opacity:${locked||!selectedAttackPlayerId||!anyTarget?'.45':'1'}">FUTBOLCUYU KADRODAN ÇIKAR</button></div>${locked?'<p style="color:#fbbf24;margin-bottom:0">Çark sonucu penceresi kapanınca seçim yapabilirsin.</p>':''}</div>`;
- modal.querySelectorAll('[data-attack-player]').forEach(btn=>btn.addEventListener('click',()=>{if(isActionLocked())return;selectedAttackPlayerId=btn.dataset.attackPlayer;renderAttackModal()}));
- const confirm=modal.querySelector('#attackConfirmBtn');if(confirm)confirm.addEventListener('click',()=>resolveAttack(selectedAttackPlayerId));
- const skip=modal.querySelector('#attackSkipBtn');if(skip)skip.addEventListener('click',passAttack);
+ modal.querySelectorAll('[data-attack-player]').forEach(btn=>{btn.onclick=()=>{if(isActionLocked())return;selectedAttackPlayerId=btn.dataset.attackPlayer;renderAttackModal()}});
+ const confirm=modal.querySelector('#attackConfirmBtn');if(confirm)confirm.onclick=()=>{const chosen=selectedAttackPlayerId;if(chosen!==null&&chosen!==undefined)resolveAttack(chosen)};
+ const skip=modal.querySelector('#attackSkipBtn');if(skip)skip.onclick=()=>passAttack(false);
 }
-async function passAttack(){
+async function passAttack(automatic=false){
  if(!roomRef||!user?.uid)return;
- try{await runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data();if(!d.pendingAttack||d.pendingAttack.uid!==user.uid||isActionLocked(d))throw new Error('Saldırı hakkı şu anda kullanılamıyor.');const at=Date.now();tx.update(roomRef,{pendingAttack:null,turnIndex:nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex),turnStartedAt:at,updatedAt:serverTimestamp()})});selectedAttackPlayerId=null;const modal=document.getElementById('attackModal');if(modal)modal.classList.add('hidden');}catch(e){msg(e.message||'Tur geçilemedi.',true)}
+ try{await runTransaction(db,async tx=>{const snap=await tx.get(roomRef);if(!snap.exists())return;const d=snap.data(),pending=d.pendingAttack;if(!pending||pending.uid!==user.uid||isActionLocked(d))throw new Error('Saldırı hakkı şu anda kullanılamıyor.');if(automatic&&Date.now()-Number(pending.startedAt||pending.at||0)<20000)throw new Error('Saldırı süresi henüz dolmadı.');const at=Date.now();tx.update(roomRef,{pendingAttack:null,turnIndex:nextTurnIndex(d.memberOrder||[],d.picks||[],d.turnIndex),turnStartedAt:at,updatedAt:serverTimestamp()})});selectedAttackPlayerId=null;const modal=document.getElementById('attackModal');if(modal)modal.classList.add('hidden');}catch(e){if(!automatic)msg(e.message||'Tur geçilemedi.',true)}
 }
 async function resolveAttack(playerId){
  if(!roomRef||!user?.uid||!playerId)return;
@@ -650,7 +650,14 @@ async function advanceEmptyCountry(club){if(!room||!roomRef)return;try{await run
 function scheduleTurnTimeout(){
  clearTimeout(draftTimeoutTimer);clearInterval(draftCountdownTimer);
  if(roomInspectionMode||!room||room.status!=='drafting'||!room.memberOrder?.length)return;
- if(room.pendingAttack)return;
+ if(room.pendingAttack){
+  const pending=room.pendingAttack,started=Number(pending.startedAt||pending.at||Date.now());
+  scheduledTurnKey=`attack:${room.id||roomId}:${pending.uid}:${started}`;
+  const tick=()=>{const left=Math.max(0,20000-(Date.now()-started));$('turnPill').textContent=String(Math.ceil(left/1000));};
+  tick();draftCountdownTimer=setInterval(tick,250);
+  if(pending.uid===user?.uid)draftTimeoutTimer=setTimeout(()=>passAttack(true),Math.max(0,20000-(Date.now()-started))+80);
+  return;
+ }
  if(room.pendingPick){
   const pending=room.pendingPick,started=Number(pending.startedAt||pending.at||Date.now());
   scheduledTurnKey=`pick:${room.id||roomId}:${pending.uid}:${pending.club}:${started}`;
