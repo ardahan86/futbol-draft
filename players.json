@@ -309,9 +309,9 @@
       "shirtNumber": 13,
       "name": "N'Golo Kanté",
       "position": "Merkez orta saha",
-      "attack": 30,
+      "attack": 1,
       "defense": 1,
-      "overall": 89
+      "overall": 83
     },
     {
       "id": "fenerbahce-matteo-guendouzi",
@@ -509,9 +509,9 @@
       "shirtNumber": 14,
       "name": "Orkun Kökçü",
       "position": "Merkez orta saha",
-      "attack": 30,
+      "attack": 1,
       "defense": 1,
-      "overall": 88
+      "overall": 82
     },
     {
       "id": "besiktas-fabio-miretti",
@@ -669,9 +669,9 @@
       "shirtNumber": 8,
       "name": "Wagner Pina",
       "position": "Sağ bek",
-      "attack": 76,
-      "defense": 76,
-      "overall": 80
+      "attack": 66,
+      "defense": 66,
+      "overall": 72
     },
     {
       "id": "trabzonspor-mustafa-eskihellac",
@@ -1230,8 +1230,8 @@
       "name": "Alessandro Bastoni",
       "position": "Stoper",
       "attack": 1,
-      "defense": 90,
-      "overall": 89
+      "defense": 86,
+      "overall": 86
     },
     {
       "id": "inter-manuel-akanji",
@@ -1959,9 +1959,9 @@
       "shirtNumber": 18,
       "name": "Antoine Semenyo",
       "position": "Sağ kanat",
-      "attack": 85,
+      "attack": 79,
       "defense": 1,
-      "overall": 89
+      "overall": 85
     },
     {
       "id": "manchester-city-iliman-ndiaye",
@@ -2579,9 +2579,9 @@
       "shirtNumber": 18,
       "name": "Julián Álvarez",
       "position": "Santrfor",
-      "attack": 90,
+      "attack": 86,
       "defense": 1,
-      "overall": 89
+      "overall": 86
     },
     {
       "id": "atletico-madrid-alexander-srloth",
@@ -2610,8 +2610,8 @@
       "name": "Michele Di Gregorio",
       "position": "Kaleci",
       "attack": 1,
-      "defense": 85,
-      "overall": 85
+      "defense": 80,
+      "overall": 80
     },
     {
       "id": "juventus-carlo-pinsoglio",
@@ -2830,8 +2830,8 @@
       "name": "Harry Maguire",
       "position": "Stoper",
       "attack": 1,
-      "defense": 90,
-      "overall": 89
+      "defense": 83,
+      "overall": 82
     },
     {
       "id": "manchester-united-matthijs-de-ligt",
