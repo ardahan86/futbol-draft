@@ -80,7 +80,16 @@ service cloud.firestore {
             && resource.data.readyPlayers.values().hasOnly([true])
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberOrder','turnIndex','picks','pendingPick','protectionRights','protectionRightsEarned','swapRights','swapRightsEarned','draftStage','lastPickAnnouncement','turnStartedAt','readyPlayers','seriesHistory','seriesRound','league','tactics','postDraftPhase','protectionDone','swapRequests','swapConfirmed','swapResolved','tacticsConfirmed','updatedAt'])))
         && request.resource.data.ownerUid == resource.data.ownerUid
-        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['readyPlayers']) || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readyPlayers','updatedAt']) && resource.data.get('readyPlayers', {}).diff(request.resource.data.readyPlayers).affectedKeys().hasOnly([request.auth.uid])))
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['readyPlayers']) || (
+          // Draftı başlatırken oda sahibi tüm oyuncular hazır olduktan sonra hazır listesini sıfırlayabilir.
+          (resource.data.status in ['waiting', 'finished']
+            && request.resource.data.status == 'drafting'
+            && request.auth.uid == resource.data.ownerUid
+            && request.resource.data.readyPlayers == {})
+          // Normal hazır/bekliyor değişikliğinde kullanıcı yalnızca kendi durumunu değiştirebilir.
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readyPlayers','updatedAt'])
+            && resource.data.get('readyPlayers', {}).diff(request.resource.data.readyPlayers).affectedKeys().hasOnly([request.auth.uid]))
+        ))
         // League creation/results are controlled by the room owner, not ordinary members.
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['league'])
           || request.auth.uid == resource.data.ownerUid || isAdmin())
